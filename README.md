@@ -1,2 +1,0 @@
-# MazeDefense
-Tower defense experiment
