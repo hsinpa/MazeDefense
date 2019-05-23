@@ -9,11 +9,21 @@ public class MapComponent : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
+    public Vector2 targetPos {
+        get { return _targetPos; }
+    }
+
+    private Vector2 _targetPos;
+
+    public void SetTargetPosition(Vector2 p_targetPos) {
+        _targetPos = p_targetPos;
+    }
+
     private void Awake()
     {
         spriteRenderer = this.GetComponent<SpriteRenderer>();
-        bounds = spriteRenderer.sprite.bounds;
-        Debug.Log(spriteRenderer.bounds);
+        bounds = spriteRenderer.bounds;
+        _targetPos = transform.position;
     }
 
 }
