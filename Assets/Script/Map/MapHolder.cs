@@ -7,18 +7,65 @@ public class MapHolder : MonoBehaviour
     Camera _camera;
 
     List<MapComponent> _mapComponents;
+    int _mapLength;
 
     float width, height;
+    float cameraTop, cameraBottom;
+
+
+    Bounds sampleBounds;
+
+    Vector2 minPos {
+        get {
+            return new Vector2(0, sampleBounds.extents.y * 2 * _mapComponents.Count - 1);
+        }
+    }
 
     private void Start()
     {
         _camera = Camera.main;
         _mapComponents = GetComponentsInChildren<MapComponent>().ToList();
+        _mapLength = _mapComponents.Count;
+
+        if (_mapComponents.Count > 0)
+            sampleBounds = _mapComponents[0].bounds;
 
         height = Camera.main.orthographicSize * 2.0f;
         width = height * Screen.width / Screen.height;
 
+        cameraTop = height / 2f;
+        cameraBottom = -cameraTop;
+
+        AlignHolderToTop();
         CalculateMapTargetPos();
+    }
+
+    public void AlignHolderToTop() {
+        transform.position = new Vector2(0, cameraTop);
+    }
+
+    public bool IsWithinMapSizeRange(Vector2 mousePosition) {
+        return (_mapLength > 0 && _mapComponents[_mapLength - 1].transform.position.y - sampleBounds.extents.y <= mousePosition.y);
+    }
+
+    public void ResumeToAppropriatePos() {
+        Vector2 tarPos = transform.position;
+
+        if (transform.position.y < cameraTop)
+        {
+            tarPos.Set(tarPos.x, cameraTop);
+        }
+        else if (_mapComponents.Count > 0 && _mapComponents[_mapComponents.Count - 1].transform.position.y > 0) 
+        {
+            tarPos.Set(tarPos.x, minPos.y);
+        }
+
+        var transitionPos = Vector2.Lerp(transform.position, tarPos, 0.1f);
+
+        if (Vector2.Distance(transitionPos, transform.position) < 0.01f)
+            transform.position = tarPos;
+
+        transform.position = transitionPos;
     }
 
     public void AddMapComp(MapComponent mapComponent) {
@@ -26,9 +73,9 @@ public class MapHolder : MonoBehaviour
 
         if (insertIndex >= 0) {
             _mapComponents.Insert(insertIndex, mapComponent);
+            _mapLength++;
             CalculateMapTargetPos();
         }
-
     }
 
     public void RemoveMapComp(MapComponent mapComponent) {
@@ -37,37 +84,33 @@ public class MapHolder : MonoBehaviour
         if (cIndex >= 0)
         {
             _mapComponents.RemoveAt(cIndex);
+            _mapLength--;
             CalculateMapTargetPos();
         }
     }
 
     private int GetComponentIndexByPos(float yPos) {
-        float heightOffset = height / 2f;
-
         if (_mapComponents.Count <= 0)
             return 0;
 
-        if (yPos > heightOffset)
+        if (yPos > transform.position.y)
             return 0;
 
-        Bounds bounds = _mapComponents[0].bounds;
-        float lowestPoint = heightOffset - (_mapComponents[0].bounds.extents.y * 2 * _mapComponents.Count);
+        float lowestPoint = transform.position.y - (_mapComponents[0].bounds.extents.y * 2 * _mapComponents.Count);
 
         if (yPos < lowestPoint)
             return _mapComponents.Count;
 
-        int index = Mathf.RoundToInt((heightOffset - yPos) / (_mapComponents[0].bounds.extents.y * 2));
+        int index = Mathf.RoundToInt((transform.position.y - yPos) / (_mapComponents[0].bounds.extents.y * 2));
 
         return index;
     }
 
-    void CalculateMapTargetPos()
+    public void CalculateMapTargetPos()
     {
-        float heightOffset = height / 2f;
-
         for (int i = 0; i < _mapComponents.Count; i++)
         {
-            float diff = heightOffset - _mapComponents[i].bounds.extents.y - ((_mapComponents[i].bounds.extents.y * 2) * (i));
+            float diff = transform.position.y - _mapComponents[i].bounds.extents.y - ((_mapComponents[i].bounds.extents.y * 2) * (i));
 
             _mapComponents[i].SetTargetPosition(new Vector2(0, diff));
         }
