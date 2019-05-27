@@ -16,14 +16,14 @@ public class MapHolder : MonoBehaviour
     int _mapLength;
 
     float width, height;
-    float cameraTop, cameraBottom;
+    public float cameraTop, cameraBottom;
 
     public System.Action<MapComponent> OnAddMapComponent;
 
     [HideInInspector]
     public Vector2 sampleSize;
 
-    Vector2 minPos {
+    public Vector2 minPos {
         get {
             return new Vector2(0, sampleSize.y * 2 * _mapComponents.Count - 1);
         }
@@ -78,7 +78,7 @@ public class MapHolder : MonoBehaviour
         {
             tarPos.Set(tarPos.x, cameraTop);
         }
-        else if (_mapLength > 0 && (_mapComponents[_mapLength - 1].transform.position.y) - 1f> 0) 
+        else if (_mapLength > 0 && (_mapComponents[_mapLength - 1].transform.position.y - sampleSize.y) > 0) 
         {
             tarPos.Set(tarPos.x, minPos.y);
         }

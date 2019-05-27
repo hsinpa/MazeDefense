@@ -70,17 +70,20 @@ public class GameInputManager : MonoBehaviour
             Release();
         }
 
+
+        IsOutOfBoundary();
+
         Scroll();
         HandleMapHolderVelocity();
 
-        mapHolder.ResumeToAppropriatePos();
+        //mapHolder.ResumeToAppropriatePos();
         mapHolder.CalculateMapTargetPos();
     }
 
     void Scroll() {
         if (Input.mouseScrollDelta.y != 0)
         {
-            mapHolder.transform.position += new Vector3(0, Input.mouseScrollDelta.y, 0) * Time.deltaTime * 10;
+            transform.position += new Vector3(0, Input.mouseScrollDelta.y, 0) * Time.deltaTime * 10;
             inputState = InputState.Scroll;
         }
         else if (inputState == InputState.Scroll) {
@@ -104,8 +107,16 @@ public class GameInputManager : MonoBehaviour
         }
 
         if (inputState == InputState.DragMap) {
+
+            bool outOfBoundary = IsOutOfBoundary();
+            if (outOfBoundary)
+            {
+                dragVelocity = 0;
+                return;
+            }
+
             dragVelocity = delta * Time.deltaTime * 10;
-            mapHolder.transform.position += new Vector3(0, dragVelocity, 0);
+            transform.position += new Vector3(0, dragVelocity, 0);
         }
     }
 
@@ -121,6 +132,25 @@ public class GameInputManager : MonoBehaviour
                 mapHolder.CalculateMapTargetPos();
             }
         }
+    }
+
+    bool IsOutOfBoundary() {
+        if (inputState != InputState.DragComp)
+        {
+            if (transform.position.y > 0)
+            {
+                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+                return true;
+            }
+
+            if (transform.position.y < (-mapHolder.minPos.y + mapHolder.cameraTop))
+            {
+                transform.position = new Vector3(transform.position.x, (-mapHolder.minPos.y + mapHolder.cameraTop), transform.position.z);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     void Drag(MapComponent dragObject, Vector3 mousePosition)
@@ -140,7 +170,7 @@ public class GameInputManager : MonoBehaviour
 
         if (inputState == InputState.Idle && dragVelocity != 0 ) {
             dragVelocity = Mathf.Clamp(dragVelocity, -maxDragVelocity, maxDragVelocity);
-            mapHolder.transform.position += new Vector3(0, dragVelocity, 0);
+            transform.position += new Vector3(0, dragVelocity, 0);
             dragVelocity *= dragDeprecation;
 
             if (Mathf.Abs(dragVelocity) < 0.005f)
@@ -155,7 +185,7 @@ public class GameInputManager : MonoBehaviour
             mapHolder.AddMapComp(dragObject);
         }
 
-        if (!mapHolder.IsWithinMapSizeRange(mapHolder.transform.position)) {
+        if (!mapHolder.IsWithinMapSizeRange(transform.position)) {
             dragVelocity = 0;
         }
 
