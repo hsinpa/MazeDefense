@@ -20,7 +20,8 @@ public class MapHolder : MonoBehaviour
 
     public System.Action<MapComponent> OnAddMapComponent;
 
-    Vector2 sampleSize;
+    [HideInInspector]
+    public Vector2 sampleSize;
 
     Vector2 minPos {
         get {
@@ -28,14 +29,27 @@ public class MapHolder : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        _camera = Camera.main;
+    public void ReadTilemap() {
         _mapComponents = GetComponentsInChildren<MapComponent>().ToList();
         _mapLength = _mapComponents.Count;
 
-        if (_mapComponents.Count > 0)
-            sampleSize = _mapComponents[0].size;
+        for (int i = 0; i < _mapLength; i++) {
+            _mapComponents[i].SetUp();
+
+            if (sampleSize == Vector2.zero)
+                sampleSize = _mapComponents[i].radiusSize;
+
+            if (OnAddMapComponent != null)
+                OnAddMapComponent(_mapComponents[i]);
+        }
+
+
+        CalculateMapTargetPos();
+    }
+
+    private void Awake()
+    {
+        _camera = Camera.main;
 
         height = Camera.main.orthographicSize * 2.0f;
         width = height * Screen.width / Screen.height;
@@ -44,7 +58,6 @@ public class MapHolder : MonoBehaviour
         cameraBottom = -cameraTop;
 
         AlignHolderToTop();
-        CalculateMapTargetPos();
     }
 
     public void AlignHolderToTop() {
@@ -65,7 +78,7 @@ public class MapHolder : MonoBehaviour
         {
             tarPos.Set(tarPos.x, cameraTop);
         }
-        else if (_mapComponents.Count > 0 && (_mapComponents[_mapComponents.Count - 1].transform.position.y - 0.5f) > 0) 
+        else if (_mapLength > 0 && (_mapComponents[_mapLength - 1].transform.position.y) - 1f> 0) 
         {
             tarPos.Set(tarPos.x, minPos.y);
         }
@@ -109,12 +122,12 @@ public class MapHolder : MonoBehaviour
         if (yPos > transform.position.y)
             return 0;
 
-        float lowestPoint = transform.position.y - (_mapComponents[0].size.y * 2 * _mapComponents.Count);
+        float lowestPoint = transform.position.y - (_mapComponents[0].radiusSize.y * 2 * _mapComponents.Count);
 
         if (yPos < lowestPoint)
             return _mapComponents.Count;
 
-        int index = Mathf.RoundToInt((transform.position.y - yPos) / (_mapComponents[0].size.y * 2));
+        int index = Mathf.RoundToInt((transform.position.y - yPos) / (_mapComponents[0].radiusSize.y * 2));
 
         return index;
     }
@@ -123,7 +136,7 @@ public class MapHolder : MonoBehaviour
     {
         for (int i = 0; i < _mapComponents.Count; i++)
         {
-            float diff = transform.position.y - _mapComponents[i].size.y - ((_mapComponents[i].size.y * 2) * (i));
+            float diff = transform.position.y - _mapComponents[i].radiusSize.y - ((_mapComponents[i].radiusSize.y * 2) * (i));
 
             _mapComponents[i].SetTargetPosition(new Vector2(0, diff));
         }
@@ -131,8 +144,7 @@ public class MapHolder : MonoBehaviour
 
     private void Update()
     {
-        int mapLength = _mapComponents.Count;
-        for (int i = 0; i < mapLength; i++) {
+        for (int i = 0; i < _mapLength; i++) {
             if (_mapComponents == null)
                 continue;
             
