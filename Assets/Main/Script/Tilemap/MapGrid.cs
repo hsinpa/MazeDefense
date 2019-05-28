@@ -8,6 +8,8 @@ public class MapGrid : MonoBehaviour
     private MapHolder mapHolder;
     private List<TileNode[,]> tilenode;
 
+    public System.Action<TileNode> OnSelectTileNode;
+
     public void SetUp()
     {
         tilenode = new List<TileNode[,]>();
@@ -22,22 +24,40 @@ public class MapGrid : MonoBehaviour
         int nodeHeight = Mathf.RoundToInt(mLength * mapHolder.sampleSize.y * 2);
         int nodeWidth = Mathf.RoundToInt(mapHolder.sampleSize.x * 2);
 
-        //for (int i = 0; i < mLength; i++) {
-        //    tilenode.Add(mapHolder.mapComponents[i].tilemapReader.nodes);
-        //}
+        for (int i = mLength - 1; i >= 0; i--) {
+            tilenode.Add(mapHolder.mapComponents[i].tilemapReader.nodes);
+        }
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            int yOffset = Mathf.CeilToInt(mapHolder.minPos.y - mapHolder.cameraTop);
-            var worldPoint = new Vector3Int(Mathf.FloorToInt(point.x + (mapHolder.sampleSize.x)), Mathf.FloorToInt(point.y + yOffset), 0);
+            ClickGridMap();
+        }
+    }
 
-            Debug.Log(point +", " + worldPoint );
-            Debug.Log(Mathf.CeilToInt (mapHolder.minPos.y - mapHolder.cameraTop));
+    private void ClickGridMap() {
 
+        Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        int yOffset = Mathf.CeilToInt(mapHolder.minPos.y - mapHolder.cameraTop);
+        var worldPoint = new Vector3Int(Mathf.FloorToInt(point.x + (mapHolder.sampleSize.x)), Mathf.FloorToInt(point.y + yOffset), 0);
+
+        float fullHeight = mapHolder.sampleSize.y * 2;
+        int componentIndex = Mathf.FloorToInt(worldPoint.y / (fullHeight));
+        int tileNodeIndex = Mathf.RoundToInt(worldPoint.y % (fullHeight));
+
+        if (componentIndex >= 0 && componentIndex < tilenode.Count &&
+            worldPoint.x >= 0 && worldPoint.x < mapHolder.sampleSize.x * 2 &&
+            tileNodeIndex >= 0 && tileNodeIndex < fullHeight
+            )
+        {
+            var selectedNode = tilenode[componentIndex][worldPoint.x, tileNodeIndex];
+            Debug.Log(point + ", " + worldPoint);
+            Debug.Log("LocalPlace " + selectedNode.LocalPlace);
+
+            if (OnSelectTileNode != null)
+                OnSelectTileNode(selectedNode);
         }
     }
 

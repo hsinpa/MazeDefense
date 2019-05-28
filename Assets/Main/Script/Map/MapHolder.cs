@@ -38,11 +38,10 @@ public class MapHolder : MonoBehaviour
 
             if (sampleSize == Vector2.zero)
                 sampleSize = _mapComponents[i].radiusSize;
-
-            if (OnAddMapComponent != null)
-                OnAddMapComponent(_mapComponents[i]);
         }
 
+        if (OnAddMapComponent != null && _mapLength > 0)
+            OnAddMapComponent(_mapComponents[_mapLength - 1]);
 
         CalculateMapTargetPos();
     }

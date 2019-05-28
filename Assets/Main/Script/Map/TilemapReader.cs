@@ -36,8 +36,13 @@ public class TilemapReader
             foreach (Vector3Int pos in tile.cellBounds.allPositionsWithin)
             {
 
-                if (!tile.HasTile(pos)) continue;
-                Vector3Int localSpace = new Vector3Int(Mathf.RoundToInt(mapComponent.radiusSize.x + pos.x), Mathf.RoundToInt(mapComponent.radiusSize.y + pos.y), pos.z);
+                if (!tile.HasTile(pos)) {
+                    continue;
+                };
+
+                Vector3Int localSpace = new Vector3Int(Mathf.RoundToInt(mapComponent.radiusSize.x + pos.x),
+                                                        Mathf.FloorToInt(mapComponent.offsetAnchor.y + mapComponent.radiusSize.y + pos.y), 
+                                                        pos.z);
 
                 var key = tile.CellToWorld(pos);
                 var tileBase = tile.GetTile(pos);

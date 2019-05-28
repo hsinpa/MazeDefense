@@ -15,6 +15,9 @@ public class GameInputManager : MonoBehaviour
     [SerializeField, Range(0, 1)]
     float dragRange;
 
+    [SerializeField, Range(1, 30)]
+    float dragSpeed = 10;
+
     [SerializeField, Range(0, 3)]
     float maxDragSensitivity;
 
@@ -83,7 +86,7 @@ public class GameInputManager : MonoBehaviour
     void Scroll() {
         if (Input.mouseScrollDelta.y != 0)
         {
-            transform.position += new Vector3(0, Input.mouseScrollDelta.y, 0) * Time.deltaTime * 10;
+            transform.position += new Vector3(0, Input.mouseScrollDelta.y, 0) * Time.deltaTime * dragSpeed;
             inputState = InputState.Scroll;
         }
         else if (inputState == InputState.Scroll) {
@@ -115,7 +118,7 @@ public class GameInputManager : MonoBehaviour
                 return;
             }
 
-            dragVelocity = delta * Time.deltaTime * 10;
+            dragVelocity = delta * Time.deltaTime * dragSpeed;
             transform.position += new Vector3(0, dragVelocity, 0);
         }
     }
