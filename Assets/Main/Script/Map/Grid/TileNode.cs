@@ -8,9 +8,11 @@ namespace TD.Map {
     public struct TileNode
     {
         public Vector3Int LocalPlace { get; set; }
+        public Vector3Int TileMapPlace { get; set; }
 
         public Vector3 WorldSpace { get {
-                return TilemapMember.CellToWorld(LocalPlace) + TilemapMember.tileAnchor;
+                //return TilemapMember.CellToWorld(TileMapPlace);
+                return TilemapMember.CellToWorld(TileMapPlace) + TilemapMember.tileAnchor;
             }
         }
 

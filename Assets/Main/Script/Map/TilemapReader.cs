@@ -53,6 +53,7 @@ public class TilemapReader
                 node.TilemapMember = tile;
                 node.TileBase = tileBase;
                 node.LocalPlace = localSpace;
+                node.TileMapPlace = pos;
                 _nodes[localSpace.x, localSpace.y] = node;
             }
         }

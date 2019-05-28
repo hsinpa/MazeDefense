@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TD.Map;
 using UnityEngine;
 
 public class GameInputManager : MonoBehaviour
@@ -36,6 +37,8 @@ public class GameInputManager : MonoBehaviour
     Vector2 initialMousePos;
     Vector2 lastMousePos;
 
+    private MapGrid mapGrid;
+
     public enum InputState {
         Scroll,
         PreDragMap,
@@ -47,14 +50,21 @@ public class GameInputManager : MonoBehaviour
 
     private InputState inputState;
 
-    private void Start()
+    #region Event
+    public System.Action<TileNode> OnSelectTileNode;
+    #endregion
+    public void SetUp(MapGrid mapGrid)
     {
         _camera = Camera.main;
+        this.mapGrid = mapGrid;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (_camera == null)
+            return;
+
         var worldPos = (_camera.ScreenToWorldPoint(Input.mousePosition));
         worldPos.Set(worldPos.x, worldPos.y, 0);
 
@@ -71,6 +81,8 @@ public class GameInputManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             Release();
+
+            ClickOnMapMaterial(worldPos);
         }
 
 
@@ -195,6 +207,14 @@ public class GameInputManager : MonoBehaviour
         inputState = InputState.Idle;
         dragObject = null;
         initialMousePos = Vector2.zero; 
+    }
+
+    void ClickOnMapMaterial(Vector3 worldPos) {
+        var tile = this.mapGrid.GetTileNodeByWorldPos(worldPos);
+
+        if (tile.TileBase != null && OnSelectTileNode != null) {
+            OnSelectTileNode(tile);
+        }
     }
 }
 
