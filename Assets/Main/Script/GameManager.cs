@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
 {
     private MapHolder _mapHolder;
     private MapGrid _mapGrid;
-    private GameInteractorCtrl _gameInteractorCtrl;
+    private InGameUICtrl _gameInteractorCtrl;
     private GameInputManager _gameInputManager;
 
 
@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
         _mapGrid = GetComponentInChildren<MapGrid>();
 
         _gameInputManager = GetComponentInChildren<GameInputManager>();
-        _gameInteractorCtrl = GetComponentInChildren<GameInteractorCtrl>();
+        _gameInteractorCtrl = GetComponentInChildren<InGameUICtrl>();
 
         _mapGrid.SetUp();
         _gameInputManager.SetUp(_mapGrid);

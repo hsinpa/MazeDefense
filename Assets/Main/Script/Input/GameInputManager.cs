@@ -45,10 +45,11 @@ public class GameInputManager : MonoBehaviour
         DragMap,
         DragComp,
         Click,
+        UIFocus,
         Idle
     }
 
-    private InputState inputState;
+    public InputState inputState;
 
     #region Event
     public System.Action<TileNode> OnSelectTileNode;

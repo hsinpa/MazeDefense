@@ -43,8 +43,6 @@ public class MapGrid : MonoBehaviour
             )
         {
             var selectedNode = tilenode[componentIndex][worldPoint.x, tileNodeIndex];
-            Debug.Log(point + ", " + worldPoint);
-            Debug.Log("LocalPlace " + selectedNode.LocalPlace);
 
             return (selectedNode);
         }
