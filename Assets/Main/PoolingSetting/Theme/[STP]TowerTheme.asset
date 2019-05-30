@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7cabf3c7441f43548815271cb10d2f38, type: 3}
-  m_Name: '[STP]Theme'
+  m_Name: '[STP]TowerTheme'
   m_EditorClassIdentifier: 
   stpObjectHolder: []

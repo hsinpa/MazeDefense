@@ -32,7 +32,6 @@ public class TilemapReader
             Tilemap tile = mapComponent.tilemaps[i];
 
             if (tile == null) continue;
-            Debug.Log(tile.name);
             foreach (Vector3Int pos in tile.cellBounds.allPositionsWithin)
             {
 
@@ -55,6 +54,8 @@ public class TilemapReader
                 node.LocalPlace = localSpace;
                 node.TileMapPlace = pos;
                 _nodes[localSpace.x, localSpace.y] = node;
+
+
             }
         }
     }

@@ -7,6 +7,9 @@ using UnityEngine.Tilemaps;
 namespace TD.Map {
     public struct TileNode
     {
+
+        public Vector2Int NodeIndex { get; set; }
+
         public Vector3Int LocalPlace { get; set; }
         public Vector3Int TileMapPlace { get; set; }
 
@@ -23,5 +26,8 @@ namespace TD.Map {
         public bool IsWalkable { get; set; }
 
         public int Cost { get; set; }
+
+        public Vector3 FlowFieldDirection { get; set; }
+        //public TileNode FlowFieldFromNode;
     }
 }
