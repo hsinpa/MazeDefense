@@ -66,6 +66,10 @@ namespace Pooling {
             Collider2D collider = p_gameobject.GetComponent<Collider2D>();
             if (collider)
                 collider.enabled = p_enable;
+
+            Animator animator = p_gameobject.GetComponent<Animator>();
+            if (animator)
+                animator.enabled = p_enable;
         }
 
         public void Destroy(GameObject p_gameobject)

@@ -9,8 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cabf3c7441f43548815271cb10d2f38, type: 3}
-  m_Name: '[STP]TowerTheme'
+  m_Script: {fileID: 11500000, guid: 1ecd7a91b8cbe624aadbc5bbda24c8d4, type: 3}
+  m_Name: '[STP]Skeleton'
   m_EditorClassIdentifier: 
-  stpObjectHolder:
-  - {fileID: 11400000, guid: 26af8db7c0542fd468efa564b1650460, type: 2}
+  _id: monster_skeleton_1
+  _tag: Monster
+  poolingNum: 30
+  prefab: {fileID: 448340967882919444, guid: e6b2c2fbeefab3f47945c8d2268c3e68, type: 3}
+  hp: 5
+  def: 5
+  damage: 5
+  moveSpeed: 6

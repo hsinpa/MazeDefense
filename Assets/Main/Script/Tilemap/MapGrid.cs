@@ -10,25 +10,34 @@ public class MapGrid : MonoBehaviour
 
     private TileNode[,] tilenodes;
 
+    private FlowField _flowField;
+
+    public int gridHeight, gridWidth;
+
     public void SetUp()
     {
         tilenode = new List<TileNode[,]>();
         mapHolder = this.GetComponent<MapHolder>();
         mapHolder.OnAddMapComponent += OnAddBlock;
+        _flowField = new FlowField();
     }
 
     public void ReformMap() {
         tilenode.Clear();
         int mLength = mapHolder.mapComponents.Count;
 
-        int nodeHeight = Mathf.RoundToInt(mLength * mapHolder.sampleSize.y * 2);
-        int nodeWidth = Mathf.RoundToInt(mapHolder.sampleSize.x * 2);
+        gridHeight = Mathf.RoundToInt(mLength * mapHolder.sampleSize.y * 2);
+        gridWidth = Mathf.RoundToInt(mapHolder.sampleSize.x * 2);
 
         for (int i = mLength - 1; i >= 0; i--) {
             tilenode.Add(mapHolder.mapComponents[i].tilemapReader.nodes);
         }
 
-        tilenodes = ReorganizedTileNode(tilenode, new Vector2Int(nodeWidth, Mathf.RoundToInt(mapHolder.sampleSize.y * 2) ) );
+        tilenodes = ReorganizedTileNode(tilenode, new Vector2Int(gridWidth, Mathf.RoundToInt(mapHolder.sampleSize.y * 2) ) );
+
+        tilenodes = _flowField.Execute(tilenodes, new Vector2Int(gridWidth, gridHeight));
+
+
     }
 
 
@@ -39,7 +48,6 @@ public class MapGrid : MonoBehaviour
         TileNode[,] tileNode = new TileNode[blockSize.x, blockSize.y * blockLength];
         int tOffset = blockLength - 1;
 
-        Debug.Log(blockSize.y);
         for (int t = 0; t < blockLength; t++)
         {
 
@@ -47,7 +55,7 @@ public class MapGrid : MonoBehaviour
             {
                 for (int y = 0; y < blockSize.y; y++)
                 {
-                    p_tileBlocks[t][x, y].NodeIndex = new Vector2Int(x, y + ((t) * blockSize.y));
+                    p_tileBlocks[t][x, y].GridIndex = new Vector2Int(x, y + ((t) * blockSize.y));
                     tileNode[x, y + ((t) * blockSize.y)] = p_tileBlocks[t][x,y];
                 }
             }
@@ -76,7 +84,6 @@ public class MapGrid : MonoBehaviour
 
         //    return (selectedNode);
         //}
-        Debug.Log(worldPoint);
 
         if (worldPoint.x >= 0 && worldPoint.x < mapHolder.sampleSize.x * 2 &&
             worldPoint.y >= 0 && worldPoint.y < mapHolder.sampleSize.y * 2 * tilenode.Count
@@ -85,6 +92,7 @@ public class MapGrid : MonoBehaviour
 
 
             var selectedNode = tilenodes[worldPoint.x, worldPoint.y];
+            //Debug.Log(selectedNode.GridIndex +", Move Direction " + selectedNode.FlowFieldDirection);
 
             return (selectedNode);
         }

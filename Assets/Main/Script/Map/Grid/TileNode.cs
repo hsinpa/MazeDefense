@@ -8,7 +8,7 @@ namespace TD.Map {
     public struct TileNode
     {
 
-        public Vector2Int NodeIndex { get; set; }
+        public Vector2Int GridIndex { get; set; }
 
         public Vector3Int LocalPlace { get; set; }
         public Vector3Int TileMapPlace { get; set; }
@@ -27,7 +27,7 @@ namespace TD.Map {
 
         public int Cost { get; set; }
 
-        public Vector3 FlowFieldDirection { get; set; }
+        public Vector2 FlowFieldDirection { get; set; }
         //public TileNode FlowFieldFromNode;
     }
 }

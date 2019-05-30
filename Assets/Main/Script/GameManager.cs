@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
         _poolManager = GetComponentInChildren<PoolManager>();
 
         _mapGrid.SetUp();
-        _gameInputManager.SetUp(_mapGrid);
+        _gameInputManager.SetUp(_mapGrid, _mapHolder);
         _gameInteractorCtrl.SetUp(_gameInputManager);
 
     }
@@ -36,6 +36,10 @@ public class GameManager : MonoBehaviour
     private void Init()
     {
         _mapHolder.ReadTilemap();
+
+        if (_poolManager != null && poolingTheme != null)
+            PreparePoolingObject(poolingTheme);
+
     }
 
     private void PreparePoolingObject(STPTheme poolingTheme) {

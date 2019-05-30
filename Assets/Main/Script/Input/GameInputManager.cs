@@ -10,9 +10,6 @@ public class GameInputManager : MonoBehaviour
     [SerializeField]
     LayerMask raycastLayer;
 
-    [SerializeField]
-    MapHolder mapHolder;
-
     [SerializeField, Range(0, 1)]
     float dragRange;
 
@@ -38,10 +35,10 @@ public class GameInputManager : MonoBehaviour
     Vector2 lastMousePos;
 
     private MapGrid mapGrid;
+    MapHolder mapHolder;
 
     public enum InputState {
         Scroll,
-        PreDragMap,
         DragMap,
         DragComp,
         Click,
@@ -54,10 +51,11 @@ public class GameInputManager : MonoBehaviour
     #region Event
     public System.Action<TileNode> OnSelectTileNode;
     #endregion
-    public void SetUp(MapGrid mapGrid)
+    public void SetUp(MapGrid mapGrid, MapHolder mapHolder)
     {
         _camera = Camera.main;
         this.mapGrid = mapGrid;
+        this.mapHolder = mapHolder;
     }
 
     // Update is called once per frame
@@ -81,9 +79,10 @@ public class GameInputManager : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            Release();
+            if (inputState == InputState.Click)
+                ClickOnMapMaterial(worldPos);
 
-            ClickOnMapMaterial(worldPos);
+            Release();
         }
 
 
@@ -111,13 +110,13 @@ public class GameInputManager : MonoBehaviour
         if (inputState == InputState.Idle)
         {
             initialMousePos = mousePosition;
-            inputState = InputState.PreDragMap;
+            inputState = InputState.Click;
             return;
         }
         float delta = (mousePosition - initialMousePos).y;
         delta = Mathf.Clamp(delta, -maxDragSensitivity, maxDragSensitivity);
 
-        if (inputState == InputState.PreDragMap && mapHolder.IsWithinMapSizeRange(mousePosition) &&
+        if (inputState == InputState.Click && mapHolder.IsWithinMapSizeRange(mousePosition) &&
             Mathf.Abs(delta) > dragRange) {
             inputState = InputState.DragMap;
         }
@@ -151,6 +150,14 @@ public class GameInputManager : MonoBehaviour
     }
 
     bool IsOutOfBoundary() {
+
+        if (mapGrid.gridHeight < mapHolder.cameraTop * 1.5f)
+        {
+            transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+            return false;
+        }
+
+
         if (inputState != InputState.DragComp)
         {
             if (transform.position.y > 0)
@@ -165,6 +172,7 @@ public class GameInputManager : MonoBehaviour
                 return true;
             }
         }
+        
 
         return false;
     }
