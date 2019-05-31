@@ -43,20 +43,32 @@ public class TilemapReader
                                                         Mathf.FloorToInt(mapComponent.offsetAnchor.y + mapComponent.radiusSize.y + pos.y), 
                                                         pos.z);
 
-                var key = tile.CellToWorld(pos);
-                var tileBase = tile.GetTile(pos);
-                var node = new TileNode();
+                var node = ParseTileInfo(tile, pos);
+                    node.LocalPlace = localSpace;
 
-                node.IsWalkable = true;
-                node.Cost = 1;
-                node.TilemapMember = tile;
-                node.TileBase = tileBase;
-                node.LocalPlace = localSpace;
-                node.TileMapPlace = pos;
                 _nodes[localSpace.x, localSpace.y] = node;
-
-
             }
         }
+    }
+
+    private TileNode ParseTileInfo(Tilemap tile, Vector3Int TileMapPlace) {
+        var node = new TileNode();
+        var key = tile.CellToWorld(TileMapPlace);
+        var tileBase = tile.GetTile(TileMapPlace);
+
+        node.TilemapMember = tile;
+        node.TileBase = tileBase;
+        node.TileMapPlace = TileMapPlace;
+        node.IsWalkable = true;
+        node.Cost = 1;
+
+        if (tileBase.GetType() == typeof(CustomTile))
+        {
+            CustomTile customTile = (CustomTile)tileBase;
+            node.IsWalkable = customTile.walkable;
+            node.Cost = customTile.cost;
+        }
+
+        return node;
     }
 }

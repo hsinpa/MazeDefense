@@ -5,14 +5,14 @@ using UnityEngine;
 public class ConstructionView : InGameUIBase
 {
 
-    public System.Action<int> TowerClickEvent;
+    public System.Action<string> TowerClickEvent;
 
     private void Start()
     {
         base.Init();
     }
 
-    public void OnTowerConstructClick(int tower_id) {
+    public void OnTowerConstructClick(string tower_id) {
         if (TowerClickEvent != null)
             TowerClickEvent(tower_id);
     }

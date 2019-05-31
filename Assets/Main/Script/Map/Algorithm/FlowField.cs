@@ -24,9 +24,13 @@ public class FlowField
             TileNode current = frontier.Dequeue();
             length--;
 
+
             List<TileNode> neighbours = GetNeighbours(tileNodes, nodeSize, current);
             for (int n = 0; n < neighbours.Count; n++) {
                 var neighbour = neighbours[n];
+
+                if (!neighbour.IsWalkable)
+                    continue;
 
                 if (!came_from.Contains(neighbour.GridIndex))
                 {

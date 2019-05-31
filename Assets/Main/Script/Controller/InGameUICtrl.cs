@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using TD.Map;
 using Utility;
+using Pooling;
+using TD.Unit;
 
 public class InGameUICtrl : MonoBehaviour
 {
     GameInputManager _gameInputManager;
+    GameUnitManager _gameUnitManager;
+    MapGrid _mapGrid;
+
     TileNode currentSelectedNode;
 
-    [SerializeField]
-    GameObject tempTowerPrefab;
 
     [SerializeField]
     ConstructionView ConstructionUI;
@@ -18,9 +21,12 @@ public class InGameUICtrl : MonoBehaviour
     [SerializeField, Range(0, 4)]
     float IgnoreInputRange = 2;
 
-    public void SetUp(GameInputManager gameInputManager) {
+    public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, MapGrid mapGrid) {
         _gameInputManager = gameInputManager;
         _gameInputManager.OnSelectTileNode += SelectTileListener;
+
+        _gameUnitManager = gameUnitManager;
+        _mapGrid = mapGrid;
 
         if (ConstructionUI != null)
         {
@@ -28,11 +34,16 @@ public class InGameUICtrl : MonoBehaviour
         }
     }
 
-    private void SelectTowerToBuild(int tower_id) {
+    private void SelectTowerToBuild(string tower_id) {
 
-        if (tempTowerPrefab != null && currentSelectedNode.TileMapPlace != null) {
-            var tower = Instantiate(tempTowerPrefab);
-            tower.transform.position = currentSelectedNode.WorldSpace;
+        if (currentSelectedNode.TileMapPlace != null) {
+            var tower = PoolManager.instance.ReuseObject(tower_id);
+
+            if (tower != null) {
+                tower.transform.position = currentSelectedNode.WorldSpace;
+
+                _gameUnitManager.AddUnit(tower.GetComponent<BaseUnit>());
+            }
         }
 
         StartCoroutine(GeneralUtility.DoDelayWork(0.1f, () =>

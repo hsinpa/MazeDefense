@@ -49,6 +49,7 @@ MonoBehaviour:
   radiusSize: {x: 0, y: 0}
   offsetAnchor: {x: 0, y: 0}
   tilemaps: []
+  map_type: 1
 --- !u!1 &4638664006640832256
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,7 +330,7 @@ Tilemap:
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: -5, y: -3, z: 0}
-  m_Size: {x: 10, y: 5, z: 1}
+  m_Size: {x: 10, y: 2, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -995,17 +996,9 @@ Tilemap:
   m_TileAssetArray:
   - m_RefCount: 50
     m_Data: {fileID: 11400000, guid: 58a8153df978e2242babceabc3e29312, type: 2}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
   m_TileSpriteArray:
   - m_RefCount: 50
     m_Data: {fileID: 21300076, guid: 0d2783d19c0951c43b59c049c4a8faed, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
   m_TileMatrixArray:
   - m_RefCount: 50
     m_Data:

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TD.Map;
+using TD.Unit;
 
 public class DummyMonsterGeneator : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class DummyMonsterGeneator : MonoBehaviour
 
     [SerializeField]
     MapHolder _mapHolder;
+
+    [SerializeField]
+    GameUnitManager _gameUnitManager;
+
 
     [SerializeField]
     string _monsterKey;
@@ -44,8 +49,11 @@ public class DummyMonsterGeneator : MonoBehaviour
         if (monsterObject != null) {
             monsterObject.transform.position = tileNode.WorldSpace;
 
-            DummyUnit dummyUnit = monsterObject.GetComponent<DummyUnit>();
+            MonsterUnit dummyUnit = monsterObject.GetComponent<MonsterUnit>();
             dummyUnit.SetUp(_mapGrid);
+
+            _gameUnitManager.AddUnit(dummyUnit);
+
         }
     }
 

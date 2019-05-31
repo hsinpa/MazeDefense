@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pooling;
+using TD.Map;
+using TD.Unit;
+
 public class GameManager : MonoBehaviour
 {
     private MapHolder _mapHolder;
@@ -9,6 +12,7 @@ public class GameManager : MonoBehaviour
     private InGameUICtrl _gameInteractorCtrl;
     private GameInputManager _gameInputManager;
     private PoolManager _poolManager;
+    private GameUnitManager _gameUnitManager;
 
     [SerializeField]
     STPTheme poolingTheme;
@@ -22,30 +26,32 @@ public class GameManager : MonoBehaviour
         _gameInputManager = GetComponentInChildren<GameInputManager>();
         _gameInteractorCtrl = GetComponentInChildren<InGameUICtrl>();
         _poolManager = GetComponentInChildren<PoolManager>();
+        _gameUnitManager = GetComponentInChildren<GameUnitManager>();
 
         _mapGrid.SetUp();
         _gameInputManager.SetUp(_mapGrid, _mapHolder);
-        _gameInteractorCtrl.SetUp(_gameInputManager);
+
+        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid);
 
     }
 
     public void Start() {
         Init();
+
+        if (_poolManager != null && poolingTheme != null)
+            PreparePoolingObject(poolingTheme);
     }
 
     private void Init()
     {
+        _gameUnitManager.Reset();
         _mapHolder.ReadTilemap();
-
-        if (_poolManager != null && poolingTheme != null)
-            PreparePoolingObject(poolingTheme);
-
     }
 
     private void PreparePoolingObject(STPTheme poolingTheme) {
         if (poolingTheme.stpObjectHolder != null) {
             for (int i = 0; i < poolingTheme.stpObjectHolder.Count; i++) {
-                _poolManager.CreatePool(poolingTheme.stpObjectHolder[0].prefab, poolingTheme.stpObjectHolder[0]._id, poolingTheme.stpObjectHolder[0].poolingNum);
+                _poolManager.CreatePool(poolingTheme.stpObjectHolder[i].prefab, poolingTheme.stpObjectHolder[i]._id, poolingTheme.stpObjectHolder[i].poolingNum);
             }
         }
     }

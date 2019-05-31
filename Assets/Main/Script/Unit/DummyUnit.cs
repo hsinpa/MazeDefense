@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TD.Map;
+using Pooling;
 
 public class DummyUnit : MonoBehaviour
 {
@@ -16,17 +18,17 @@ public class DummyUnit : MonoBehaviour
     {
 
         if (_mapGrid == null) return;
-        Debug.Log(transform.position);
 
+        var unitPosition = transform.position;
         var currentTile = _mapGrid.GetTileNodeByWorldPos(transform.position);
 
         if (currentTile.TilemapMember != null) {
 
-            moveDelta.Set(transform.position.x + (currentTile.FlowFieldDirection.x * Time.deltaTime),
-                transform.position.y + (currentTile.FlowFieldDirection.y * Time.deltaTime),
-                transform.position.z);
+            moveDelta.Set((currentTile.FlowFieldDirection.x), (currentTile.FlowFieldDirection.y), 0);
+            moveDelta *= Time.deltaTime; 
 
-            transform.position = moveDelta;
+
+            transform.position += moveDelta;
         }
     }
 }
