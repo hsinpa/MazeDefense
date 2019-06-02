@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
         _mapGrid.SetUp();
         _gameInputManager.SetUp(_mapGrid, _mapHolder);
 
-        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid);
+        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid, poolingTheme);
 
     }
 

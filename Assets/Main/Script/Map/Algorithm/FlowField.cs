@@ -1,12 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using TD.Map;
 using UnityEngine;
 
 public class FlowField
 {
 
+    private Vector3 zeroVector3 = new Vector3(0, 0, 0);
 
+    public void ExecuteAsyn(TileNode[,] tileNodes, Vector2Int nodeSize, System.Action<TileNode[,]> callback) {
+        Thread t = new Thread(new ThreadStart(() => {
+
+            tileNodes = EraseTileNextPath(tileNodes, nodeSize);
+            tileNodes = Execute(tileNodes, nodeSize);
+
+            if (callback != null)
+                callback(tileNodes);
+        }));
+        t.Start();
+    }
 
     public TileNode[,] Execute(TileNode[,] tileNodes, Vector2Int nodeSize) {
 
@@ -29,7 +42,7 @@ public class FlowField
             for (int n = 0; n < neighbours.Count; n++) {
                 var neighbour = neighbours[n];
 
-                if (!neighbour.IsWalkable)
+                if (!neighbour.IsWalkable || neighbour.towerUnit != null)
                     continue;
 
                 if (!came_from.Contains(neighbour.GridIndex))
@@ -85,6 +98,19 @@ public class FlowField
         }
 
         return neighbours;
+    }
+
+    private TileNode[,] EraseTileNextPath(TileNode[,] tileNodes, Vector2Int nodeSize) {
+        for (int x = 0; x < nodeSize.x; x++)
+        {
+            for (int y = 0; y < nodeSize.y; y++)
+            {
+                tileNodes[x, y].FlowFieldDirection = zeroVector3;
+            }
+        }
+
+        return tileNodes;
+
     }
 
 

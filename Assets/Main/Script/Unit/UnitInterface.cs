@@ -4,11 +4,11 @@ using UnityEngine;
 
 
 namespace TD.Unit {
-    public interface BaseUnit
+    public interface UnitInterface
     {
         GameObject unitObject { get; }
 
-        void ReadyToAction(System.Action<BaseUnit> OnDestroyCallback);
+        void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback);
         void OnUpdate();
         void Destroy();
     }

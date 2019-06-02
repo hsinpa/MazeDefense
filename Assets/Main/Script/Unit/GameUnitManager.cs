@@ -1,24 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TD.Map;
 
 namespace TD.Unit {
     public class GameUnitManager : MonoBehaviour
     {
-        private List<BaseUnit> unitList = new List<BaseUnit>();
-        private List<BaseUnit> pendingDestroyList = new List<BaseUnit>();
+        private List<UnitInterface> unitList = new List<UnitInterface>();
+        private List<UnitInterface> pendingDestroyList = new List<UnitInterface>();
 
         private int unitLength = 0;
+        private MapGrid _mapGrid;
 
         #region Public Method
-        public void AddUnit(BaseUnit unit) {
+        public void SetUp(MapGrid mapGrid) {
+            _mapGrid = mapGrid;
+        }
+
+        public void AddUnit(UnitInterface unit) {
             unit.ReadyToAction(RemoveUnit);
 
             unitList.Add(unit);
             unitLength++;
         }
 
-        public void RemoveUnit(BaseUnit unit) {
+        public void RemoveUnit(UnitInterface unit) {
             pendingDestroyList.Add(unit);
         }
         #endregion
@@ -55,7 +61,7 @@ namespace TD.Unit {
         {
             unitLength = 0;
             unitList.Clear();
-            unitList.Clear();
+            pendingDestroyList.Clear();
         }
 
     }

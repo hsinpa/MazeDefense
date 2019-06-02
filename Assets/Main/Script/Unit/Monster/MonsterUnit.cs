@@ -4,45 +4,64 @@ using UnityEngine;
 using TD.Map;
 
 namespace TD.Unit {
-    public class MonsterUnit : MonoBehaviour, BaseUnit
+    public class MonsterUnit : MonoBehaviour, UnitInterface
     {
         public GameObject unitObject { get { return gameObject; } }
 
-        MapGrid _mapGrid;
+        private MapGrid _mapGrid;
 
-        Vector3 moveDelta;
+        private Vector3 moveDelta;
+
+        private System.Action<UnitInterface> OnDestroyCallback;
+
+        private TileNode currentTile;
 
         public void SetUp(MapGrid mapGrid)
         {
             _mapGrid = mapGrid;
         }
 
-        public void ReadyToAction(System.Action<BaseUnit> OnDestroyCallback)
+        public void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback)
         {
-
+            this.OnDestroyCallback = OnDestroyCallback;
         }
 
         public void OnUpdate()
         {
             if (_mapGrid == null) return;
 
-            var unitPosition = transform.position;
-            var currentTile = _mapGrid.GetTileNodeByWorldPos(transform.position);
+            Vector3 unitPosition = transform.position;
 
-            if (currentTile.TilemapMember != null)
+            TileNode standTile = _mapGrid.GetTileNodeByWorldPos(transform.position);
+
+            if (standTile.TilemapMember != null && standTile.GridIndex != currentTile.GridIndex)
             {
+                if (currentTile.TilemapMember != null)
+                    _mapGrid.EditUnitState(currentTile.GridIndex, this, false);
 
-                moveDelta.Set((currentTile.FlowFieldDirection.x), (currentTile.FlowFieldDirection.y), 0);
-                moveDelta *= Time.deltaTime;
-
-
-                transform.position += moveDelta;
+                _mapGrid.EditUnitState(standTile.GridIndex, this, true);
+                currentTile = standTile;
             }
+
+            moveDelta.Set((currentTile.FlowFieldDirection.x), (currentTile.FlowFieldDirection.y), 0);
+            moveDelta *= Time.deltaTime;
+
+            transform.position += moveDelta;
         }
 
         public void Destroy()
         {
+            if (this.OnDestroyCallback != null)
+                OnDestroyCallback(this);
 
+            if (_mapGrid != null)
+            {
+                _mapGrid.EditUnitState(currentTile.GridIndex, this, false);
+            }
+
+            this.OnDestroyCallback = null;
+
+            this.currentTile = default(TileNode);
         }
 
     }

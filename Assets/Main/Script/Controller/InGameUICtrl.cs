@@ -5,6 +5,7 @@ using TD.Map;
 using Utility;
 using Pooling;
 using TD.Unit;
+using System.Threading.Tasks;
 
 public class InGameUICtrl : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class InGameUICtrl : MonoBehaviour
     MapGrid _mapGrid;
 
     TileNode currentSelectedNode;
-
+    STPTheme _stpTheme;
 
     [SerializeField]
     ConstructionView ConstructionUI;
@@ -21,12 +22,13 @@ public class InGameUICtrl : MonoBehaviour
     [SerializeField, Range(0, 4)]
     float IgnoreInputRange = 2;
 
-    public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, MapGrid mapGrid) {
+    public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, MapGrid mapGrid, STPTheme stpTheme) {
         _gameInputManager = gameInputManager;
         _gameInputManager.OnSelectTileNode += SelectTileListener;
 
         _gameUnitManager = gameUnitManager;
         _mapGrid = mapGrid;
+        _stpTheme = stpTheme;
 
         if (ConstructionUI != null)
         {
@@ -34,7 +36,7 @@ public class InGameUICtrl : MonoBehaviour
         }
     }
 
-    private void SelectTowerToBuild(string tower_id) {
+    private async void SelectTowerToBuild(string tower_id) {
 
         if (currentSelectedNode.TileMapPlace != null) {
             var tower = PoolManager.instance.ReuseObject(tower_id);
@@ -42,15 +44,22 @@ public class InGameUICtrl : MonoBehaviour
             if (tower != null) {
                 tower.transform.position = currentSelectedNode.WorldSpace;
 
-                _gameUnitManager.AddUnit(tower.GetComponent<BaseUnit>());
+
+                STPTower stpTower = _stpTheme.FindObject<STPTower>(tower_id);
+                TowerUnit towerUnit = tower.GetComponent<TowerUnit>();
+
+                if (stpTower != null && towerUnit != null) {
+                    towerUnit.SetUp(stpTower, _mapGrid);
+
+                    _gameUnitManager.AddUnit(towerUnit);
+                }
             }
         }
 
-        StartCoroutine(GeneralUtility.DoDelayWork(0.1f, () =>
+        await (GeneralUtility.DoDelayWork(0.1f, () =>
         {
             Reset();
         }));
-
     }
 
     private void SelectTileListener(TileNode tileNode) {

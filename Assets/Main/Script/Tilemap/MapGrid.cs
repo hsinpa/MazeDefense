@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TD.Unit;
 
 namespace TD.Map {
 
     public class MapGrid : MonoBehaviour
     {
         private MapHolder mapHolder;
-        private List<TileNode[,]> tilenode;
+        private List<TileNode[,]> raw_tileData;
 
         private TileNode[,] tilenodes;
 
@@ -15,9 +16,11 @@ namespace TD.Map {
 
         public int gridHeight, gridWidth;
 
+        public System.Action OnMapReform;
+
         public void SetUp()
         {
-            tilenode = new List<TileNode[,]>();
+            raw_tileData = new List<TileNode[,]>();
             mapHolder = this.GetComponent<MapHolder>();
             mapHolder.OnAddMapComponent += OnAddBlock;
             _flowField = new FlowField();
@@ -25,7 +28,7 @@ namespace TD.Map {
 
         public void ReformMap()
         {
-            tilenode.Clear();
+            raw_tileData.Clear();
             int mLength = mapHolder.mapComponents.Count;
 
             gridHeight = Mathf.RoundToInt(mLength * mapHolder.sampleSize.y * 2);
@@ -33,20 +36,81 @@ namespace TD.Map {
 
             for (int i = mLength - 1; i >= 0; i--)
             {
-                tilenode.Add(mapHolder.mapComponents[i].tilemapReader.nodes);
+                raw_tileData.Add(mapHolder.mapComponents[i].tilemapReader.nodes);
             }
 
-            tilenodes = ReorganizedTileNode(tilenode, new Vector2Int(gridWidth, Mathf.RoundToInt(mapHolder.sampleSize.y * 2)));
+            tilenodes = ReorganizedTileNode(raw_tileData, new Vector2Int(gridWidth, Mathf.RoundToInt(mapHolder.sampleSize.y * 2)));
 
-            tilenodes = _flowField.Execute(tilenodes, new Vector2Int(gridWidth, gridHeight));
+            if (OnMapReform != null)
+                OnMapReform();
 
-
+            RefreshMonsterFlowFieldMap();
         }
 
+        public void EditUnitState(Vector2Int index, UnitInterface unit, bool isAdd) {
+            if (ValidateNodeIndex(index.x, index.y)) {
+
+                if (unit.GetType() == typeof(TowerUnit)) {
+                    if (isAdd)
+                        tilenodes[index.x, index.y].towerUnit = (TowerUnit)unit;
+                    else {
+                        if (tilenodes[index.x, index.y].towerUnit == (TowerUnit)unit)
+                            tilenodes[index.x, index.y].towerUnit = null;
+                    }
+                }
+                else {
+
+                    if (isAdd)
+                        tilenodes[index.x, index.y].AddMonsterUnit((MonsterUnit)unit);
+                    else
+                        tilenodes[index.x, index.y].RemoveMonsterUnit((MonsterUnit)unit);
+                }
+            }
+        }
+
+        public List<T> FindUnitsFromRange<T>(TileNode centerNode, float range) where T : class
+        {
+            int intRange = Mathf.RoundToInt(range);
+            List<T> unitList = new List<T>(); 
+
+            if (ValidateNodeIndex(centerNode.GridIndex.x, centerNode.GridIndex.y)) {
+
+                int startPointX = centerNode.GridIndex.x - intRange,
+                    startPointY = centerNode.GridIndex.y - intRange,
+                    endPointX = centerNode.GridIndex.x + intRange,
+                    endPointY = centerNode.GridIndex.y + intRange;
+
+                for (int x = startPointX; x <= endPointX; x++) {
+                    for (int y = startPointY; y <= endPointY; y++)
+                    {
+
+                        if (x == centerNode.GridIndex.x && y == centerNode.GridIndex.y)
+                            continue;
+
+                        if (ValidateNodeIndex(x, y)) {
+
+                            if (typeof(T) == typeof(MonsterUnit) && tilenodes[x, y].monsterUnit != null) {
+                                unitList.AddRange(tilenodes[x,y].monsterUnit as List<T>);
+                            } else if (typeof(T) == typeof(TowerUnit) && tilenodes[x, y].towerUnit != null)
+                            {
+                                unitList.Add(tilenodes[x, y].towerUnit as T);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return unitList;
+        }
+
+        public void RefreshMonsterFlowFieldMap() {
+            _flowField.ExecuteAsyn(tilenodes, new Vector2Int(gridWidth, gridHeight), (TileNode[,] resultNodes) => {
+                tilenodes = resultNodes;
+            });
+        }
 
         private TileNode[,] ReorganizedTileNode(List<TileNode[,]> p_tileBlocks, Vector2Int blockSize)
         {
-
             int blockLength = p_tileBlocks.Count;
             TileNode[,] tileNode = new TileNode[blockSize.x, blockSize.y * blockLength];
             int tOffset = blockLength - 1;
@@ -88,13 +152,10 @@ namespace TD.Map {
             //    return (selectedNode);
             //}
 
-            if (worldPoint.x >= 0 && worldPoint.x < mapHolder.sampleSize.x * 2 &&
-                worldPoint.y >= 0 && worldPoint.y < mapHolder.sampleSize.y * 2 * tilenode.Count
-                )
+            if (ValidateNodeIndex(worldPoint.x, worldPoint.y))
             {
-
-
                 var selectedNode = tilenodes[worldPoint.x, worldPoint.y];
+
                 //Debug.Log(selectedNode.GridIndex +", Move Direction " + selectedNode.FlowFieldDirection);
 
                 return (selectedNode);
@@ -108,11 +169,15 @@ namespace TD.Map {
             ReformMap();
         }
 
+        private bool ValidateNodeIndex(int x, int y) {
+            return (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight);
+        }
+
         private void OnDestroy()
         {
             if (mapHolder != null)
                 mapHolder.OnAddMapComponent -= OnAddBlock;
         }
-    }
 
+    }
 }
