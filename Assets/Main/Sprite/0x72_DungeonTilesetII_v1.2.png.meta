@@ -10,6 +10,7 @@ TextureImporter:
     21300010: skeleton_anim_06
     21300012: skeleton_anim_07
     21300014: skeleton_anim_08
+    21300016: arrow_01
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -269,6 +270,26 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 55594825454fbc64ab788ce09c9246b9
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: arrow_01
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 481
+        width: 6
+        height: 13
+      alignment: 9
+      pivot: {x: 0.50775653, y: 0.080996}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50e008e3d54100a41810a01571e02b61
       vertices: []
       indices: 
       edges: []

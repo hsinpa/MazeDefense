@@ -28,6 +28,8 @@ namespace TD.Unit {
 
         TileNode currentTileNode;
         MonsterUnit currentTarget;
+        float minRotationDiff = 15;
+        bool fireReady = false;
 
         public void SetUp(STPTower stpTower, MapGrid mapGrid) {
             _stpTower = stpTower;
@@ -54,9 +56,31 @@ namespace TD.Unit {
         }
 
         private void Attack(MonsterUnit target) {
-            if (target != null) {
-                Debug.Log("Attack this one " + target.name +", " + target.transform.position);
+            float angle = 0;
+
+            if (target != null && gunBodyObject != null) {
+
+                Vector3 distance = (target.transform.position - transform.position);
+                Vector3 direction = distance.normalized;
+
+                angle = Utility.MathUtility.NormalizeAngle(Utility.MathUtility.VectorToAngle(direction) - 90);
+
+                if (fireReady)
+                {
+                    gunBodyObject.transform.rotation = Quaternion.Euler(0, 0, angle);
+                }
+                else {
+                    float currentAngle = gunBodyObject.transform.eulerAngles.z;
+                    gunBodyObject.transform.rotation = Quaternion.Euler(0, 0, Mathf.Lerp(currentAngle, angle, 0.1f));
+
+                    float rotationDiff = Mathf.Abs(angle - currentAngle);
+                    if (rotationDiff < minRotationDiff)
+                        fireReady = true;
+                }
+
+                //Debug.Log("Attack this one " + target.name +", " + target.transform.position);
             }
+
         }
 
         private MonsterUnit UpdateTargetState() {
@@ -69,6 +93,8 @@ namespace TD.Unit {
             else {
 
                 var monsters = _mapGrid.FindUnitsFromRange<MonsterUnit>(currentTileNode, _stpTower.range);
+
+                fireReady = false;
 
                 if (monsters.Count <= 0)
                     return null;

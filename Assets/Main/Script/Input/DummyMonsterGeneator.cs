@@ -37,8 +37,6 @@ public class DummyMonsterGeneator : MonoBehaviour
 
             if (tile.TileBase != null)
             {
-                Debug.Log("Right click " + tile.GridIndex);
-
                 GenerateMonster(tile);
             }
         }
