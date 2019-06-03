@@ -10,6 +10,7 @@ namespace TD.Unit
     {
         public GameObject unitObject { get => this.gameObject; }
         public System.Action<UnitInterface> OnDestroyCallback;
+        public bool isActive { get { return OnDestroyCallback != null; } }
 
         public void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback)
         {

@@ -16,6 +16,8 @@ namespace TD.Unit {
 
         private TileNode currentTile;
 
+        public bool isActive { get { return OnDestroyCallback != null; } }
+
         public void SetUp(MapGrid mapGrid)
         {
             _mapGrid = mapGrid;
@@ -28,7 +30,7 @@ namespace TD.Unit {
 
         public void OnUpdate()
         {
-            if (_mapGrid == null) return;
+            if (_mapGrid == null || OnDestroyCallback == null) return;
 
             Vector3 unitPosition = transform.position;
 
