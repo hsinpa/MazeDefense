@@ -10,5 +10,6 @@ namespace Pooling
         public float frequency;
         public float range;
 
+        public STPBullet stpBullet;
     }
 }

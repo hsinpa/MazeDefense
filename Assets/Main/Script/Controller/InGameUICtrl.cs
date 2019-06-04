@@ -49,7 +49,9 @@ public class InGameUICtrl : MonoBehaviour
                 TowerUnit towerUnit = tower.GetComponent<TowerUnit>();
 
                 if (stpTower != null && towerUnit != null) {
-                    towerUnit.SetUp(stpTower, _mapGrid);
+                    towerUnit.SetUp(stpTower, _mapGrid, (UnitInterface projectile) => {
+                        _gameUnitManager.AddUnit(projectile);
+                    });
 
                     _gameUnitManager.AddUnit(towerUnit);
                 }

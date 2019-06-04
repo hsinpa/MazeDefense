@@ -12,8 +12,9 @@ namespace TD.Unit {
         MapGrid _mapGrid;
         System.Action<UnitInterface> OnDestroyCallback;
 
-        public bool isActive { get { return OnDestroyCallback != null; } }
+        System.Action<UnitInterface> OnFireProjectile;
 
+        public bool isActive { get { return OnDestroyCallback != null; } }
 
         [SerializeField]
         private Transform stationObject;
@@ -28,12 +29,14 @@ namespace TD.Unit {
 
         TileNode currentTileNode;
         MonsterUnit currentTarget;
-        float minRotationDiff = 15;
+        const float minRotationDiff = 15;
         bool fireReady = false;
+        float recordFrequency;
 
-        public void SetUp(STPTower stpTower, MapGrid mapGrid) {
+        public void SetUp(STPTower stpTower, MapGrid mapGrid, System.Action<UnitInterface> OnFireProjectile) {
             _stpTower = stpTower;
             _mapGrid = mapGrid;
+            this.OnFireProjectile = OnFireProjectile;
         }
 
         public void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback)
@@ -68,6 +71,7 @@ namespace TD.Unit {
                 if (fireReady)
                 {
                     gunBodyObject.transform.rotation = Quaternion.Euler(0, 0, angle);
+                    Fire(target);
                 }
                 else {
                     float currentAngle = gunBodyObject.transform.eulerAngles.z;
@@ -80,7 +84,21 @@ namespace TD.Unit {
 
                 //Debug.Log("Attack this one " + target.name +", " + target.transform.position);
             }
+        }
 
+        private void Fire(MonsterUnit target) {
+            if (recordFrequency < Time.time ) {
+                GameObject bulletObj = Pooling.PoolManager.instance.ReuseObject(_stpTower.stpBullet._id);
+
+                if (bulletObj != null && OnFireProjectile != null) {
+                    BulletUnit bulletUnit = bulletObj.GetComponent<BulletUnit>();
+                    bulletUnit.transform.position = transform.position;
+                    bulletUnit.SetUp(_stpTower.stpBullet, target);
+                    
+                    OnFireProjectile(bulletUnit);
+                    recordFrequency = Time.time + _stpTower.frequency;
+                }
+            }
         }
 
         private MonsterUnit UpdateTargetState() {
@@ -137,8 +155,11 @@ namespace TD.Unit {
                 _mapGrid.RefreshMonsterFlowFieldMap();
             }
 
+            this.OnFireProjectile = null;
             this.OnDestroyCallback = null;
             this._stpTower = null;
+
+            this.recordFrequency = 0;
 
             currentTarget = null;
             currentTileNode = default(TileNode);

@@ -19,3 +19,4 @@ MonoBehaviour:
   damage: 10
   frequency: 0.5
   range: 2
+  stpBullet: {fileID: 11400000, guid: 1cfbc5970dfeb1c49acd82287a2f4399, type: 2}

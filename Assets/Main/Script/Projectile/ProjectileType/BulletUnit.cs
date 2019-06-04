@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TD.Map;
+using Pooling;
 
 namespace TD.Unit
 {
@@ -14,12 +15,16 @@ namespace TD.Unit
         public bool isActive { get { return OnDestroyCallback != null; } }
 
         private Vector3 lastPosition;
-        private MonsterUnit _monsterUnit;
         private Vector3 moveDelta;
-        private float minDist;
+        private Vector3 eulerRotation;
 
-        public void SetUp(MonsterUnit monsterUnit)
+        private MonsterUnit _monsterUnit;
+        private float minDist = 0.4f;
+        private STPBullet _sTPBullet;
+
+        public void SetUp(STPBullet stpBullet, MonsterUnit monsterUnit)
         {
+            _sTPBullet = stpBullet;
             _monsterUnit = monsterUnit;
             lastPosition = _monsterUnit.transform.position;
         }
@@ -33,16 +38,21 @@ namespace TD.Unit
         {
             if (OnDestroyCallback == null) return;
 
-            float tSpeed = 10;
-
             Vector3 targetPos = (_monsterUnit.isActive) ? _monsterUnit.transform.position : lastPosition;
             Vector3 distance = (targetPos - transform.position);
             Vector3 direction = distance.normalized;
 
             moveDelta.Set((direction.x), (direction.y), 0);
-            moveDelta *= Time.deltaTime * tSpeed;
+            moveDelta *= Time.deltaTime * _sTPBullet.moveSpeed;
 
-            lastPosition += moveDelta;
+
+
+            transform.position += moveDelta;
+
+            eulerRotation.Set(0, 0, Utility.MathUtility.VectorToAngle(direction)-90);
+            transform.eulerAngles = eulerRotation;
+
+            lastPosition = targetPos;
 
             if (distance.magnitude < minDist) {
                 Destroy();

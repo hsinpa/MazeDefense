@@ -15,3 +15,4 @@ MonoBehaviour:
   stpObjectHolder:
   - {fileID: 11400000, guid: 26af8db7c0542fd468efa564b1650460, type: 2}
   - {fileID: 11400000, guid: 1fef7d8fd4efd184abcf9df00c335aa4, type: 2}
+  - {fileID: 11400000, guid: 1cfbc5970dfeb1c49acd82287a2f4399, type: 2}

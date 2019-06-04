@@ -63,9 +63,9 @@ namespace Pooling {
             if (renderer)
                 renderer.enabled = p_enable;
 
-            Collider2D collider = p_gameobject.GetComponent<Collider2D>();
-            if (collider)
-                collider.enabled = p_enable;
+            //Collider2D collider = p_gameobject.GetComponent<Collider2D>();
+            //if (collider)
+            //    collider.enabled = p_enable;
 
             Animator animator = p_gameobject.GetComponent<Animator>();
             if (animator)
