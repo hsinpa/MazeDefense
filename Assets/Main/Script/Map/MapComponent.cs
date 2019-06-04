@@ -40,6 +40,7 @@ namespace TD.Map
         {
             get { return _targetPos; }
         }
+
         private Vector2 _targetPos;
 
         public TilemapReader tilemapReader;
@@ -56,7 +57,7 @@ namespace TD.Map
             //bounds = spriteRenderer.bounds;
             tilemaps = transform.GetComponentsInChildren<Tilemap>();
             tilemap = tilemaps[0];
-
+            
             offsetAnchor = tilemap.tileAnchor;
             radiusSize = tilemap.localBounds.extents;
 
