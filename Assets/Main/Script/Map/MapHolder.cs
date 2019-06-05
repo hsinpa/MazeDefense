@@ -150,9 +150,9 @@ namespace TD.Map {
                 if (_mapComponents == null)
                     continue;
             
-                var transitionPos = Vector2.Lerp(_mapComponents[i].transform.position, _mapComponents[i].targetPos, 0.1f);
+                var transitionPos = Vector2.Lerp(_mapComponents[i].transform.position, _mapComponents[i].targetPos, 0.2f);
 
-                if (Vector2.Distance(transitionPos, _mapComponents[i].targetPos) < 0.01f) {
+                if (Vector2.Distance(transitionPos, _mapComponents[i].targetPos) < 0.1f) {
                     _mapComponents[i].transform.position = _mapComponents[i].targetPos;
                     continue;
                 }

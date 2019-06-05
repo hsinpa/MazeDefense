@@ -64,19 +64,24 @@ namespace TD.AI {
         }
 
         private void Spawn() {
-            //Pick monster type
-            STPMonster randomMonster = _monsterUnits[Random.Range(0, monsterLength)];
+            int spawnNumPerTime = Random.Range(1, 4);
 
-            //Pick start position
-            int randomX = Random.Range(0, _entranceComponent.fullSize.x);
-            TileNode randomTileNode = _entranceComponent.tilemapReader.nodes[randomX, _entranceComponent.fullSize.y-1];
+            for (int s = 0; s < spawnNumPerTime; s++) {
+                //Pick monster type
+                STPMonster randomMonster = _monsterUnits[Random.Range(0, monsterLength)];
 
-            GameObject monsterObject = PoolManager.instance.ReuseObject(randomMonster._id);
-            if (monsterObject != null) {
-                MonsterUnit unit = monsterObject.GetComponent<MonsterUnit>();
-                unit.transform.position = randomTileNode.WorldSpace;
-                unit.SetUp(_mapGrid);
-                _gameUnitManager.AddUnit(unit);
+                //Pick start position
+                int randomX = Random.Range(0, _entranceComponent.fullSize.x);
+                TileNode randomTileNode = _entranceComponent.tilemapReader.nodes[randomX, _entranceComponent.fullSize.y - 1];
+
+                GameObject monsterObject = PoolManager.instance.ReuseObject(randomMonster._id);
+                if (monsterObject != null)
+                {
+                    MonsterUnit unit = monsterObject.GetComponent<MonsterUnit>();
+                    unit.transform.position = randomTileNode.WorldSpace;
+                    unit.SetUp(_mapGrid);
+                    _gameUnitManager.AddUnit(unit);
+                }
             }
         }
 

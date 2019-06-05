@@ -49,7 +49,6 @@ namespace TD.Unit {
 
                 if (index >= 0) {
                     Pooling.PoolManager.instance.Destroy(pendingDestroyList[i].unitObject);
-                    Debug.Log("Destory Index " + index);
                     unitList.RemoveAt(index);
                     unitLength--;
                 }

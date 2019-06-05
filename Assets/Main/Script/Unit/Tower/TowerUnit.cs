@@ -29,7 +29,7 @@ namespace TD.Unit {
 
         TileNode currentTileNode;
         MonsterUnit currentTarget;
-        const float minRotationDiff = 15;
+        const float minRotationDiff = 35;
         bool fireReady = false;
         float recordFrequency;
 
@@ -75,14 +75,18 @@ namespace TD.Unit {
                 }
                 else {
                     float currentAngle = gunBodyObject.transform.eulerAngles.z;
-                    gunBodyObject.transform.rotation = Quaternion.Euler(0, 0, Mathf.Lerp(currentAngle, angle, 0.1f));
+                    if (currentAngle > 270 && angle >= 0 && angle < 180) {
+                        angle += 360;
+                    }
+
+                    float lerpAngle = Utility.MathUtility.NormalizeAngle( Mathf.Lerp(currentAngle, angle, 0.1f) );
+                    gunBodyObject.transform.rotation = Quaternion.Euler(0, 0, lerpAngle);
 
                     float rotationDiff = Mathf.Abs(angle - currentAngle);
                     if (rotationDiff < minRotationDiff)
                         fireReady = true;
                 }
 
-                //Debug.Log("Attack this one " + target.name +", " + target.transform.position);
             }
         }
 

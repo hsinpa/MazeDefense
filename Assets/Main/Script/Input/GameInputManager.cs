@@ -85,8 +85,10 @@ public class GameInputManager : MonoBehaviour
             Release();
         }
 
+        bool outOfBoundary = IsOutOfBoundary();
 
-        IsOutOfBoundary();
+        if (outOfBoundary)
+            dragVelocity = 0;
 
         Scroll();
         HandleMapHolderVelocity();
@@ -141,7 +143,7 @@ public class GameInputManager : MonoBehaviour
         int hits = Physics2D.OverlapCircleNonAlloc(mousePosition, radius, rayhitCache, raycastLayer);
         if (hits > 0) {
             MapComponent tMapComp = (rayhitCache[0].gameObject.transform.parent).GetComponent<MapComponent>();
-            if (tMapComp != null) {
+            if (tMapComp != null && tMapComp.map_type == MapComponent.Type.Free) {
                 dragObject = tMapComp;
                 mapHolder.RemoveMapComp(dragObject);
                 mapHolder.CalculateMapTargetPos();
@@ -172,7 +174,6 @@ public class GameInputManager : MonoBehaviour
                 return true;
             }
         }
-        
 
         return false;
     }
