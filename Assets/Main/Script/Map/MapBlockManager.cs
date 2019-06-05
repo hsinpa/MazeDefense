@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace TD.Map {
 
-    public class MapHolder : MonoBehaviour
+    public class MapBlockManager : MonoBehaviour
     {
         Camera _camera;
 

@@ -35,7 +35,7 @@ public class GameInputManager : MonoBehaviour
     Vector2 lastMousePos;
 
     private MapGrid mapGrid;
-    MapHolder mapHolder;
+    MapBlockManager mapHolder;
 
     public enum InputState {
         Scroll,
@@ -51,7 +51,7 @@ public class GameInputManager : MonoBehaviour
     #region Event
     public System.Action<TileNode> OnSelectTileNode;
     #endregion
-    public void SetUp(MapGrid mapGrid, MapHolder mapHolder)
+    public void SetUp(MapGrid mapGrid, MapBlockManager mapHolder)
     {
         _camera = Camera.main;
         this.mapGrid = mapGrid;

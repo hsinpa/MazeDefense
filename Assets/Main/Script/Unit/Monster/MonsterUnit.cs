@@ -36,19 +36,20 @@ namespace TD.Unit {
 
             TileNode standTile = _mapGrid.GetTileNodeByWorldPos(transform.position);
 
-            if (standTile.TilemapMember != null && standTile.GridIndex != currentTile.GridIndex)
+            if (standTile.TilemapMember != null && standTile.GridIndex != currentTile.GridIndex )
             {
                 if (currentTile.TilemapMember != null)
                     _mapGrid.EditUnitState(currentTile.GridIndex, this, false);
 
                 _mapGrid.EditUnitState(standTile.GridIndex, this, true);
-                currentTile = standTile;
             }
 
             moveDelta.Set((currentTile.FlowFieldDirection.x), (currentTile.FlowFieldDirection.y), 0);
             moveDelta *= Time.deltaTime;
 
             transform.position += moveDelta;
+
+            currentTile = standTile;
         }
 
         public void Destroy()

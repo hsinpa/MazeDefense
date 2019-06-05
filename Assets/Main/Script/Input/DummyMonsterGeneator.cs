@@ -10,7 +10,7 @@ public class DummyMonsterGeneator : MonoBehaviour
     MapGrid _mapGrid;
 
     [SerializeField]
-    MapHolder _mapHolder;
+    MapBlockManager _mapHolder;
 
     [SerializeField]
     GameUnitManager _gameUnitManager;

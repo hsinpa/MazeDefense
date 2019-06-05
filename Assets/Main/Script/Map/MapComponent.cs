@@ -15,6 +15,8 @@ namespace TD.Map
 
         public Tilemap[] tilemaps;
 
+        public Transform unitHolder;
+
         public Vector2Int fullSize
         {
             get
@@ -30,20 +32,21 @@ namespace TD.Map
             Free
         }
 
+        public TilemapReader tilemapReader;
+
         public Type map_type = Type.Free;
 
         private SpriteRenderer spriteRenderer;
 
-        private Tilemap tilemap;
+        private Tilemap sample_tilemap;
 
         public Vector2 targetPos
         {
             get { return _targetPos; }
         }
 
-        private Vector2 _targetPos;
 
-        public TilemapReader tilemapReader;
+        private Vector2 _targetPos;
 
         public void SetTargetPosition(Vector2 p_targetPos)
         {
@@ -53,21 +56,15 @@ namespace TD.Map
 
         public void SetUp()
         {
-            //spriteRenderer = this.GetComponent<SpriteRenderer>();
-            //bounds = spriteRenderer.bounds;
             tilemaps = transform.GetComponentsInChildren<Tilemap>();
-            tilemap = tilemaps[0];
+            sample_tilemap = tilemaps[0];
             
-            offsetAnchor = tilemap.tileAnchor;
-            radiusSize = tilemap.localBounds.extents;
+            offsetAnchor = sample_tilemap.tileAnchor;
+            radiusSize = sample_tilemap.localBounds.extents;
 
-            //tileOffset = tilemap.tileAnchor.y;
-            //bounds.extents.Set(bounds.extents.x, bounds.extents.y - (tileOffset / 2f), bounds.extents.z);
             _targetPos = transform.position;
 
             tilemapReader = new TilemapReader(this);
         }
-
     }
-
 }

@@ -7,7 +7,7 @@ namespace TD.Map {
 
     public class MapGrid : MonoBehaviour
     {
-        private MapHolder mapHolder;
+        private MapBlockManager mapHolder;
         private List<TileNode[,]> raw_tileData;
 
         private TileNode[,] tilenodes;
@@ -21,7 +21,7 @@ namespace TD.Map {
         public void SetUp()
         {
             raw_tileData = new List<TileNode[,]>();
-            mapHolder = this.GetComponent<MapHolder>();
+            mapHolder = this.GetComponent<MapBlockManager>();
             mapHolder.OnAddMapComponent += OnAddBlock;
             _flowField = new FlowField();
         }

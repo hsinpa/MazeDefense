@@ -9,7 +9,7 @@ namespace TD.AI {
     public class LevelDesignManager : MonoBehaviour
     {
         private GameUnitManager _gameUnitManager;
-        private MapHolder _mapHolder;
+        private MapBlockManager _mapHolder;
         private MapGrid _mapGrid;
 
         private MapComponent _entranceComponent;
@@ -27,7 +27,7 @@ namespace TD.AI {
 
         private float recordTime;
 
-        public void SetUp(GameUnitManager gameUnitManager, MapHolder mapHolder, MapGrid mapGrid, List<STPMonster> monsterUnits)
+        public void SetUp(GameUnitManager gameUnitManager, MapBlockManager mapHolder, MapGrid mapGrid, List<STPMonster> monsterUnits)
         {
             _gameUnitManager = gameUnitManager;
             _mapHolder = mapHolder;
@@ -48,7 +48,7 @@ namespace TD.AI {
             }
         }
 
-        private MapComponent FindEntryComponent(MapHolder mapHolder) {
+        private MapComponent FindEntryComponent(MapBlockManager mapHolder) {
             return mapHolder.mapComponents.Find(x => x.map_type == MapComponent.Type.Entrance);
         }
 

@@ -8,7 +8,7 @@ using TD.AI;
 
 public class GameManager : MonoBehaviour
 {
-    private MapHolder _mapHolder;
+    private MapBlockManager _mapHolder;
     private MapGrid _mapGrid;
     private InGameUICtrl _gameInteractorCtrl;
     private GameInputManager _gameInputManager;
@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        _mapHolder = GetComponentInChildren<MapHolder>();
+        _mapHolder = GetComponentInChildren<MapBlockManager>();
 
         _mapGrid = GetComponentInChildren<MapGrid>();
 
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
         _gameUnitManager.Reset();
         _mapHolder.ReadTilemap();
 
-        _levelDesignManager.CallEveryoneReady();
+        //_levelDesignManager.CallEveryoneReady();
     }
 
     private void PreparePoolingObject(STPTheme poolingTheme) {
