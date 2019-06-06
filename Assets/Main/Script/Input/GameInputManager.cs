@@ -145,8 +145,8 @@ public class GameInputManager : MonoBehaviour
             MapComponent tMapComp = (rayhitCache[0].gameObject.transform.parent).GetComponent<MapComponent>();
             if (tMapComp != null && tMapComp.map_type == MapComponent.Type.Free) {
                 dragObject = tMapComp;
-                mapHolder.RemoveMapComp(dragObject);
-                mapHolder.CalculateMapTargetPos();
+                //mapHolder.RemoveMapComp(dragObject);
+                //mapHolder.CalculateMapTargetPos();
             }
         }
     }
@@ -187,6 +187,8 @@ public class GameInputManager : MonoBehaviour
         mousePosition.Set(dragObject.transform.position.x, mousePosition.y, 0);
 
         dragObject.transform.position = mousePosition;
+
+        mapHolder.CalculateMapTargetPos();
         //Debug.Log(dragObject.name);
     }
 
@@ -207,7 +209,8 @@ public class GameInputManager : MonoBehaviour
     void Release() {
 
         if (dragObject != null) {
-            mapHolder.AddMapComp(dragObject);
+            //mapHolder.AddMapComp(dragObject);
+            mapHolder.AutoEditMapComp(dragObject);
         }
 
         if (!mapHolder.IsWithinMapSizeRange(transform.position)) {

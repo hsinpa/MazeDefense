@@ -19,6 +19,8 @@ namespace TD.Map {
         int _mapLength;
 
         float width, height;
+
+        [HideInInspector]
         public float cameraTop, cameraBottom;
 
         public System.Action<MapComponent> OnAddMapComponent;
@@ -93,8 +95,20 @@ namespace TD.Map {
             transform.position = transitionPos;
         }
 
+        public MapComponent GetMapComponentByPos(Vector2 worldPos) {
+
+            int insertIndex = Mathf.CeilToInt(worldPos.y / mapComponents[0].fullSize.y);
+
+
+            if (insertIndex >= 0 && insertIndex < mapComponents.Count) {
+                return mapComponents[insertIndex];
+            }
+
+            return null;
+        }
+
         public void AddMapComp(MapComponent mapComponent) {
-            int insertIndex = GetComponentIndexByPos(mapComponent.transform.position.y);
+            int insertIndex = GetComponentIndexByPos(mapComponent.transform.position.y + mapComponent.offsetAnchor.y);
 
             if (insertIndex >= 0) {
                 _mapComponents.Insert(insertIndex, mapComponent);
@@ -117,6 +131,21 @@ namespace TD.Map {
             }
         }
 
+        public void AutoEditMapComp(MapComponent mapComponent) {
+            if (mapComponent == null) return;
+
+            int originalIndex = _mapComponents.IndexOf(mapComponent);
+            _mapComponents.RemoveAt(originalIndex);
+
+            int insertIndex = GetComponentIndexByPos(mapComponent.transform.position.y - mapComponent.offsetAnchor.y);
+            _mapComponents.Insert(insertIndex, mapComponent);
+
+            CalculateMapTargetPos();
+
+            if (OnAddMapComponent != null)
+                OnAddMapComponent(mapComponent);
+        }
+
         private int GetComponentIndexByPos(float yPos) {
             if (_mapComponents.Count <= 0)
                 return 0;
@@ -124,12 +153,12 @@ namespace TD.Map {
             if (yPos > transform.position.y)
                 return 0;
 
-            float lowestPoint = transform.position.y - (_mapComponents[0].radiusSize.y * 2 * _mapComponents.Count);
+            float lowestPoint = transform.position.y - (_mapComponents[0].fullSize.y * _mapComponents.Count);
 
             if (yPos < lowestPoint)
                 return _mapComponents.Count;
 
-            int index = Mathf.RoundToInt((transform.position.y - yPos) / (_mapComponents[0].radiusSize.y * 2));
+            int index = Mathf.FloorToInt((transform.position.y - yPos) / (_mapComponents[0].fullSize.y));
 
             return index;
         }

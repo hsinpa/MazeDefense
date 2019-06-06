@@ -12,6 +12,7 @@ public class InGameUICtrl : MonoBehaviour
     GameInputManager _gameInputManager;
     GameUnitManager _gameUnitManager;
     MapGrid _mapGrid;
+    MapBlockManager _mapBlockManager;
 
     TileNode currentSelectedNode;
     STPTheme _stpTheme;
@@ -22,12 +23,13 @@ public class InGameUICtrl : MonoBehaviour
     [SerializeField, Range(0, 4)]
     float IgnoreInputRange = 2;
 
-    public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, MapGrid mapGrid, STPTheme stpTheme) {
+    public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, MapGrid mapGrid, MapBlockManager mapBlockManager, STPTheme stpTheme) {
         _gameInputManager = gameInputManager;
         _gameInputManager.OnSelectTileNode += SelectTileListener;
 
         _gameUnitManager = gameUnitManager;
         _mapGrid = mapGrid;
+        _mapBlockManager = mapBlockManager;
         _stpTheme = stpTheme;
 
         if (ConstructionUI != null)
@@ -44,11 +46,12 @@ public class InGameUICtrl : MonoBehaviour
             if (tower != null) {
                 tower.transform.position = currentSelectedNode.WorldSpace;
 
-
+                MapComponent mapBlock = _mapBlockManager.GetMapComponentByPos(currentSelectedNode.WorldSpace);
                 STPTower stpTower = _stpTheme.FindObject<STPTower>(tower_id);
                 TowerUnit towerUnit = tower.GetComponent<TowerUnit>();
 
-                if (stpTower != null && towerUnit != null) {
+                if (stpTower != null && towerUnit != null && mapBlock != null) {
+                    tower.transform.SetParent(mapBlock.unitHolder);
                     towerUnit.SetUp(stpTower, _mapGrid, (UnitInterface projectile) => {
                         _gameUnitManager.AddUnit(projectile);
                     });
