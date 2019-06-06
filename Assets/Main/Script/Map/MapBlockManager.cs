@@ -135,15 +135,20 @@ namespace TD.Map {
             if (mapComponent == null) return;
 
             int originalIndex = _mapComponents.IndexOf(mapComponent);
-            _mapComponents.RemoveAt(originalIndex);
-
             int insertIndex = GetComponentIndexByPos(mapComponent.transform.position.y - mapComponent.offsetAnchor.y);
-            _mapComponents.Insert(insertIndex, mapComponent);
 
-            CalculateMapTargetPos();
+            if (originalIndex != insertIndex) {
 
-            if (OnAddMapComponent != null)
-                OnAddMapComponent(mapComponent);
+                _mapComponents.RemoveAt(originalIndex);
+
+                //int insertIndex = GetComponentIndexByPos(mapComponent.transform.position.y - mapComponent.offsetAnchor.y);
+                _mapComponents.Insert(insertIndex, mapComponent);
+
+                CalculateMapTargetPos();
+
+                if (OnAddMapComponent != null)
+                    OnAddMapComponent(mapComponent);
+            }
         }
 
         private int GetComponentIndexByPos(float yPos) {

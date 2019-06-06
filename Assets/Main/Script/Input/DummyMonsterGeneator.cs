@@ -15,9 +15,8 @@ public class DummyMonsterGeneator : MonoBehaviour
     [SerializeField]
     GameUnitManager _gameUnitManager;
 
-
     [SerializeField]
-    string _monsterKey;
+    Pooling.STPMonster _spawnMonster;
 
     Camera _camera;
 
@@ -43,12 +42,12 @@ public class DummyMonsterGeneator : MonoBehaviour
     }
 
     private void GenerateMonster(TileNode tileNode) {
-        GameObject monsterObject = Pooling.PoolManager.instance.ReuseObject(_monsterKey);
+        GameObject monsterObject = Pooling.PoolManager.instance.ReuseObject(_spawnMonster._id);
         if (monsterObject != null) {
             monsterObject.transform.position = tileNode.WorldSpace;
 
             MonsterUnit dummyUnit = monsterObject.GetComponent<MonsterUnit>();
-            dummyUnit.SetUp(_mapGrid);
+            dummyUnit.SetUp(_spawnMonster, _mapGrid);
 
             _gameUnitManager.AddUnit(dummyUnit);
 

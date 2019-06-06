@@ -11,11 +11,12 @@ namespace TD.Unit {
         private List<UnitInterface> pendingDestroyList = new List<UnitInterface>();
 
         private int unitLength = 0;
-        private MapGrid _mapGrid;
+
+        public GameDamageManager gameDamageManager;
 
         #region Public Method
-        public void SetUp(MapGrid mapGrid) {
-            _mapGrid = mapGrid;
+        public void SetUp() {
+            gameDamageManager = new GameDamageManager();
         }
 
         public void AddUnit(UnitInterface unit) {
@@ -38,6 +39,8 @@ namespace TD.Unit {
             for (int i = 0; i < unitLength; i++) {
                 unitList[i].OnUpdate();
             }
+
+            gameDamageManager.OnUpdate();
         }
 
         private void HandleDestroyUnit() {
@@ -63,6 +66,7 @@ namespace TD.Unit {
             unitLength = 0;
             unitList.Clear();
             pendingDestroyList.Clear();
+            gameDamageManager.Reset();
         }
 
     }

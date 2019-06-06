@@ -38,14 +38,17 @@ namespace TD.Unit
         {
             if (OnDestroyCallback == null) return;
 
+            if (!_monsterUnit.isActive) {
+                Destroy();
+                return;
+            }
+
             Vector3 targetPos = (_monsterUnit.isActive) ? _monsterUnit.transform.position : lastPosition;
             Vector3 distance = (targetPos - transform.position);
             Vector3 direction = distance.normalized;
 
             moveDelta.Set((direction.x), (direction.y), 0);
             moveDelta *= Time.deltaTime * _sTPBullet.moveSpeed;
-
-
 
             transform.position += moveDelta;
 
@@ -64,6 +67,7 @@ namespace TD.Unit
             if (this.OnDestroyCallback != null)
                 OnDestroyCallback(this);
 
+            this._monsterUnit = null;
             this.OnDestroyCallback = null;
         }
 

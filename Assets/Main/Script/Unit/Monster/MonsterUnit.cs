@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TD.Map;
+using Pooling;
 
 namespace TD.Unit {
     public class MonsterUnit : MonoBehaviour, UnitInterface
@@ -16,11 +17,18 @@ namespace TD.Unit {
 
         private TileNode currentTile;
 
+        private STPMonster _stpMonster;
+
+        private float hp;
+
         public bool isActive { get { return OnDestroyCallback != null; } }
 
-        public void SetUp(MapGrid mapGrid)
+        public void SetUp(STPMonster stpMonster, MapGrid mapGrid)
         {
+            _stpMonster = stpMonster;
             _mapGrid = mapGrid;
+
+            hp = _stpMonster.hp;
         }
 
         public void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback)
@@ -50,6 +58,14 @@ namespace TD.Unit {
             transform.position += moveDelta;
 
             currentTile = standTile;
+        }
+
+        public void OnAttack(float damage)
+        {
+            hp -= damage;
+
+            if (hp <= 0)
+                Destroy();
         }
 
         public void Destroy()

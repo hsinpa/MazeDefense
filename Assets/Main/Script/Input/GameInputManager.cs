@@ -188,7 +188,8 @@ public class GameInputManager : MonoBehaviour
 
         dragObject.transform.position = mousePosition;
 
-        mapHolder.CalculateMapTargetPos();
+        //mapHolder.CalculateMapTargetPos();
+        mapHolder.AutoEditMapComp(dragObject);
         //Debug.Log(dragObject.name);
     }
 
@@ -210,7 +211,7 @@ public class GameInputManager : MonoBehaviour
 
         if (dragObject != null) {
             //mapHolder.AddMapComp(dragObject);
-            mapHolder.AutoEditMapComp(dragObject);
+            //mapHolder.AutoEditMapComp(dragObject);
         }
 
         if (!mapHolder.IsWithinMapSizeRange(transform.position)) {

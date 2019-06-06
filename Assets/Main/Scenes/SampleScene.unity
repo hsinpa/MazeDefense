@@ -486,7 +486,7 @@ MonoBehaviour:
   _mapGrid: {fileID: 1313335100}
   _mapHolder: {fileID: 1313335097}
   _gameUnitManager: {fileID: 743619301}
-  _monsterKey: monster_skeleton_1
+  _spawnMonster: {fileID: 11400000, guid: 26af8db7c0542fd468efa564b1650460, type: 2}
 --- !u!1 &686150759
 GameObject:
   m_ObjectHideFlags: 0

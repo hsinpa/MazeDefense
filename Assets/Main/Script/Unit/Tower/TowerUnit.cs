@@ -12,7 +12,7 @@ namespace TD.Unit {
         MapGrid _mapGrid;
         System.Action<UnitInterface> OnDestroyCallback;
 
-        System.Action<UnitInterface> OnFireProjectile;
+        System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile;
 
         public bool isActive { get { return OnDestroyCallback != null; } }
 
@@ -33,7 +33,7 @@ namespace TD.Unit {
         bool fireReady = false;
         float recordFrequency;
 
-        public void SetUp(STPTower stpTower, MapGrid mapGrid, System.Action<UnitInterface> OnFireProjectile) {
+        public void SetUp(STPTower stpTower, MapGrid mapGrid, System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile) {
             _stpTower = stpTower;
             _mapGrid = mapGrid;
             this.OnFireProjectile = OnFireProjectile;
@@ -91,18 +91,35 @@ namespace TD.Unit {
         }
 
         private void Fire(MonsterUnit target) {
-            if (recordFrequency < Time.time ) {
+            float time = Time.time;
+
+            if (recordFrequency < time) {
                 GameObject bulletObj = Pooling.PoolManager.instance.ReuseObject(_stpTower.stpBullet._id);
 
                 if (bulletObj != null && OnFireProjectile != null) {
                     BulletUnit bulletUnit = bulletObj.GetComponent<BulletUnit>();
                     bulletUnit.transform.position = transform.position;
                     bulletUnit.SetUp(_stpTower.stpBullet, target);
-                    
-                    OnFireProjectile(bulletUnit);
-                    recordFrequency = Time.time + _stpTower.frequency;
+
+                    float dist = Vector3.Distance(target.transform.position, transform.position);
+                    float reachTime = dist / (_stpTower.stpBullet.moveSpeed * Time.deltaTime * 60);
+
+                    OnFireProjectile(bulletUnit, GetDMGRegisterCard(target, time, reachTime));
+                    recordFrequency = time + _stpTower.frequency;
                 }
             }
+        }
+
+        private GameDamageManager.DMGRegistry GetDMGRegisterCard(MonsterUnit target, float fireTime, float timeToDst) {
+            GameDamageManager.DMGRegistry damageRequest = new GameDamageManager.DMGRegistry();
+            damageRequest.fireTime = fireTime;
+            damageRequest.timeToDest = timeToDst;
+            damageRequest.towerInfo = _stpTower;
+
+            damageRequest.targetNum = 1;
+            damageRequest.targets = new MonsterUnit[] { target };
+
+            return damageRequest;
         }
 
         private MonsterUnit UpdateTargetState() {

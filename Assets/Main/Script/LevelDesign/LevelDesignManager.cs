@@ -79,7 +79,7 @@ namespace TD.AI {
                 {
                     MonsterUnit unit = monsterObject.GetComponent<MonsterUnit>();
                     unit.transform.position = randomTileNode.WorldSpace;
-                    unit.SetUp(_mapGrid);
+                    unit.SetUp(randomMonster, _mapGrid);
                     _gameUnitManager.AddUnit(unit);
                 }
             }

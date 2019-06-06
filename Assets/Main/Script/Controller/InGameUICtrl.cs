@@ -52,8 +52,9 @@ public class InGameUICtrl : MonoBehaviour
 
                 if (stpTower != null && towerUnit != null && mapBlock != null) {
                     tower.transform.SetParent(mapBlock.unitHolder);
-                    towerUnit.SetUp(stpTower, _mapGrid, (UnitInterface projectile) => {
+                    towerUnit.SetUp(stpTower, _mapGrid, (UnitInterface projectile, GameDamageManager.DMGRegistry dmgRistry) => {
                         _gameUnitManager.AddUnit(projectile);
+                        _gameUnitManager.gameDamageManager.AddRequest(dmgRistry);
                     });
 
                     _gameUnitManager.AddUnit(towerUnit);
