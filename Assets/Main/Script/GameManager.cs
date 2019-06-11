@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
         _gameUnitManager.Reset();
         _mapHolder.ReadTilemap();
 
-        //_levelDesignManager.CallEveryoneReady();
+        _levelDesignManager.CallEveryoneReady();
     }
 
     private void PreparePoolingObject(STPTheme poolingTheme) {

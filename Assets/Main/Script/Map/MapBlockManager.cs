@@ -161,7 +161,7 @@ namespace TD.Map {
             float lowestPoint = transform.position.y - (_mapComponents[0].fullSize.y * _mapComponents.Count);
 
             if (yPos < lowestPoint)
-                return _mapComponents.Count;
+                return _mapComponents.Count - 1;
 
             int index = Mathf.FloorToInt((transform.position.y - yPos) / (_mapComponents[0].fullSize.y));
 
