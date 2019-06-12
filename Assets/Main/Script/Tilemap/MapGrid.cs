@@ -164,7 +164,7 @@ namespace TD.Map {
             return default(TileNode);
         }
 
-        private void OnAddBlock(MapComponent mapComponent)
+        private void OnAddBlock(BlockComponent mapComponent)
         {
             ReformMap();
         }

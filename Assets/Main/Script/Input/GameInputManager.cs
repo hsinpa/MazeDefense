@@ -27,7 +27,7 @@ public class GameInputManager : MonoBehaviour
 
     float dragVelocity;
 
-    MapComponent dragObject;
+    BlockComponent dragObject;
 
     Camera _camera;
 
@@ -142,8 +142,8 @@ public class GameInputManager : MonoBehaviour
 
         int hits = Physics2D.OverlapCircleNonAlloc(mousePosition, radius, rayhitCache, raycastLayer);
         if (hits > 0) {
-            MapComponent tMapComp = (rayhitCache[0].gameObject.transform.parent).GetComponent<MapComponent>();
-            if (tMapComp != null && tMapComp.map_type == MapComponent.Type.Free) {
+            BlockComponent tMapComp = (rayhitCache[0].gameObject.transform.parent).GetComponent<BlockComponent>();
+            if (tMapComp != null && tMapComp.map_type == BlockComponent.Type.Free) {
                 dragObject = tMapComp;
                 //mapHolder.RemoveMapComp(dragObject);
                 //mapHolder.CalculateMapTargetPos();
@@ -178,7 +178,7 @@ public class GameInputManager : MonoBehaviour
         return false;
     }
 
-    void Drag(MapComponent dragObject, Vector3 mousePosition)
+    void Drag(BlockComponent dragObject, Vector3 mousePosition)
     {
         if (dragObject == null)
             return;
@@ -189,6 +189,8 @@ public class GameInputManager : MonoBehaviour
         dragObject.transform.position = mousePosition;
 
         //mapHolder.CalculateMapTargetPos();
+        dragObject.isMoving = true;
+
         mapHolder.AutoEditMapComp(dragObject);
         //Debug.Log(dragObject.name);
     }
@@ -212,6 +214,7 @@ public class GameInputManager : MonoBehaviour
         if (dragObject != null) {
             //mapHolder.AddMapComp(dragObject);
             //mapHolder.AutoEditMapComp(dragObject);
+            dragObject.isMoving = false;
         }
 
         if (!mapHolder.IsWithinMapSizeRange(transform.position)) {

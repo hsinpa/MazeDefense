@@ -11,11 +11,15 @@ namespace TD.Unit {
 
         private MapGrid _mapGrid;
 
+        private MapBlockManager _mapBlockManager;
+
         private Vector3 moveDelta;
 
         private System.Action<UnitInterface> OnDestroyCallback;
 
         private TileNode currentTile;
+
+        private BlockComponent currentBlockComp;
 
         private STPMonster _stpMonster;
 
@@ -23,10 +27,19 @@ namespace TD.Unit {
 
         public bool isActive { get { return OnDestroyCallback != null; } }
 
-        public void SetUp(STPMonster stpMonster, MapGrid mapGrid)
+        private enum StupidState
+        {
+            Idle, PathFirst, TowerFirst
+        }
+
+        private StupidState currentStatus;
+
+        public void SetUp(STPMonster stpMonster, MapGrid mapGrid, MapBlockManager mapBlockManager)
         {
             _stpMonster = stpMonster;
             _mapGrid = mapGrid;
+            _mapBlockManager = mapBlockManager;
+            currentStatus = StupidState.PathFirst;
 
             hp = _stpMonster.hp;
         }
@@ -52,12 +65,39 @@ namespace TD.Unit {
                 _mapGrid.EditUnitState(standTile.GridIndex, this, true);
             }
 
-            moveDelta.Set((currentTile.FlowFieldDirection.x), (currentTile.FlowFieldDirection.y), 0);
-            moveDelta *= Time.deltaTime;
+            BlockComponent blockComponent = _mapBlockManager.GetMapComponentByPos(transform.position);
+            if (blockComponent != null && currentBlockComp != blockComponent)
+            {
+                if (currentBlockComp == null || !currentBlockComp.isMoving && !blockComponent.isMoving)
+                {
+                    currentBlockComp = blockComponent;
 
-            transform.position += moveDelta;
+                    this.transform.SetParent(currentBlockComp.unitHolder);
+                }
+            }
+            
+
+            ChooseTactics(currentBlockComp);
+            AgentMove();
 
             currentTile = standTile;
+        }
+
+        private void AgentMove() {
+            if (currentStatus == StupidState.PathFirst) {
+                moveDelta.Set((currentTile.FlowFieldDirection.x), (currentTile.FlowFieldDirection.y), 0);
+                moveDelta *= Time.deltaTime;
+
+                transform.position += moveDelta;
+
+            }
+        }
+
+        private void ChooseTactics(BlockComponent blockComponent) {
+            if (blockComponent != null) {
+                //Debug.Log(blockComponent.name);
+                currentStatus = (blockComponent.isMoving) ? StupidState.Idle : StupidState.PathFirst;
+            }
         }
 
         public void OnAttack(float damage)

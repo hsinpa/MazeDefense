@@ -9,13 +9,15 @@ namespace TD.Map {
     {
         Camera _camera;
 
-        public List<MapComponent> mapComponents {
+        public List<BlockComponent> mapComponents {
             get {
                 return _mapComponents;
             }
         }
 
-        List<MapComponent> _mapComponents;
+        [SerializeField]
+        private List<BlockComponent> _mapComponents;
+
         int _mapLength;
 
         float width, height;
@@ -23,7 +25,7 @@ namespace TD.Map {
         [HideInInspector]
         public float cameraTop, cameraBottom;
 
-        public System.Action<MapComponent> OnAddMapComponent;
+        public System.Action<BlockComponent> OnAddMapComponent;
 
         [HideInInspector]
         public Vector2 sampleSize;
@@ -35,7 +37,7 @@ namespace TD.Map {
         }
 
         public void ReadTilemap() {
-            _mapComponents = GetComponentsInChildren<MapComponent>().ToList();
+            _mapComponents = GetComponentsInChildren<BlockComponent>().ToList();
             _mapLength = _mapComponents.Count;
 
             for (int i = 0; i < _mapLength; i++) {
@@ -95,19 +97,18 @@ namespace TD.Map {
             transform.position = transitionPos;
         }
 
-        public MapComponent GetMapComponentByPos(Vector2 worldPos) {
+        public BlockComponent GetMapComponentByPos(Vector2 worldPos) {
 
-            int insertIndex = Mathf.CeilToInt(worldPos.y / mapComponents[0].fullSize.y);
+            int insertIndex = _mapLength - Mathf.CeilToInt(worldPos.y / _mapComponents[0].fullSize.y) - 1;
 
-
-            if (insertIndex >= 0 && insertIndex < mapComponents.Count) {
-                return mapComponents[insertIndex];
+            if (insertIndex >= 0 && insertIndex < _mapLength) {
+                return _mapComponents[insertIndex];
             }
 
             return null;
         }
 
-        public void AddMapComp(MapComponent mapComponent) {
+        public void AddMapComp(BlockComponent mapComponent) {
             int insertIndex = GetComponentIndexByPos(mapComponent.transform.position.y + mapComponent.offsetAnchor.y);
 
             if (insertIndex >= 0) {
@@ -120,7 +121,7 @@ namespace TD.Map {
             }
         }
 
-        public void RemoveMapComp(MapComponent mapComponent) {
+        public void RemoveMapComp(BlockComponent mapComponent) {
             if (mapComponent == null) return;
             int cIndex = _mapComponents.IndexOf(mapComponent);
             if (cIndex >= 0)
@@ -131,7 +132,7 @@ namespace TD.Map {
             }
         }
 
-        public void AutoEditMapComp(MapComponent mapComponent) {
+        public void AutoEditMapComp(BlockComponent mapComponent) {
             if (mapComponent == null) return;
 
             int originalIndex = _mapComponents.IndexOf(mapComponent);

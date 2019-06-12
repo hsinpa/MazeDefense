@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 namespace TD.Map
 {
-    public class MapComponent : MonoBehaviour
+    public class BlockComponent : MonoBehaviour
     {
         [HideInInspector]
         public Vector2 radiusSize;
@@ -35,6 +35,8 @@ namespace TD.Map
         public TilemapReader tilemapReader;
 
         public Type map_type = Type.Free;
+
+        public bool isMoving = false;
 
         private SpriteRenderer spriteRenderer;
 

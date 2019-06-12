@@ -46,7 +46,7 @@ public class InGameUICtrl : MonoBehaviour
             if (tower != null) {
                 tower.transform.position = currentSelectedNode.WorldSpace;
 
-                MapComponent mapBlock = _mapBlockManager.GetMapComponentByPos(currentSelectedNode.WorldSpace);
+                BlockComponent mapBlock = _mapBlockManager.GetMapComponentByPos(currentSelectedNode.WorldSpace);
                 STPTower stpTower = _stpTheme.FindObject<STPTower>(tower_id);
                 TowerUnit towerUnit = tower.GetComponent<TowerUnit>();
 

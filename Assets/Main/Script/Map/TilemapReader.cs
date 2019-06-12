@@ -6,7 +6,7 @@ using TD.Map;
 
 public class TilemapReader
 {
-    private MapComponent mapComponent;
+    private BlockComponent mapComponent;
 
     public TileNode[,] nodes {
         get {
@@ -15,7 +15,7 @@ public class TilemapReader
     }
     private TileNode[,] _nodes;
 
-    public TilemapReader(MapComponent mapComponent)
+    public TilemapReader(BlockComponent mapComponent)
     {
         this.mapComponent = mapComponent;
         _nodes = new TileNode[mapComponent.fullSize.x, mapComponent.fullSize.y];

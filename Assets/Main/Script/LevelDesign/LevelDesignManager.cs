@@ -12,7 +12,7 @@ namespace TD.AI {
         private MapBlockManager _mapHolder;
         private MapGrid _mapGrid;
 
-        private MapComponent _entranceComponent;
+        private BlockComponent _entranceComponent;
         private List<STPMonster> _monsterUnits;
         private int monsterLength;
 
@@ -48,8 +48,8 @@ namespace TD.AI {
             }
         }
 
-        private MapComponent FindEntryComponent(MapBlockManager mapHolder) {
-            return mapHolder.mapComponents.Find(x => x.map_type == MapComponent.Type.Entrance);
+        private BlockComponent FindEntryComponent(MapBlockManager mapHolder) {
+            return mapHolder.mapComponents.Find(x => x.map_type == BlockComponent.Type.Entrance);
         }
 
         private void Update() {
@@ -79,7 +79,7 @@ namespace TD.AI {
                 {
                     MonsterUnit unit = monsterObject.GetComponent<MonsterUnit>();
                     unit.transform.position = randomTileNode.WorldSpace;
-                    unit.SetUp(randomMonster, _mapGrid);
+                    unit.SetUp(randomMonster, _mapGrid, _mapHolder);
                     _gameUnitManager.AddUnit(unit);
                 }
             }

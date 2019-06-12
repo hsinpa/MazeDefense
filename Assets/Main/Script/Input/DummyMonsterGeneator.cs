@@ -47,7 +47,7 @@ public class DummyMonsterGeneator : MonoBehaviour
             monsterObject.transform.position = tileNode.WorldSpace;
 
             MonsterUnit dummyUnit = monsterObject.GetComponent<MonsterUnit>();
-            dummyUnit.SetUp(_spawnMonster, _mapGrid);
+            dummyUnit.SetUp(_spawnMonster, _mapGrid, _mapHolder);
 
             _gameUnitManager.AddUnit(dummyUnit);
 
