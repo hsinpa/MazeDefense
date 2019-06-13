@@ -68,7 +68,7 @@ namespace TD.Unit {
             BlockComponent blockComponent = _mapBlockManager.GetMapComponentByPos(transform.position);
             if (blockComponent != null && currentBlockComp != blockComponent)
             {
-                if (currentBlockComp == null || !currentBlockComp.isMoving && !blockComponent.isMoving)
+                if (currentBlockComp == null || (!currentBlockComp.isMoving && !blockComponent.isMoving))
                 {
                     currentBlockComp = blockComponent;
 

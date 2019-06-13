@@ -184,15 +184,18 @@ namespace TD.Map {
             for (int i = 0; i < _mapLength; i++) {
                 if (_mapComponents == null)
                     continue;
-            
-                var transitionPos = Vector2.Lerp(_mapComponents[i].transform.position, _mapComponents[i].targetPos, 0.2f);
 
-                if (Vector2.Distance(transitionPos, _mapComponents[i].targetPos) < 0.1f) {
-                    _mapComponents[i].transform.position = _mapComponents[i].targetPos;
+                BlockComponent blockComponent = _mapComponents[i];
+                var transitionPos = Vector2.Lerp(blockComponent.transform.position, blockComponent.targetPos, 0.2f);
+
+                if (Vector2.Distance(transitionPos, blockComponent.targetPos) < 0.1f) {
+                    blockComponent.transform.position = blockComponent.targetPos;
+                    blockComponent.isMoving = false;
                     continue;
                 }
 
-                _mapComponents[i].transform.position = transitionPos;
+                blockComponent.isMoving = true;
+                blockComponent.transform.position = transitionPos;
             }
         }
 

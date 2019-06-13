@@ -214,7 +214,6 @@ public class GameInputManager : MonoBehaviour
         if (dragObject != null) {
             //mapHolder.AddMapComp(dragObject);
             //mapHolder.AutoEditMapComp(dragObject);
-            dragObject.isMoving = false;
         }
 
         if (!mapHolder.IsWithinMapSizeRange(transform.position)) {
