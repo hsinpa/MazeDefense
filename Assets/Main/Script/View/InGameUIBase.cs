@@ -12,7 +12,7 @@ public class InGameUIBase : MonoBehaviour
         _canvasGroup = GetComponent<CanvasGroup>();
     }
 
-    public void Show(bool isOn)
+    public virtual void Show(bool isOn)
     {
         _canvasGroup.alpha = (isOn) ? 1 : 0;
         _canvasGroup.blocksRaycasts = isOn;
