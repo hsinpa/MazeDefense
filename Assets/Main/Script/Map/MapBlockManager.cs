@@ -20,7 +20,8 @@ namespace TD.Map {
 
         int _mapLength;
 
-        float width, height;
+        [HideInInspector]
+        public float width, height;
 
         [HideInInspector]
         public float cameraTop, cameraBottom;
@@ -28,11 +29,14 @@ namespace TD.Map {
         public System.Action<BlockComponent> OnAddMapComponent;
 
         [HideInInspector]
-        public Vector2 sampleSize;
+        public Vector2 blockRadius;
+
+        [HideInInspector]
+        public Vector2 blockSize;
 
         public Vector2 minPos {
             get {
-                return new Vector2(0, sampleSize.y * 2 * _mapComponents.Count - 1);
+                return new Vector2(0, blockRadius.y * 2 * _mapComponents.Count - 1);
             }
         }
 
@@ -43,8 +47,11 @@ namespace TD.Map {
             for (int i = 0; i < _mapLength; i++) {
                 _mapComponents[i].SetUp();
 
-                if (sampleSize == Vector2.zero)
-                    sampleSize = _mapComponents[i].radiusSize;
+                if (blockRadius == Vector2.zero)
+                    blockRadius = _mapComponents[i].radiusSize;
+
+                if (blockSize == Vector2.zero)
+                    blockSize = _mapComponents[i].fullSize;
             }
 
             if (OnAddMapComponent != null && _mapLength > 0)
@@ -71,7 +78,7 @@ namespace TD.Map {
         }
 
         public bool IsWithinMapSizeRange(Vector2 mousePosition) {
-            return (_mapLength > 0 && _mapComponents[_mapLength - 1].transform.position.y - sampleSize.y <= mousePosition.y &&
+            return (_mapLength > 0 && _mapComponents[_mapLength - 1].transform.position.y - blockRadius.y <= mousePosition.y &&
                 mousePosition.y < cameraTop
                 );
         }
@@ -84,7 +91,7 @@ namespace TD.Map {
             {
                 tarPos.Set(tarPos.x, cameraTop);
             }
-            else if (_mapLength > 0 && (_mapComponents[_mapLength - 1].transform.position.y - sampleSize.y) > 0) 
+            else if (_mapLength > 0 && (_mapComponents[_mapLength - 1].transform.position.y - blockRadius.y) > 0) 
             {
                 tarPos.Set(tarPos.x, minPos.y);
             }

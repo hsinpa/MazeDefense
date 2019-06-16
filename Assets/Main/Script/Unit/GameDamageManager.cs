@@ -29,12 +29,13 @@ namespace TD.Unit {
                 if (time < dmgRegisterList[i].timeToDest + dmgRegisterList[i].fireTime)
                     break;
 
-                for (int m = 0; m < dmgRegisterList[i].targetNum; m++)
-                {
-                    var monster = dmgRegisterList[i].targets[m];
+                if (dmgRegisterList[i].target != null) {
+                    int tempDMG = 1;
+                    var monster = dmgRegisterList[i].target;
                     if (monster.isActive)
-                        monster.OnAttack(dmgRegisterList[i].towerInfo.damage);
+                        monster.OnAttack(tempDMG);
                 }
+
                 removeNum++;
             }
 
@@ -54,10 +55,11 @@ namespace TD.Unit {
         #region Private Method
 
         #endregion
+
         public struct DMGRegistry {
             public STPTower towerInfo;
-            public MonsterUnit[] targets;
-            public int targetNum;
+            public TD.Database.TowerStats towerStats;
+            public MonsterUnit target;
 
             public float fireTime;
             public float timeToDest;

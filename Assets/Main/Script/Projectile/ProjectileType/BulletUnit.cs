@@ -14,6 +14,8 @@ namespace TD.Unit
 
         public bool isActive { get { return OnDestroyCallback != null; } }
 
+        public float hp => throw new System.NotImplementedException();
+
         private Vector3 lastPosition;
         private Vector3 moveDelta;
         private Vector3 eulerRotation;
@@ -71,5 +73,9 @@ namespace TD.Unit
             this.OnDestroyCallback = null;
         }
 
+        public void OnAttack(float dmg)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

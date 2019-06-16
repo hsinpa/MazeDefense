@@ -16,7 +16,11 @@ public class ConstructionView : InGameUIBase
     [SerializeField, Range(0, 2)]
     private float item_radius = 1.2f;
 
-    private enum UILayout {
+    [SerializeField, Range(0, 3)]
+    private int padding = 0;
+
+
+    public enum UILayout {
         EqualSpace,
         SpecificSpace
     }
@@ -31,16 +35,25 @@ public class ConstructionView : InGameUIBase
             TowerClickEvent(tower_id);
     }
 
+    public void SetEnablePosition(Vector3 position, Vector2 mapIndex, Vector2 mapSize)
+    {
+        transform.position = position;
+        Show(true);
+
+
+        UILayout uiLayout = GetUiLayout(mapIndex, mapSize, padding);
+        int faceDir = GetFaceDirection(mapIndex, mapSize);
+
+        ReLayoutUIComponent(uiLayout, faceDir);
+    }
+
     public override void Show(bool isOn)
     {
         base.Show(isOn);
 
-        if (isOn) {
-            ReLayoutUIComponent(UILayout.SpecificSpace);
-        }
     }
 
-    private void ReLayoutUIComponent(UILayout ui_layout) {
+    private void ReLayoutUIComponent(UILayout ui_layout, int faceDir) {
         if (ShopObject != null) {
 
             switch (ui_layout) {
@@ -49,7 +62,7 @@ public class ConstructionView : InGameUIBase
                 break;
 
                 case UILayout.SpecificSpace:
-                    ToSpecificLayout(ShopObject.transform, 0, item_radius, item_space);
+                    ToSpecificLayout(ShopObject.transform, faceDir, item_radius, item_space);
                 break;
             }
 
@@ -89,7 +102,15 @@ public class ConstructionView : InGameUIBase
             Vector3 rotatePos = MathUtility.AngleToVector3(startAngle + (space * i));
             child.position = centerObject.position + (rotatePos * radius);
         }
+    }
 
+    private UILayout GetUiLayout(Vector2 mapIndex, Vector2 mapSize, int padding) {
+        return (mapIndex.x <= (0 + padding) || mapIndex.x >= (mapSize.x - padding - 1)) ? UILayout.SpecificSpace : UILayout.EqualSpace;
+    }
+
+    private int GetFaceDirection(Vector2 mapIndex, Vector2 mapSize)
+    {
+        return (mapIndex.x < (mapSize.x / 2)) ? 90 : 270;
     }
 
 }

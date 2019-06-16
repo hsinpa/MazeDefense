@@ -84,10 +84,10 @@ public class InGameUICtrl : MonoBehaviour
             }
         }
 
+
         currentSelectedNode = tileNode;
 
-        ConstructionUI.transform.position = currentSelectedNode.WorldSpace;
-        ConstructionUI.Show(true);
+        ConstructionUI.SetEnablePosition(currentSelectedNode.WorldSpace, currentSelectedNode.GridIndex, _mapBlockManager.blockSize);
     }
 
     private void Reset()

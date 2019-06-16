@@ -31,15 +31,15 @@ namespace TD.Map {
             raw_tileData.Clear();
             int mLength = mapHolder.mapComponents.Count;
 
-            gridHeight = Mathf.RoundToInt(mLength * mapHolder.sampleSize.y * 2);
-            gridWidth = Mathf.RoundToInt(mapHolder.sampleSize.x * 2);
+            gridHeight = Mathf.RoundToInt(mLength * mapHolder.blockRadius.y * 2);
+            gridWidth = Mathf.RoundToInt(mapHolder.blockRadius.x * 2);
 
             for (int i = mLength - 1; i >= 0; i--)
             {
                 raw_tileData.Add(mapHolder.mapComponents[i].tilemapReader.nodes);
             }
 
-            tilenodes = ReorganizedTileNode(raw_tileData, new Vector2Int(gridWidth, Mathf.RoundToInt(mapHolder.sampleSize.y * 2)));
+            tilenodes = ReorganizedTileNode(raw_tileData, new Vector2Int(gridWidth, Mathf.RoundToInt(mapHolder.blockRadius.y * 2)));
 
             if (OnMapReform != null)
                 OnMapReform();
@@ -136,7 +136,7 @@ namespace TD.Map {
 
             //Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             int yOffset = Mathf.CeilToInt(mapHolder.minPos.y - mapHolder.cameraTop);
-            var worldPoint = new Vector3Int(Mathf.FloorToInt(point.x + (mapHolder.sampleSize.x)), Mathf.FloorToInt(point.y + yOffset), 0);
+            var worldPoint = new Vector3Int(Mathf.FloorToInt(point.x + (mapHolder.blockRadius.x)), Mathf.FloorToInt(point.y + yOffset), 0);
 
             //float fullHeight = mapHolder.sampleSize.y * 2;
             //int componentIndex = Mathf.FloorToInt(worldPoint.y / (fullHeight));

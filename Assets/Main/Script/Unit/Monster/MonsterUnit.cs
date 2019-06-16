@@ -17,15 +17,20 @@ namespace TD.Unit {
 
         private System.Action<UnitInterface> OnDestroyCallback;
 
-        private TileNode currentTile;
+        public TileNode currentTile { get { return _currentTile; } }
+
+        private TileNode _currentTile;
 
         private BlockComponent currentBlockComp;
 
         private STPMonster _stpMonster;
 
-        private float hp;
-
         public bool isActive { get { return OnDestroyCallback != null; } }
+
+        public float hp {
+            get { return _hp; } 
+        }
+        float _hp;
 
         private enum StupidState
         {
@@ -41,7 +46,7 @@ namespace TD.Unit {
             _mapBlockManager = mapBlockManager;
             currentStatus = StupidState.PathFirst;
 
-            hp = _stpMonster.hp;
+            _hp = _stpMonster.hp;
         }
 
         public void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback)
@@ -57,10 +62,10 @@ namespace TD.Unit {
 
             TileNode standTile = _mapGrid.GetTileNodeByWorldPos(transform.position);
 
-            if (standTile.TilemapMember != null && standTile.GridIndex != currentTile.GridIndex )
+            if (standTile.TilemapMember != null && standTile.GridIndex != _currentTile.GridIndex )
             {
-                if (currentTile.TilemapMember != null)
-                    _mapGrid.EditUnitState(currentTile.GridIndex, this, false);
+                if (_currentTile.TilemapMember != null)
+                    _mapGrid.EditUnitState(_currentTile.GridIndex, this, false);
 
                 _mapGrid.EditUnitState(standTile.GridIndex, this, true);
             }
@@ -80,12 +85,12 @@ namespace TD.Unit {
             ChooseTactics(currentBlockComp);
             AgentMove();
 
-            currentTile = standTile;
+            _currentTile = standTile;
         }
 
         private void AgentMove() {
             if (currentStatus == StupidState.PathFirst) {
-                moveDelta.Set((currentTile.FlowFieldDirection.x), (currentTile.FlowFieldDirection.y), 0);
+                moveDelta.Set((_currentTile.FlowFieldDirection.x), (_currentTile.FlowFieldDirection.y), 0);
                 moveDelta *= Time.deltaTime;
 
                 transform.position += moveDelta;
@@ -102,9 +107,9 @@ namespace TD.Unit {
 
         public void OnAttack(float damage)
         {
-            hp -= damage;
+            _hp -= damage;
 
-            if (hp <= 0)
+            if (_hp <= 0)
                 Destroy();
         }
 
@@ -115,12 +120,12 @@ namespace TD.Unit {
 
             if (_mapGrid != null)
             {
-                _mapGrid.EditUnitState(currentTile.GridIndex, this, false);
+                _mapGrid.EditUnitState(_currentTile.GridIndex, this, false);
             }
 
             this.OnDestroyCallback = null;
 
-            this.currentTile = default(TileNode);
+            this._currentTile = default(TileNode);
         }
 
     }

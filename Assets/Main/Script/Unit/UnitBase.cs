@@ -27,5 +27,9 @@ namespace TD.Unit
 
         }
 
+        public void OnAttack(float dmg)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

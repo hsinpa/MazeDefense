@@ -4,11 +4,14 @@ using UnityEngine;
 using Pooling;
 using System.Linq;
 using TD.Map;
+using TD.Database;
 
 namespace TD.Unit {
     public class TowerUnit : MonoBehaviour, UnitInterface
     {
         STPTower _stpTower;
+        TowerStats towerStats;
+        
         MapGrid _mapGrid;
         System.Action<UnitInterface> OnDestroyCallback;
 
@@ -27,7 +30,9 @@ namespace TD.Unit {
 
         public GameObject unitObject { get => this.gameObject; }
 
-        TileNode currentTileNode;
+        public TileNode currentTile { get { return _currentTile; } }
+        private TileNode _currentTile;
+
         MonsterUnit currentTarget;
         const float minRotationDiff = 35;
         bool fireReady = false;
@@ -51,7 +56,7 @@ namespace TD.Unit {
 
         public void OnUpdate()
         {
-            if (this.OnDestroyCallback != null && _mapGrid != null && currentTileNode.TilemapMember != null && _stpTower != null) {
+            if (this.OnDestroyCallback != null && _mapGrid != null && _currentTile.TilemapMember != null && _stpTower != null) {
 
                 this.currentTarget = UpdateTargetState();
                 Attack(this.currentTarget);
@@ -112,12 +117,14 @@ namespace TD.Unit {
 
         private GameDamageManager.DMGRegistry GetDMGRegisterCard(MonsterUnit target, float fireTime, float timeToDst) {
             GameDamageManager.DMGRegistry damageRequest = new GameDamageManager.DMGRegistry();
+
             damageRequest.fireTime = fireTime;
             damageRequest.timeToDest = timeToDst;
-            damageRequest.towerInfo = _stpTower;
 
-            damageRequest.targetNum = 1;
-            damageRequest.targets = new MonsterUnit[] { target };
+            damageRequest.towerInfo = _stpTower;
+            damageRequest.towerStats = this.towerStats;
+
+            damageRequest.target = target;
 
             return damageRequest;
         }
@@ -131,7 +138,7 @@ namespace TD.Unit {
             }
             else {
 
-                var monsters = _mapGrid.FindUnitsFromRange<MonsterUnit>(currentTileNode, _stpTower.range);
+                var monsters = _mapGrid.FindUnitsFromRange<MonsterUnit>(_currentTile, _stpTower.range);
 
                 fireReady = false;
 
@@ -140,6 +147,11 @@ namespace TD.Unit {
 
                 return FindTheClosestUnit(monsters);
             }
+        }
+
+        public void OnAttack(float dmg)
+        {
+            throw new System.NotImplementedException();
         }
 
         private MonsterUnit FindTheClosestUnit(List<MonsterUnit> monsterUnits) {
@@ -153,12 +165,12 @@ namespace TD.Unit {
 
             TileNode standTile = _mapGrid.GetTileNodeByWorldPos(unitObject.transform.position);
 
-            if (standTile.TilemapMember != null && standTile.GridIndex != currentTileNode.GridIndex)
+            if (standTile.TilemapMember != null && standTile.GridIndex != _currentTile.GridIndex)
             {
-                if (currentTileNode.TilemapMember != null)
-                    _mapGrid.EditUnitState(currentTileNode.GridIndex, this, false);
+                if (_currentTile.TilemapMember != null)
+                    _mapGrid.EditUnitState(_currentTile.GridIndex, this, false);
 
-                currentTileNode = standTile;
+                _currentTile = standTile;
 
                 _mapGrid.EditUnitState(standTile.GridIndex, this, true);
                 _mapGrid.RefreshMonsterFlowFieldMap();
@@ -171,7 +183,7 @@ namespace TD.Unit {
                 OnDestroyCallback(this);
 
             if (_mapGrid != null) {
-                _mapGrid.EditUnitState(currentTileNode.GridIndex, this, false);
+                _mapGrid.EditUnitState(_currentTile.GridIndex, this, false);
                 _mapGrid.OnMapReform -= UpdateUnitState;
                 _mapGrid.RefreshMonsterFlowFieldMap();
             }
@@ -183,9 +195,8 @@ namespace TD.Unit {
             this.recordFrequency = 0;
 
             currentTarget = null;
-            currentTileNode = default(TileNode);
+            _currentTile = default(TileNode);
         }
-
 
     }
 }

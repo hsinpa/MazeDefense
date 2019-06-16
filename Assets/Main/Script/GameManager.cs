@@ -5,6 +5,7 @@ using Pooling;
 using TD.Map;
 using TD.Unit;
 using TD.AI;
+using TD.Database;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     STPTheme poolingTheme;
+
+    [SerializeField]
+    StatsHolder statsHolder;
 
     private void Awake()
     {

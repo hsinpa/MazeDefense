@@ -37,6 +37,9 @@ public class GameInputManager : MonoBehaviour
     private MapGrid mapGrid;
     MapBlockManager mapHolder;
 
+    [SerializeField]
+    public Vector3 mouseWorldPos;
+
     public enum InputState {
         Scroll,
         DragMap,
@@ -64,23 +67,23 @@ public class GameInputManager : MonoBehaviour
         if (_camera == null)
             return;
 
-        var worldPos = (_camera.ScreenToWorldPoint(Input.mousePosition));
-        worldPos.Set(worldPos.x, worldPos.y, 0);
+        mouseWorldPos = (_camera.ScreenToWorldPoint(Input.mousePosition));
+        mouseWorldPos.Set(mouseWorldPos.x, mouseWorldPos.y, 0);
 
         if (Input.GetMouseButtonDown(0)) {
-            CheckMapComponentDrag(worldPos);
+            CheckMapComponentDrag(mouseWorldPos);
         }
 
         if (Input.GetMouseButton(0)) {
-            CheckMapHolderDrag(worldPos);
+            CheckMapHolderDrag(mouseWorldPos);
         }
 
-        Drag(dragObject, worldPos);
+        Drag(dragObject, mouseWorldPos);
 
         if (Input.GetMouseButtonUp(0))
         {
             if (inputState == InputState.Click)
-                ClickOnMapMaterial(worldPos);
+                ClickOnMapMaterial(mouseWorldPos);
 
             Release();
         }
