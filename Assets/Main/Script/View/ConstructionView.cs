@@ -20,6 +20,8 @@ public class ConstructionView : InGameUIBase
     [SerializeField, Range(0, 3)]
     private int padding = 0;
 
+    private DisplayUIComp[] _displayUiComs;
+
     public enum UILayout {
         EqualSpace,
         SpecificSpace
@@ -35,69 +37,67 @@ public class ConstructionView : InGameUIBase
             TowerClickEvent(tower_id);
     }
 
-    public void SetEnablePosition(Vector3 position, Vector2 mapIndex, Vector2 mapSize)
-    {
-        transform.position = position;
-        Show(true);
-
-
-        UILayout uiLayout = GetUiLayout(mapIndex, mapSize, padding);
-        int faceDir = GetFaceDirection(mapIndex, mapSize);
-
-        ReLayoutUIComponent(uiLayout, faceDir);
-    }
-
     public override void Show(bool isOn)
     {
         base.Show(isOn);
     }
 
-    public void SetTowerToDisplay(DisplayUIComp[] displayUiComps ) {
-        int uiLength = displayUiComps.Length;
+    public Button[] SetTowerToDisplay(DisplayUIComp[] displayUiComps ) {
+        _displayUiComs = displayUiComps;
+        int uiLength = _displayUiComs.Length;
         Button[] UIObjects = GetAvailableShotItemUI(uiLength);
 
+
         for (int i = 0; i < uiLength; i++) {
+            int index = i;
             if (UIObjects[i] == null)
                 continue;
 
             Text itemLabel = UIObjects[i].transform.Find("text").GetComponent<Text>();
             if (itemLabel != null)
-                itemLabel.text = displayUiComps[i].label;
+                itemLabel.text = _displayUiComs[i].label;
 
             Image itemImage = UIObjects[i].transform.Find("sample_image").GetComponent<Image>();
             if (itemImage != null)
-                itemImage.sprite = displayUiComps[i].sprite;
+                itemImage.sprite = _displayUiComs[i].sprite;
 
             //Assign Click event
             UIObjects[i].onClick.RemoveAllListeners();
-            if (displayUiComps[i].OnClickFunction != null)
-                UIObjects[i].onClick.AddListener(() => displayUiComps[i].OnClickFunction());
+            UIObjects[i].onClick.AddListener(() => OnTowerConstructClick(_displayUiComs[index]._id));
         }
+
+        return UIObjects;
     }
 
-    private void ReLayoutUIComponent(UILayout ui_layout, int faceDir) {
+    public void SetLayoutUI(Button[] UIbuttons, Vector2 mapIndex, Vector2 mapSize) {
+        UILayout uiLayout = GetUiLayout(mapIndex, mapSize, padding);
+        int faceDir = GetFaceDirection(mapIndex, mapSize);
+        ReLayoutUIComponent(uiLayout, UIbuttons, faceDir);
+    }
+
+    private void ReLayoutUIComponent(UILayout ui_layout, Button[] UIbuttons, int faceDir) {
         if (ShopObject != null) {
 
             switch (ui_layout) {
                 case UILayout.EqualSpace:
-                    ToEqualSpaceLayout(ShopObject.transform, item_radius);
+                    ToEqualSpaceLayout(ShopObject.transform, UIbuttons, item_radius);
                 break;
 
                 case UILayout.SpecificSpace:
-                    ToSpecificLayout(ShopObject.transform, faceDir, item_radius, item_space);
+                    ToSpecificLayout(ShopObject.transform, UIbuttons, faceDir, item_radius, item_space);
                 break;
             }
 
         }
     }
 
-    private void ToEqualSpaceLayout(Transform centerObject, float radius) {
-        int componentLength = centerObject.childCount;
+    private void ToEqualSpaceLayout(Transform centerObject, Button[] buttonUI, float radius) {
+        int componentLength = buttonUI.Length;
         float space = 360f / componentLength;
 
         for (int i = 0; i < componentLength; i++)
         {
-            Transform child = centerObject.GetChild(i);
+            Transform child = buttonUI[i].transform;
 
             float angle = space * i;
 
@@ -109,9 +109,8 @@ public class ConstructionView : InGameUIBase
         }
     }
 
-    private void ToSpecificLayout(Transform centerObject, float angle, float radius, float space) {
-        int componentLength = centerObject.childCount;
-
+    private void ToSpecificLayout(Transform centerObject, Button[] buttonUI, float angle, float radius, float space) {
+        int componentLength = buttonUI.Length;
 
         float totalSpace = (componentLength - 1) * space;
 
@@ -119,7 +118,7 @@ public class ConstructionView : InGameUIBase
         
         for (int i = 0; i < componentLength; i++)
         {
-            Transform child = centerObject.GetChild(i);
+            Transform child = buttonUI[i].transform;
 
             Vector3 rotatePos = MathUtility.AngleToVector3(startAngle + (space * i));
             child.position = centerObject.position + (rotatePos * radius);
@@ -136,6 +135,7 @@ public class ConstructionView : InGameUIBase
             if (i < count) {
                 itemObject.gameObject.SetActive(true);
                 findUIItem[i] = itemObject;
+                continue;
             }
 
             itemObject.gameObject.SetActive(false);
@@ -154,11 +154,11 @@ public class ConstructionView : InGameUIBase
     }
 
     public struct DisplayUIComp {
+        public string _id;
+
         public Sprite sprite;
 
         public string label;
-
-        public System.Action OnClickFunction;
     }
 
 }

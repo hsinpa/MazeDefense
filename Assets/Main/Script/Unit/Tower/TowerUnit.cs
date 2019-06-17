@@ -10,7 +10,7 @@ namespace TD.Unit {
     public class TowerUnit : MonoBehaviour, UnitInterface
     {
         STPTower _stpTower;
-        TowerStats towerStats;
+        TowerStats _towerStats;
         
         MapGrid _mapGrid;
         System.Action<UnitInterface> OnDestroyCallback;
@@ -38,9 +38,15 @@ namespace TD.Unit {
         bool fireReady = false;
         float recordFrequency;
 
-        public void SetUp(STPTower stpTower, MapGrid mapGrid, System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile) {
+        public void SetUp(TowerStats towerStats, STPTower stpTower, Sprite towerSprite, MapGrid mapGrid, 
+            System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile) {
+            _towerStats = towerStats;
             _stpTower = stpTower;
             _mapGrid = mapGrid;
+
+            SpriteRenderer renderer = gunBodyObject.GetComponent<SpriteRenderer>();
+            renderer.sprite = towerSprite;
+
             this.OnFireProjectile = OnFireProjectile;
         }
 
@@ -122,7 +128,7 @@ namespace TD.Unit {
             damageRequest.timeToDest = timeToDst;
 
             damageRequest.towerInfo = _stpTower;
-            damageRequest.towerStats = this.towerStats;
+            damageRequest.towerStats = _towerStats;
 
             damageRequest.target = target;
 

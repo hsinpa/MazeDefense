@@ -13,6 +13,7 @@ namespace TD.Unit {
         private int unitLength = 0;
 
         public GameDamageManager gameDamageManager;
+        private GameSkillHandler gameSkillHandler;
 
         #region Public Method
         public void SetUp() {

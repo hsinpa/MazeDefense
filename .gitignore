@@ -15,7 +15,9 @@
 *.booproj
 
 /Assets/Database/Asset/
-Assets/Database/CSV/
+/Assets/Database/CSV/
+/Assets/Database/*.asset
+
 # Unity3D generated meta files
 *.pidb.meta
 

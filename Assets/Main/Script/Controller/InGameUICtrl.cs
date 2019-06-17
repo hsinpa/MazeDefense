@@ -53,18 +53,21 @@ public class InGameUICtrl : MonoBehaviour
     private async void SelectTowerToBuild(string tower_id) {
 
         if (currentSelectedNode.TileMapPlace != null) {
-            var tower = PoolManager.instance.ReuseObject(tower_id);
+            var tower = PoolManager.instance.ReuseObject(VaraibleFlag.Pooling.TowerID);
 
             if (tower != null) {
                 tower.transform.position = currentSelectedNode.WorldSpace;
 
                 BlockComponent mapBlock = _mapBlockManager.GetMapComponentByPos(currentSelectedNode.WorldSpace);
-                STPTower stpTower = _stpTheme.FindObject<STPTower>(tower_id);
+                STPTower stpTower = _stpTheme.FindObject<STPTower>(VaraibleFlag.Pooling.TowerID);
                 TowerUnit towerUnit = tower.GetComponent<TowerUnit>();
+                TowerStats towerStats = _statHolder.FindObject<TowerStats>(tower_id);
 
-                if (stpTower != null && towerUnit != null && mapBlock != null) {
+                if (stpTower != null && towerUnit != null && mapBlock != null && towerStats != null) {
                     tower.transform.SetParent(mapBlock.unitHolder);
-                    towerUnit.SetUp(stpTower, _mapGrid, (UnitInterface projectile, GameDamageManager.DMGRegistry dmgRistry) => {
+                    towerUnit.SetUp(towerStats, stpTower,
+                        (tower_id == "tower_01") ? tempSprite1 : tempSprite2,
+                        _mapGrid, (UnitInterface projectile, GameDamageManager.DMGRegistry dmgRistry) => {
                         _gameUnitManager.AddUnit(projectile);
                         _gameUnitManager.gameDamageManager.AddRequest(dmgRistry);
                     });
@@ -96,10 +99,12 @@ public class InGameUICtrl : MonoBehaviour
             }
         }
 
-
         currentSelectedNode = tileNode;
 
-        ConstructionUI.SetEnablePosition(currentSelectedNode.WorldSpace, currentSelectedNode.GridIndex, _mapBlockManager.blockSize);
+        UnityEngine.UI.Button[] displayBTObjects = ConstructionUI.SetTowerToDisplay(GetInitialTowerPlacement());
+        ConstructionUI.SetLayoutUI(displayBTObjects, currentSelectedNode.GridIndex, _mapBlockManager.blockSize);
+        ConstructionUI.transform.position = currentSelectedNode.WorldSpace;
+        ConstructionUI.Show(true);
     }
 
     private ConstructionView.DisplayUIComp[] GetInitialTowerPlacement() {
@@ -107,13 +112,23 @@ public class InGameUICtrl : MonoBehaviour
         firstLevelTowers = firstLevelTowers.FindAll(x => x.level == 1);
 
         int towerLength = firstLevelTowers.Count;
+
         ConstructionView.DisplayUIComp[] uiCompArray = new ConstructionView.DisplayUIComp[towerLength];
 
         for (int i = 0; i < towerLength; i++) {
             ConstructionView.DisplayUIComp uiComp = new ConstructionView.DisplayUIComp();
             uiComp.label = "$" + firstLevelTowers[i].cost;
+            uiComp._id = firstLevelTowers[i].id;
 
+            if (i == 0)
+                uiComp.sprite = tempSprite2;
 
+            else if (i == 1)
+                uiComp.sprite = tempSprite1;
+            else
+                uiComp.sprite = tempSprite1;
+
+            uiCompArray[i] = uiComp;
         }
 
         return uiCompArray;

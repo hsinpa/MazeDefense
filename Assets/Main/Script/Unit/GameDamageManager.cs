@@ -30,10 +30,9 @@ namespace TD.Unit {
                     break;
 
                 if (dmgRegisterList[i].target != null) {
-                    int tempDMG = 1;
                     var monster = dmgRegisterList[i].target;
                     if (monster.isActive)
-                        monster.OnAttack(tempDMG);
+                        monster.OnAttack(dmgRegisterList[i].towerStats.atk);
                 }
 
                 removeNum++;
