@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Utility;
+using UnityEngine.UI;
 
 public class ConstructionView : InGameUIBase
 {
@@ -18,7 +19,6 @@ public class ConstructionView : InGameUIBase
 
     [SerializeField, Range(0, 3)]
     private int padding = 0;
-
 
     public enum UILayout {
         EqualSpace,
@@ -50,7 +50,29 @@ public class ConstructionView : InGameUIBase
     public override void Show(bool isOn)
     {
         base.Show(isOn);
+    }
 
+    public void SetTowerToDisplay(DisplayUIComp[] displayUiComps ) {
+        int uiLength = displayUiComps.Length;
+        Button[] UIObjects = GetAvailableShotItemUI(uiLength);
+
+        for (int i = 0; i < uiLength; i++) {
+            if (UIObjects[i] == null)
+                continue;
+
+            Text itemLabel = UIObjects[i].transform.Find("text").GetComponent<Text>();
+            if (itemLabel != null)
+                itemLabel.text = displayUiComps[i].label;
+
+            Image itemImage = UIObjects[i].transform.Find("sample_image").GetComponent<Image>();
+            if (itemImage != null)
+                itemImage.sprite = displayUiComps[i].sprite;
+
+            //Assign Click event
+            UIObjects[i].onClick.RemoveAllListeners();
+            if (displayUiComps[i].OnClickFunction != null)
+                UIObjects[i].onClick.AddListener(() => displayUiComps[i].OnClickFunction());
+        }
     }
 
     private void ReLayoutUIComponent(UILayout ui_layout, int faceDir) {
@@ -104,6 +126,24 @@ public class ConstructionView : InGameUIBase
         }
     }
 
+    private Button[] GetAvailableShotItemUI(int count) {
+        int maxCount = ShopObject.transform.childCount;
+        Button[] findUIItem = new Button[ Mathf.Clamp(count, 0, maxCount) ];
+
+        for (int i = 0; i < maxCount; i++) {
+            Button itemObject = ShopObject.transform.GetChild(i).GetComponent<Button>();
+
+            if (i < count) {
+                itemObject.gameObject.SetActive(true);
+                findUIItem[i] = itemObject;
+            }
+
+            itemObject.gameObject.SetActive(false);
+        }
+
+        return findUIItem;
+    }
+
     private UILayout GetUiLayout(Vector2 mapIndex, Vector2 mapSize, int padding) {
         return (mapIndex.x <= (0 + padding) || mapIndex.x >= (mapSize.x - padding - 1)) ? UILayout.SpecificSpace : UILayout.EqualSpace;
     }
@@ -111,6 +151,14 @@ public class ConstructionView : InGameUIBase
     private int GetFaceDirection(Vector2 mapIndex, Vector2 mapSize)
     {
         return (mapIndex.x < (mapSize.x / 2)) ? 90 : 270;
+    }
+
+    public struct DisplayUIComp {
+        public Sprite sprite;
+
+        public string label;
+
+        public System.Action OnClickFunction;
     }
 
 }

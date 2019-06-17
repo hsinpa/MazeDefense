@@ -38,10 +38,11 @@ public class GameManager : MonoBehaviour
         _mapGrid.SetUp();
         _gameInputManager.SetUp(_mapGrid, _mapHolder);
         _gameUnitManager.SetUp();
-        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid, _mapHolder, poolingTheme);
+        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid, _mapHolder, poolingTheme, statsHolder);
 
-        var monsters = poolingTheme.FindObjectByType<STPMonster>();
-        _levelDesignManager.SetUp(_gameUnitManager, _mapHolder, _mapGrid, monsters);
+        var monsterPools = poolingTheme.FindObjectByType<STPMonster>();
+
+        _levelDesignManager.SetUp(_gameUnitManager, _mapHolder, _mapGrid, monsterPools);
     }
 
     public void Start() {

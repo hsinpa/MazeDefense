@@ -5,6 +5,7 @@ using TD.Map;
 using Utility;
 using Pooling;
 using TD.Unit;
+using TD.Database;
 using System.Threading.Tasks;
 
 public class InGameUICtrl : MonoBehaviour
@@ -16,14 +17,24 @@ public class InGameUICtrl : MonoBehaviour
 
     TileNode currentSelectedNode;
     STPTheme _stpTheme;
+    StatsHolder _statHolder;
 
     [SerializeField]
     ConstructionView ConstructionUI;
 
+    [SerializeField]
+    Sprite tempSprite1;
+
+    [SerializeField]
+    Sprite tempSprite2;
+
     [SerializeField, Range(0, 4)]
     float IgnoreInputRange = 2;
 
-    public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, MapGrid mapGrid, MapBlockManager mapBlockManager, STPTheme stpTheme) {
+    private List<TowerStats> FirstLevelTowers;
+
+    public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, MapGrid mapGrid, MapBlockManager mapBlockManager, 
+                    STPTheme stpTheme, StatsHolder statHolder) {
         _gameInputManager = gameInputManager;
         _gameInputManager.OnSelectTileNode += SelectTileListener;
 
@@ -31,6 +42,7 @@ public class InGameUICtrl : MonoBehaviour
         _mapGrid = mapGrid;
         _mapBlockManager = mapBlockManager;
         _stpTheme = stpTheme;
+        _statHolder = statHolder;
 
         if (ConstructionUI != null)
         {
@@ -89,6 +101,24 @@ public class InGameUICtrl : MonoBehaviour
 
         ConstructionUI.SetEnablePosition(currentSelectedNode.WorldSpace, currentSelectedNode.GridIndex, _mapBlockManager.blockSize);
     }
+
+    private ConstructionView.DisplayUIComp[] GetInitialTowerPlacement() {
+        List<TowerStats> firstLevelTowers = _statHolder.FindObjectByType<TowerStats>();
+        firstLevelTowers = firstLevelTowers.FindAll(x => x.level == 1);
+
+        int towerLength = firstLevelTowers.Count;
+        ConstructionView.DisplayUIComp[] uiCompArray = new ConstructionView.DisplayUIComp[towerLength];
+
+        for (int i = 0; i < towerLength; i++) {
+            ConstructionView.DisplayUIComp uiComp = new ConstructionView.DisplayUIComp();
+            uiComp.label = "$" + firstLevelTowers[i].cost;
+
+
+        }
+
+        return uiCompArray;
+    }
+
 
     private void Reset()
     {

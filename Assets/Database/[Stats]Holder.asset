@@ -9,20 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 7d7a619e7744b6d41a83908235b0f6d6, type: 3}
   m_Name: '[Stats]Holder'
   m_EditorClassIdentifier: Assembly-CSharp:TD.Database:StatsHolder
   stpObjectHolder:
-  - {fileID: 11400000, guid: 449c18a8360209d4e90072a37509312b, type: 2}
-  - {fileID: 11400000, guid: 24e12ff51f33db84e80968834868d0dc, type: 2}
-  - {fileID: 11400000, guid: 9b48816a22c7ee44cb32744c014b57ed, type: 2}
-  - {fileID: 11400000, guid: 36ccd99cec0e32d43a2b0a3eabf83458, type: 2}
-  - {fileID: 11400000, guid: c93e4ce7c2a66f44a8bef8f236d3c9c1, type: 2}
-  - {fileID: 11400000, guid: 7dd88d11e8993df48acd1ec1b5978367, type: 2}
-  - {fileID: 11400000, guid: 9ba41202dbb438346b181ca8ee0bc504, type: 2}
-  - {fileID: 11400000, guid: d738afb80708b5c49b633ec989559569, type: 2}
-  - {fileID: 11400000, guid: e1ffbecd3909b4447abe410daa9a004c, type: 2}
-  - {fileID: 11400000, guid: af43815858f85564eb78af41696947b5, type: 2}
-  - {fileID: 11400000, guid: 1249806b06c0ff74ca88b884775a89b0, type: 2}
-  - {fileID: 11400000, guid: 528d0240834c301449b6b9b12d24dcb8, type: 2}
-  - {fileID: 11400000, guid: 06023f7e7e4c0f145827b8dece2fda07, type: 2}
+  - {fileID: 11400000, guid: 5a225882004be864e843511dcaff47a8, type: 2}
+  - {fileID: 11400000, guid: 65be75fe2d8e3e74bb2b7bf771cd5586, type: 2}
+  - {fileID: 11400000, guid: 6c9990a6a5739c246b6f8e8d5aa85daa, type: 2}
+  - {fileID: 11400000, guid: 99aa77e8996e36746a5c6db5dd68b37a, type: 2}
+  - {fileID: 11400000, guid: a9556d18e15df164b90eeacb873c0040, type: 2}
+  - {fileID: 11400000, guid: dc66cd9a9e7ee0f48b2e6e1cfdaf056f, type: 2}
+  - {fileID: 11400000, guid: 7ef246d95683583419fee63d8faa8332, type: 2}
+  - {fileID: 11400000, guid: 0b4cb14829611e84185a96233e176b5e, type: 2}
+  - {fileID: 11400000, guid: fb5edbde8709d8f4e874d1163d373e9a, type: 2}
+  - {fileID: 11400000, guid: ee41071e87a71644da9f58887b5c5196, type: 2}
+  - {fileID: 11400000, guid: 520c6a4c483e7f043aa2d23161ab9e23, type: 2}
+  - {fileID: 11400000, guid: c9044727c8519fd4fb27cfce2161ce43, type: 2}
+  - {fileID: 11400000, guid: 35253f7c55e499d45ac057b5ac25e61f, type: 2}

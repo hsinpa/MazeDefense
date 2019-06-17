@@ -189,7 +189,7 @@ public class DatabaseLoader : Object
     static public void Reset()
     {
         PlayerPrefs.DeleteAll();
-        Caching.CleanCache();
+        Caching.ClearCache();
     }
 
     [MenuItem("Assets/MazeDefense/Database/DownloadGoogleSheet", false, 0)]
