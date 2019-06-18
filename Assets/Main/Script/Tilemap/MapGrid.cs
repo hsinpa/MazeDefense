@@ -10,8 +10,9 @@ namespace TD.Map {
         private MapBlockManager mapHolder;
         private List<TileNode[,]> raw_tileData;
 
-        private TileNode[,] tilenodes;
+        private List<TowerUnit> allTowerUnit = new List<TowerUnit>();
 
+        private TileNode[,] tilenodes;
 
         private FlowField _flowField;
 
@@ -25,11 +26,13 @@ namespace TD.Map {
             mapHolder = this.GetComponent<MapBlockManager>();
             mapHolder.OnAddMapComponent += OnAddBlock;
             _flowField = new FlowField();
+
         }
 
         public void ReformMap()
         {
             raw_tileData.Clear();
+            allTowerUnit.Clear();
             int mLength = mapHolder.mapComponents.Count;
 
             gridHeight = Mathf.RoundToInt(mLength * mapHolder.blockRadius.y * 2);
@@ -52,11 +55,15 @@ namespace TD.Map {
             if (ValidateNodeIndex(index.x, index.y)) {
 
                 if (unit.GetType() == typeof(TowerUnit)) {
-                    if (isAdd)
+                    if (isAdd) {
+                        allTowerUnit.Add((TowerUnit)unit);
                         tilenodes[index.x, index.y].towerUnit = (TowerUnit)unit;
+                    }
                     else {
-                        if (tilenodes[index.x, index.y].towerUnit == (TowerUnit)unit)
+                        if (tilenodes[index.x, index.y].towerUnit == (TowerUnit)unit) {
                             tilenodes[index.x, index.y].towerUnit = null;
+                            allTowerUnit.Remove((TowerUnit)unit);
+                        }
                     }
                 }
                 else {
@@ -108,15 +115,21 @@ namespace TD.Map {
 
             //Path to 
             var hardCodeTargetNodes = new TileNode[] { tilenodes[4, 0] };
-            _flowField.ExecuteAsyn(tilenodes, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), (TileNode[,] resultNodes) => {
+            _flowField.ExecuteAsyn(tilenodes, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Path.CastleFirst,
+                (TileNode[,] resultNodes) => {
                 tilenodes = resultNodes;
             });
 
 
+            //TileNode[] towerTileNode = new TileNode[allTowerUnit.Count];
+            //for (int t = 0; t < towerTileNode.Length; t++)
+            //    towerTileNode[t] = allTowerUnit[t].currentTile;
 
+            //_flowField.ExecuteAsyn(tilenodes, towerTileNode, new Vector2Int(gridWidth, gridHeight), VariableFlag.Path.TowersFirst,
+            //(TileNode[,] resultNodes) => {
+            //    tilenodes = resultNodes;
+            //});
         }
-
-
 
         private TileNode[,] ReorganizedTileNode(List<TileNode[,]> p_tileBlocks, Vector2Int blockSize)
         {

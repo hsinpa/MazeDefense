@@ -90,7 +90,9 @@ namespace TD.Unit {
 
         private void AgentMove() {
             if (currentStatus == StupidState.PathFirst) {
-                moveDelta.Set((_currentTile.FlowFieldDirection.x), (_currentTile.FlowFieldDirection.y), 0);
+                moveDelta.Set((_currentTile.GetFlowFieldPath(VariableFlag.Path.CastleFirst).x), 
+                                _currentTile.GetFlowFieldPath(VariableFlag.Path.CastleFirst).y, 0);
+
                 moveDelta *= Time.deltaTime;
 
                 transform.position += moveDelta;

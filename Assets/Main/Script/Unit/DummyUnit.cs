@@ -24,9 +24,10 @@ public class DummyUnit : MonoBehaviour
 
         if (currentTile.TilemapMember != null) {
 
-            moveDelta.Set((currentTile.FlowFieldDirection.x), (currentTile.FlowFieldDirection.y), 0);
-            moveDelta *= Time.deltaTime; 
+            moveDelta.Set((currentTile.GetFlowFieldPath(VariableFlag.Path.CastleFirst).x), 
+                        (currentTile.GetFlowFieldPath(VariableFlag.Path.CastleFirst).y), 0);
 
+            moveDelta *= Time.deltaTime; 
 
             transform.position += moveDelta;
         }

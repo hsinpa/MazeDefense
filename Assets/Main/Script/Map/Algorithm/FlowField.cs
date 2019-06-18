@@ -9,11 +9,11 @@ public class FlowField
 
     private Vector3 zeroVector3 = new Vector3(0, 0, 0);
 
-    public void ExecuteAsyn(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, System.Action<TileNode[,]> callback) {
+    public void ExecuteAsyn(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Path pathTag, System.Action<TileNode[,]> callback) {
         Thread t = new Thread(new ThreadStart(() => {
 
             tileNodes = EraseTileNextPath(tileNodes, nodeSize);
-            tileNodes = Execute(tileNodes, targetNodes, nodeSize);
+            tileNodes = Execute(tileNodes, targetNodes, nodeSize, pathTag);
 
             if (callback != null)
                 callback(tileNodes);
@@ -21,9 +21,8 @@ public class FlowField
         t.Start();
     }
 
-    public TileNode[,] Execute(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize) {
+    public TileNode[,] Execute(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Path pathTag) {
 
-        var length = 1;
         var frontier = new Queue<TileNode>();
 
         var came_from = new List<Vector2Int>();
@@ -33,6 +32,8 @@ public class FlowField
             frontier.Enqueue(tileNodes[targetNodes[t].GridIndex.x, targetNodes[t].GridIndex.y]);
             came_from.Add(targetNodes[t].GridIndex);
         }
+
+        var length = frontier.Count;
 
         //Hard code exit points
         //frontier.Enqueue(tileNodes[4, 0]);
@@ -55,7 +56,9 @@ public class FlowField
                     frontier.Enqueue(neighbour);
                     came_from.Add(neighbour.GridIndex);
 
-                    tileNodes[neighbour.GridIndex.x, neighbour.GridIndex.y].FlowFieldDirection = current.GridIndex - neighbour.GridIndex;
+
+                    //tileNodes[neighbour.GridIndex.x, neighbour.GridIndex.y].FlowFieldDirection = current.GridIndex - neighbour.GridIndex;
+                    tileNodes[neighbour.GridIndex.x, neighbour.GridIndex.y].AddFlowField(pathTag, current.GridIndex - neighbour.GridIndex);
                     length++;
                 }
             }
@@ -110,7 +113,9 @@ public class FlowField
         {
             for (int y = 0; y < nodeSize.y; y++)
             {
-                tileNodes[x, y].FlowFieldDirection = zeroVector3;
+                //tileNodes[x, y].FlowFieldDirection = zeroVector3;
+
+                tileNodes[x, y].FlowFieldDirectionSet.Clear();
             }
         }
 
