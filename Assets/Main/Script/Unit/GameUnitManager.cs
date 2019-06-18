@@ -13,11 +13,12 @@ namespace TD.Unit {
         private int unitLength = 0;
 
         public GameDamageManager gameDamageManager;
-        private GameSkillHandler gameSkillHandler;
+        private GameSkillMapper gameSkillMapper;
 
         #region Public Method
-        public void SetUp() {
-            gameDamageManager = new GameDamageManager();
+        public void SetUp(MapBlockManager mapBlockManager, MapGrid mapGrid) {
+            gameSkillMapper = new GameSkillMapper();
+            gameDamageManager = new GameDamageManager(gameSkillMapper, mapBlockManager, mapGrid);
         }
 
         public void AddUnit(UnitInterface unit) {

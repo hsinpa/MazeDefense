@@ -9,11 +9,11 @@ public class FlowField
 
     private Vector3 zeroVector3 = new Vector3(0, 0, 0);
 
-    public void ExecuteAsyn(TileNode[,] tileNodes, Vector2Int nodeSize, System.Action<TileNode[,]> callback) {
+    public void ExecuteAsyn(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, System.Action<TileNode[,]> callback) {
         Thread t = new Thread(new ThreadStart(() => {
 
             tileNodes = EraseTileNextPath(tileNodes, nodeSize);
-            tileNodes = Execute(tileNodes, nodeSize);
+            tileNodes = Execute(tileNodes, targetNodes, nodeSize);
 
             if (callback != null)
                 callback(tileNodes);
@@ -21,17 +21,22 @@ public class FlowField
         t.Start();
     }
 
-    public TileNode[,] Execute(TileNode[,] tileNodes, Vector2Int nodeSize) {
+    public TileNode[,] Execute(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize) {
 
         var length = 1;
         var frontier = new Queue<TileNode>();
 
-        //Hard code exit points
-        frontier.Enqueue(tileNodes[4, 0]);
-        //frontier.Enqueue(tileNodes[5, 0]);
-
         var came_from = new List<Vector2Int>();
-        came_from.Add(tileNodes[4, 0].GridIndex);
+
+        int targetNodeLength = targetNodes.Length;
+        for (int t = 0; t < targetNodeLength; t++) {
+            frontier.Enqueue(tileNodes[targetNodes[t].GridIndex.x, targetNodes[t].GridIndex.y]);
+            came_from.Add(targetNodes[t].GridIndex);
+        }
+
+        //Hard code exit points
+        //frontier.Enqueue(tileNodes[4, 0]);
+        //frontier.Enqueue(tileNodes[5, 0]);
 
         while (length > 0) {
             TileNode current = frontier.Dequeue();

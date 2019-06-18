@@ -12,6 +12,7 @@ namespace TD.Map {
 
         private TileNode[,] tilenodes;
 
+
         private FlowField _flowField;
 
         public int gridHeight, gridWidth;
@@ -104,10 +105,18 @@ namespace TD.Map {
         }
 
         public void RefreshMonsterFlowFieldMap() {
-            _flowField.ExecuteAsyn(tilenodes, new Vector2Int(gridWidth, gridHeight), (TileNode[,] resultNodes) => {
+
+            //Path to 
+            var hardCodeTargetNodes = new TileNode[] { tilenodes[4, 0] };
+            _flowField.ExecuteAsyn(tilenodes, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), (TileNode[,] resultNodes) => {
                 tilenodes = resultNodes;
             });
+
+
+
         }
+
+
 
         private TileNode[,] ReorganizedTileNode(List<TileNode[,]> p_tileBlocks, Vector2Int blockSize)
         {

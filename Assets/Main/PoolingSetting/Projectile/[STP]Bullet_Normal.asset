@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef78377b006e2bc45bc136c4a6c5c108, type: 3}
   m_Name: '[STP]Bullet_Normal'
   m_EditorClassIdentifier: 
-  _id: bullet_01
+  _id: the_bullet
   _tag: Projectile
   poolingNum: 20
   prefab: {fileID: 2254850470000597965, guid: 73e195b6caac06c439292d4a2b7a05e2, type: 3}

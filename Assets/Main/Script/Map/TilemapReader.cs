@@ -61,6 +61,7 @@ public class TilemapReader
         node.TileMapPlace = TileMapPlace;
         node.IsWalkable = true;
         node.Cost = 1;
+        node.FlowFieldDirectionSet = new Dictionary<VariableFlag.Path, Vector2>();
 
         if (tileBase.GetType() == typeof(CustomTile))
         {

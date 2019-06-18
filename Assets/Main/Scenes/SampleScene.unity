@@ -860,18 +860,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 752806118}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 743364121}
-        m_MethodName: OnTowerConstructClick
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: tower_temp_1
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &752806118
@@ -1381,18 +1370,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1345046488}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 743364121}
-        m_MethodName: OnTowerConstructClick
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: tower_temp_1
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1345046488
@@ -1601,6 +1579,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ConstructionUI: {fileID: 743364121}
+  tempSprite1: {fileID: 21300000, guid: 4fe17ce980da36a4b8d9165b32fea2ce, type: 3}
+  tempSprite2: {fileID: 21300000, guid: e358536cb04cc244d8f00542664d28b2, type: 3}
   IgnoreInputRange: 1.5
 --- !u!1 &1608211220
 GameObject:
@@ -1750,18 +1730,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1717323914}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 743364121}
-        m_MethodName: OnTowerConstructClick
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: tower_temp_1
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1832327557

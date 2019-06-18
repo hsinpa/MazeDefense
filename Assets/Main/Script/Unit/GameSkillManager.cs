@@ -4,11 +4,11 @@ using UnityEngine;
 using TD.Skill;
 using TD.Database;
 
-public class GameSkillHandler
+public class GameSkillMapper
 {
     private Dictionary<string, BaseSkill> skillMappingTable;
 
-    public GameSkillHandler() {
+    public GameSkillMapper() {
         skillMappingTable = GetSkillMappingTable();
     }
 
@@ -23,11 +23,11 @@ public class GameSkillHandler
     private Dictionary<string, BaseSkill> GetSkillMappingTable() {
 
         return new Dictionary<string, BaseSkill> {
-            { VaraibleFlag.Skill.Penetration, new SkillDiffusion() },
-            { VaraibleFlag.Skill.DiminishOverTime, new SkillDiffusion() },
-            { VaraibleFlag.Skill.Diffusion, new SkillDiffusion() },
-            { VaraibleFlag.Skill.Slow, new SkillDiffusion() },
-            { VaraibleFlag.Skill.Teleport, new SkillDiffusion() },
+            { VariableFlag.Skill.Penetration, null },
+            { VariableFlag.Skill.DiminishOverTime, null },
+            { VariableFlag.Skill.Diffusion, new SkillDiffusion() },
+            { VariableFlag.Skill.Slow, null },
+            { VariableFlag.Skill.Teleport, null },
         };
 
     }

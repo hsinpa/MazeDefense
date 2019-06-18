@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ecd7a91b8cbe624aadbc5bbda24c8d4, type: 3}
   m_Name: '[STP]Skeleton'
   m_EditorClassIdentifier: 
-  _id: monster_skeleton_1
+  _id: the_monster
   _tag: Monster
   poolingNum: 30
   prefab: {fileID: 448340967882919444, guid: e6b2c2fbeefab3f47945c8d2268c3e68, type: 3}

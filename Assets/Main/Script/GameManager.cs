@@ -9,7 +9,7 @@ using TD.Database;
 
 public class GameManager : MonoBehaviour
 {
-    private MapBlockManager _mapHolder;
+    private MapBlockManager _blockManager;
     private MapGrid _mapGrid;
     private InGameUICtrl _gameInteractorCtrl;
     private GameInputManager _gameInputManager;
@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        _mapHolder = GetComponentInChildren<MapBlockManager>();
+        _blockManager = GetComponentInChildren<MapBlockManager>();
 
         _mapGrid = GetComponentInChildren<MapGrid>();
 
@@ -36,13 +36,13 @@ public class GameManager : MonoBehaviour
         _levelDesignManager = GetComponentInChildren<LevelDesignManager>();
 
         _mapGrid.SetUp();
-        _gameInputManager.SetUp(_mapGrid, _mapHolder);
-        _gameUnitManager.SetUp();
-        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid, _mapHolder, poolingTheme, statsHolder);
+        _gameInputManager.SetUp(_mapGrid, _blockManager);
+        _gameUnitManager.SetUp(_blockManager, _mapGrid);
+        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid, _blockManager, poolingTheme, statsHolder);
 
         var monsterPools = poolingTheme.FindObjectByType<STPMonster>();
 
-        _levelDesignManager.SetUp(_gameUnitManager, _mapHolder, _mapGrid, monsterPools);
+        _levelDesignManager.SetUp(_gameUnitManager, _blockManager, _mapGrid, monsterPools);
     }
 
     public void Start() {
@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
     private void Init()
     {
         _gameUnitManager.Reset();
-        _mapHolder.ReadTilemap();
+        _blockManager.ReadTilemap();
 
         //_levelDesignManager.CallEveryoneReady();
     }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1885560228df954a8e61181d3346b36, type: 3}
   m_Name: '[STP]TowerArcher'
   m_EditorClassIdentifier: 
-  _id: tower_temp_1
+  _id: the_tower
   _tag: Tower
   poolingNum: 20
   prefab: {fileID: 4098938175618599259, guid: 1f5007889daa6934a8347415720ba411, type: 3}

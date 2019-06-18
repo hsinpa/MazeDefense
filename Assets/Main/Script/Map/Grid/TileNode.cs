@@ -8,7 +8,6 @@ using TD.Unit;
 namespace TD.Map {
     public struct TileNode
     {
-
         public Vector2Int GridIndex { get; set; }
 
         public Vector3Int LocalPlace { get; set; }
@@ -30,9 +29,12 @@ namespace TD.Map {
 
         public Vector2 FlowFieldDirection { get; set; }
 
+        public Dictionary<VariableFlag.Path, Vector2> FlowFieldDirectionSet { get; set; }
+
+        public const VariableFlag.Path defaultPath = VariableFlag.Path.CastleFirst;
+
         public TowerUnit towerUnit { get; set; }
         public List<MonsterUnit> monsterUnit { get; set; }
-
 
         public void AddMonsterUnit(TD.Unit.MonsterUnit unit)
         {

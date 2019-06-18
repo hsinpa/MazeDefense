@@ -53,13 +53,13 @@ public class InGameUICtrl : MonoBehaviour
     private async void SelectTowerToBuild(string tower_id) {
 
         if (currentSelectedNode.TileMapPlace != null) {
-            var tower = PoolManager.instance.ReuseObject(VaraibleFlag.Pooling.TowerID);
+            var tower = PoolManager.instance.ReuseObject(VariableFlag.Pooling.TowerID);
 
             if (tower != null) {
                 tower.transform.position = currentSelectedNode.WorldSpace;
 
                 BlockComponent mapBlock = _mapBlockManager.GetMapComponentByPos(currentSelectedNode.WorldSpace);
-                STPTower stpTower = _stpTheme.FindObject<STPTower>(VaraibleFlag.Pooling.TowerID);
+                STPTower stpTower = _stpTheme.FindObject<STPTower>(VariableFlag.Pooling.TowerID);
                 TowerUnit towerUnit = tower.GetComponent<TowerUnit>();
                 TowerStats towerStats = _statHolder.FindObject<TowerStats>(tower_id);
 
