@@ -18,7 +18,8 @@ public class VariableFlag
         public const string Teleport = "skill_05";
     }
 
-    public enum Path {
+    public enum Strategy {
+        None = -1,
         CastleFirst = 0,
         TowersFirst,
         MoveStraight

@@ -192,6 +192,8 @@ public class DatabaseLoader : Object
 
         AssetDatabase.CreateFolder(DATABASE_FOLDER + "/Asset", "Monster");
 
+        string MonsterAnimatorPath = "Assets/Main/Animation/Monster/{0}/Animator.overrideController";
+
         int csvCount = csvFile.length;
         for (int i = csvCount - 1; i >= 0; i--)
         {
@@ -205,7 +207,7 @@ public class DatabaseLoader : Object
 
             c_prefab.id = id;
             c_prefab.label = csvFile.Get<string>(i, "Label");
-            c_prefab.strategy = (VariableFlag.Path) csvFile.Get<int>(i, "Strategy");
+            c_prefab.strategy = (VariableFlag.Strategy) csvFile.Get<int>(i, "Strategy");
             c_prefab.value = csvFile.Get<float>(i, "Value");
 
             c_prefab.hp = csvFile.Get<int>(i, "HP");
@@ -222,6 +224,10 @@ public class DatabaseLoader : Object
                 c_prefab.skills = GetSkillFromIDs(statsHolder, skillArray);
             }
 
+            Debug.Log(string.Format(MonsterAnimatorPath, c_prefab.sprite_id));
+            RuntimeAnimatorController animator = AssetDatabase.LoadAssetAtPath(string.Format(MonsterAnimatorPath, c_prefab.sprite_id), typeof(AnimatorOverrideController)) as RuntimeAnimatorController;
+            if (animator != null)
+                c_prefab.animator = animator;
 
             statsHolder.stpObjectHolder.Add(c_prefab);
         }

@@ -115,13 +115,13 @@ namespace TD.Map {
 
             var hardCodeTargetNodes = new TileNode[] { tilenodes[4, 0] };
 
-            TileNode[,] resultNode = await _flowField.Execute(tilenodes, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Path.CastleFirst);
+            TileNode[,] resultNode = await _flowField.Execute(tilenodes, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.CastleFirst);
 
             TileNode[] towerTileNode = new TileNode[allTowerUnit.Count];
             for (int t = 0; t < towerTileNode.Length; t++)
                 towerTileNode[t] = allTowerUnit[t].currentTile;
 
-            resultNode = await _flowField.Execute(resultNode, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Path.CastleFirst);
+            resultNode = await _flowField.Execute(resultNode, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.CastleFirst);
 
             tilenodes = resultNode;
         }

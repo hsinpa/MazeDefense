@@ -12,10 +12,13 @@ namespace TD.AI {
         private GameUnitManager _gameUnitManager;
         private MapBlockManager _mapHolder;
         private MapGrid _mapGrid;
+        private GameStrategyMapper _strategyMapper;
 
         private BlockComponent _entranceComponent;
         private List<MonsterStats> _monsterUnits;
         private int monsterLength;
+
+        public static float Time, DeltaTime;
 
         [SerializeField]
         float spawnSpeedAtWaitingStage = 1;
@@ -34,6 +37,7 @@ namespace TD.AI {
             _mapHolder = mapHolder;
             _mapGrid = mapGrid;
             _monsterUnits = monsterUnits;
+            _strategyMapper = new GameStrategyMapper();
             monsterLength = _monsterUnits.Count;
         }
 
@@ -55,12 +59,15 @@ namespace TD.AI {
 
         private void Update() {
 
+            Time = UnityEngine.Time.time;
+            DeltaTime = UnityEngine.Time.deltaTime;
+
             if (recordTime > spawnStageLastSecond || _entranceComponent == null)
                 return;
 
-            if (recordTime < Time.time) {
+            if (recordTime < Time) {
                 Spawn();
-                recordTime = Time.time + spawnStageFrequncy;
+                recordTime = Time + spawnStageFrequncy;
             }
         }
 
@@ -78,9 +85,11 @@ namespace TD.AI {
                 GameObject monsterObject = PoolManager.instance.ReuseObject(VariableFlag.Pooling.MonsterID);
                 if (monsterObject != null)
                 {
+                    BaseStrategy strategy = _strategyMapper.GetStrategy(randomMonster.strategy);
+
                     MonsterUnit unit = monsterObject.GetComponent<MonsterUnit>();
                     unit.transform.position = randomTileNode.WorldSpace;
-                    unit.SetUp(randomMonster, _mapGrid, _mapHolder);
+                    unit.SetUp(randomMonster, strategy, _mapGrid, _mapHolder);
                     _gameUnitManager.AddUnit(unit);
                 }
             }

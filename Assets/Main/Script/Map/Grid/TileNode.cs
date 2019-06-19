@@ -29,14 +29,14 @@ namespace TD.Map {
 
         //public Vector2 FlowFieldDirection { get; set; }
 
-        public Dictionary<VariableFlag.Path, Vector2> FlowFieldDirectionSet { get; set; }
+        public Dictionary<VariableFlag.Strategy, Vector2> FlowFieldDirectionSet { get; set; }
 
         public TowerUnit towerUnit { get; set; }
         public List<MonsterUnit> monsterUnit { get; set; }
 
-        public void AddFlowField(VariableFlag.Path pathTag, Vector2 direction) {
+        public void AddFlowField(VariableFlag.Strategy pathTag, Vector2 direction) {
             if (FlowFieldDirectionSet == null)
-                FlowFieldDirectionSet = new Dictionary<VariableFlag.Path, Vector2>();
+                FlowFieldDirectionSet = new Dictionary<VariableFlag.Strategy, Vector2>();
 
             if (!FlowFieldDirectionSet.ContainsKey(pathTag))
                 FlowFieldDirectionSet.Add(pathTag, direction);
@@ -44,8 +44,8 @@ namespace TD.Map {
                 FlowFieldDirectionSet[pathTag] = direction;
         }
 
-        public Vector2 GetFlowFieldPath(VariableFlag.Path pathTag) {
-            if (FlowFieldDirectionSet == null || !FlowFieldDirectionSet.ContainsKey(pathTag))
+        public Vector2 GetFlowFieldPath(VariableFlag.Strategy pathTag) {
+            if (FlowFieldDirectionSet == null || !FlowFieldDirectionSet.ContainsKey(pathTag)) 
                 return Vector2.zero;
             else
                 return FlowFieldDirectionSet[pathTag];

@@ -591,10 +591,7 @@ MonoBehaviour:
   _mapGrid: {fileID: 1313335100}
   _mapHolder: {fileID: 1313335097}
   _gameUnitManager: {fileID: 743619301}
-  _spawnMonster:
-  - {fileID: 11400000, guid: cafbe6d85fd012445b6a9718e50a75aa, type: 2}
-  - {fileID: 11400000, guid: f05532f58e88c4d498ae009e214f6c5b, type: 2}
-  - {fileID: 11400000, guid: 4a4d23cf359f6c1439d654e64dd2b00a, type: 2}
+  _statsHolder: {fileID: 11400000, guid: 26781fc117df39940a83fa7abeb48b72, type: 2}
 --- !u!1 &743364115
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ namespace TD.Database
     public class MonsterStats : BaseStats
     {
 
-        public VariableFlag.Path strategy;
+        public VariableFlag.Strategy strategy;
 
         public float value;
         public int hp;
@@ -27,5 +27,6 @@ namespace TD.Database
         public SkillStats[] skills;
 
         public string sprite_id;
+        public RuntimeAnimatorController animator;
     }
 }

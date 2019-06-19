@@ -4,6 +4,7 @@ using UnityEngine;
 using TD.Map;
 using TD.Unit;
 using TD.Database;
+using TD.AI;
 
 public class DummyMonsterGeneator : MonoBehaviour
 {
@@ -17,13 +18,21 @@ public class DummyMonsterGeneator : MonoBehaviour
     GameUnitManager _gameUnitManager;
 
     [SerializeField]
-    MonsterStats[] _spawnMonster;
+    StatsHolder _statsHolder;
+
+    List<MonsterStats> _monsterStats;
 
     Camera _camera;
+
+    GameStrategyMapper _strategyMapper; 
 
     private void Start()
     {
         _camera = Camera.main;
+        _strategyMapper = new GameStrategyMapper();
+
+        if (_statsHolder != null)
+            _monsterStats = _statsHolder.FindObjectByType<MonsterStats>();
     }
 
 #if UNITY_EDITOR
@@ -46,21 +55,20 @@ public class DummyMonsterGeneator : MonoBehaviour
 
     private void GenerateMonster(TileNode tileNode) {
 
-        if (_spawnMonster == null || _spawnMonster.Length <= 0)
+        if (_monsterStats == null || _monsterStats.Count <= 0)
             return;
 
-        MonsterStats monsterStats = _spawnMonster[Random.Range(0, _spawnMonster.Length)];
+        MonsterStats monsterStats = _monsterStats[Random.Range(0, _monsterStats.Count)];
 
         GameObject monsterObject = Pooling.PoolManager.instance.ReuseObject(VariableFlag.Pooling.MonsterID);
         if (monsterObject != null) {
             monsterObject.transform.position = tileNode.WorldSpace;
+            BaseStrategy strategy = _strategyMapper.GetStrategy(monsterStats.strategy);
 
             MonsterUnit dummyUnit = monsterObject.GetComponent<MonsterUnit>();
-            dummyUnit.SetUp(monsterStats, _mapGrid, _mapHolder);
+            dummyUnit.SetUp(monsterStats, strategy, _mapGrid, _mapHolder);
 
             _gameUnitManager.AddUnit(dummyUnit);
-
         }
     }
-
 }

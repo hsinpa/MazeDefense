@@ -22,7 +22,7 @@ public class FlowField
     //    t.Start();
     //}
 
-    public async Task<TileNode[,]> Execute(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Path pathTag) {
+    public async Task<TileNode[,]> Execute(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Strategy pathTag) {
 
         var frontier = new Queue<TileNode>();
 

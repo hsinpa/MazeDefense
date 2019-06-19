@@ -4,6 +4,7 @@ using UnityEngine;
 using TD.Map;
 using TD.Database;
 using Pooling;
+using TD.AI;
 
 namespace TD.Unit {
     public class MonsterUnit : MonoBehaviour, UnitInterface
@@ -33,22 +34,28 @@ namespace TD.Unit {
         }
         float _hp;
 
-        private enum ActiveState
+        public enum ActiveState
         {
-            Idle, Action
+            Idle, Action, Attack
         }
-        private ActiveState currentState;
+        public ActiveState currentState;
 
-        private VariableFlag.Path strategy;
+        [SerializeField]
+        private Animator _animator;
 
-        public void SetUp( MonsterStats monsterStats, MapGrid mapGrid, MapBlockManager mapBlockManager)
+        private BaseStrategy _strategy;
+
+        public void SetUp( MonsterStats monsterStats, BaseStrategy strategy, MapGrid mapGrid, MapBlockManager mapBlockManager)
         {
             _monsterStats = monsterStats;
+            _strategy = strategy;
             _mapGrid = mapGrid;
             _mapBlockManager = mapBlockManager;
             currentState = ActiveState.Action;
-
+            
             _hp = _monsterStats.hp;
+
+            SetAnimator(monsterStats.animator);
         }
 
         public void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback)
@@ -86,27 +93,42 @@ namespace TD.Unit {
             }
             
             UpdateActiveState(currentBlockComp);
-            AgentMove();
+
+            if (currentState == ActiveState.Action)
+            {
+                if (_strategy == null)
+                    AgentMove();
+                else {
+                    //_strategy shouldn't put any where but here, all units share the same strategy object
+                    _strategy.SetUp(this, _monsterStats, _mapGrid);
+                    _strategy.Execute(_currentTile);
+                }
+            }
 
             _currentTile = standTile;
         }
 
         private void AgentMove() {
-            if (currentState == ActiveState.Action) {
-                moveDelta.Set((_currentTile.GetFlowFieldPath(VariableFlag.Path.CastleFirst).x), 
-                                _currentTile.GetFlowFieldPath(VariableFlag.Path.CastleFirst).y, 0);
+            moveDelta.Set((_currentTile.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).x), 
+                            _currentTile.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).y, 0);
 
-                moveDelta *= Time.deltaTime;
+            moveDelta *= Time.deltaTime * _monsterStats.spd * 0.3f;
 
-                transform.position += moveDelta;
-
-            }
+            transform.position += moveDelta;
         }
 
         private void UpdateActiveState(BlockComponent blockComponent) {
             if (blockComponent != null) {
                 //Debug.Log(blockComponent.name);
                 currentState = (blockComponent.isMoving) ? ActiveState.Idle : ActiveState.Action;
+            }
+        }
+
+        private void SetAnimator(RuntimeAnimatorController targetAnimator) {
+            if (targetAnimator != null && _animator != null) {
+
+                _animator.runtimeAnimatorController = targetAnimator ;
+
             }
         }
 
