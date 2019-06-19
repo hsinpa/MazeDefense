@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TD.Map;
 using TD.Unit;
+using TD.Database;
 
 public class DummyMonsterGeneator : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class DummyMonsterGeneator : MonoBehaviour
     GameUnitManager _gameUnitManager;
 
     [SerializeField]
-    Pooling.STPMonster _spawnMonster;
+    MonsterStats[] _spawnMonster;
 
     Camera _camera;
 
@@ -25,6 +26,7 @@ public class DummyMonsterGeneator : MonoBehaviour
         _camera = Camera.main;
     }
 
+#if UNITY_EDITOR
     private void Update()
     {
         if (Input.GetMouseButtonDown(1)) {
@@ -40,14 +42,21 @@ public class DummyMonsterGeneator : MonoBehaviour
             }
         }
     }
+#endif
 
     private void GenerateMonster(TileNode tileNode) {
-        GameObject monsterObject = Pooling.PoolManager.instance.ReuseObject(_spawnMonster._id);
+
+        if (_spawnMonster == null || _spawnMonster.Length <= 0)
+            return;
+
+        MonsterStats monsterStats = _spawnMonster[Random.Range(0, _spawnMonster.Length)];
+
+        GameObject monsterObject = Pooling.PoolManager.instance.ReuseObject(VariableFlag.Pooling.MonsterID);
         if (monsterObject != null) {
             monsterObject.transform.position = tileNode.WorldSpace;
 
             MonsterUnit dummyUnit = monsterObject.GetComponent<MonsterUnit>();
-            dummyUnit.SetUp(_spawnMonster, _mapGrid, _mapHolder);
+            dummyUnit.SetUp(monsterStats, _mapGrid, _mapHolder);
 
             _gameUnitManager.AddUnit(dummyUnit);
 

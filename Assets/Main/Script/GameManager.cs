@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
         _gameUnitManager.SetUp(_blockManager, _mapGrid);
         _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid, _blockManager, poolingTheme, statsHolder);
 
-        var monsterPools = poolingTheme.FindObjectByType<STPMonster>();
+        var monsterPools = statsHolder.FindObjectByType<MonsterStats>();
 
         _levelDesignManager.SetUp(_gameUnitManager, _blockManager, _mapGrid, monsterPools);
     }

@@ -20,7 +20,8 @@ public class VariableFlag
 
     public enum Path {
         CastleFirst = 0,
-        TowersFirst
+        TowersFirst,
+        MoveStraight
     }
 
 }

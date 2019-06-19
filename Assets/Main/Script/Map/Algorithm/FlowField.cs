@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using TD.Map;
 using UnityEngine;
 
@@ -9,19 +10,19 @@ public class FlowField
 
     private Vector3 zeroVector3 = new Vector3(0, 0, 0);
 
-    public void ExecuteAsyn(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Path pathTag, System.Action<TileNode[,]> callback) {
-        Thread t = new Thread(new ThreadStart(() => {
+    //public void ExecuteAsyn(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Path pathTag, System.Action<TileNode[,]> callback) {
+    //    Thread t = new Thread(new ThreadStart(() => {
 
-            tileNodes = EraseTileNextPath(tileNodes, nodeSize);
-            tileNodes = Execute(tileNodes, targetNodes, nodeSize, pathTag);
+    //        tileNodes = EraseTileNextPath(tileNodes, nodeSize);
+    //        tileNodes = Execute(tileNodes, targetNodes, nodeSize, pathTag);
 
-            if (callback != null)
-                callback(tileNodes);
-        }));
-        t.Start();
-    }
+    //        if (callback != null)
+    //            callback(tileNodes);
+    //    }));
+    //    t.Start();
+    //}
 
-    public TileNode[,] Execute(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Path pathTag) {
+    public async Task<TileNode[,]> Execute(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Path pathTag) {
 
         var frontier = new Queue<TileNode>();
 
@@ -38,7 +39,6 @@ public class FlowField
         //Hard code exit points
         //frontier.Enqueue(tileNodes[4, 0]);
         //frontier.Enqueue(tileNodes[5, 0]);
-
         while (length > 0) {
             TileNode current = frontier.Dequeue();
             length--;

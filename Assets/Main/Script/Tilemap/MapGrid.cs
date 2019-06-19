@@ -111,24 +111,19 @@ namespace TD.Map {
             return unitList;
         }
 
-        public void RefreshMonsterFlowFieldMap() {
+        public async void RefreshMonsterFlowFieldMap() {
 
-            //Path to 
             var hardCodeTargetNodes = new TileNode[] { tilenodes[4, 0] };
-            _flowField.ExecuteAsyn(tilenodes, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Path.CastleFirst,
-                (TileNode[,] resultNodes) => {
-                tilenodes = resultNodes;
-            });
 
+            TileNode[,] resultNode = await _flowField.Execute(tilenodes, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Path.CastleFirst);
 
-            //TileNode[] towerTileNode = new TileNode[allTowerUnit.Count];
-            //for (int t = 0; t < towerTileNode.Length; t++)
-            //    towerTileNode[t] = allTowerUnit[t].currentTile;
+            TileNode[] towerTileNode = new TileNode[allTowerUnit.Count];
+            for (int t = 0; t < towerTileNode.Length; t++)
+                towerTileNode[t] = allTowerUnit[t].currentTile;
 
-            //_flowField.ExecuteAsyn(tilenodes, towerTileNode, new Vector2Int(gridWidth, gridHeight), VariableFlag.Path.TowersFirst,
-            //(TileNode[,] resultNodes) => {
-            //    tilenodes = resultNodes;
-            //});
+            resultNode = await _flowField.Execute(resultNode, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Path.CastleFirst);
+
+            tilenodes = resultNode;
         }
 
         private TileNode[,] ReorganizedTileNode(List<TileNode[,]> p_tileBlocks, Vector2Int blockSize)

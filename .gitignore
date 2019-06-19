@@ -16,6 +16,8 @@
 
 /Assets/Database/Asset/
 /Assets/Database/CSV/
+/Assets/Database/Monster/
+
 /Assets/Database/*.asset
 
 # Unity3D generated meta files

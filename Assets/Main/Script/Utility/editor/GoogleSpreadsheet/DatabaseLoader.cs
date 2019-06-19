@@ -52,6 +52,8 @@ public class DatabaseLoader : Object
         else
         {
             Debug.Log("Done");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
     }
 
@@ -67,6 +69,7 @@ public class DatabaseLoader : Object
             statsHolder.stpObjectHolder.Clear();
             CreateSkillStats(statsHolder);
             CreateTowerStats(statsHolder);
+            CreateMonsterStats(statsHolder);
         }
         else {
             Debug.LogError("[Stats]Holder.asset has not been created yet!");
@@ -144,7 +147,7 @@ public class DatabaseLoader : Object
             if (!string.IsNullOrEmpty(rawSkills))
             {
                 string[] skillArray = rawSkills.Split(new string[] { "," }, System.StringSplitOptions.None);
-                c_prefab = UpdateTowerSkill(c_prefab, statsHolder, skillArray);
+                c_prefab.skills = GetSkillFromIDs(statsHolder, skillArray);
             }
 
 
@@ -152,19 +155,19 @@ public class DatabaseLoader : Object
         }
     }
 
-    static private TowerStats UpdateTowerSkill(TowerStats c_prefab, StatsHolder statsHolder, string[] skillArray)
+    static private SkillStats[] GetSkillFromIDs(StatsHolder statsHolder, string[] skillArray)
     {
-        c_prefab.skills = new SkillStats[skillArray.Length];
+        SkillStats[] skillStats = new SkillStats[skillArray.Length];
 
         for (int k = 0; k < skillArray.Length; k++)
         {
             SkillStats findObject = statsHolder.FindObject<SkillStats>(skillArray[k]);
 
             if (findObject != null)
-                c_prefab.skills[k] = findObject;
+                skillStats[k] = findObject;
         }
 
-        return c_prefab;
+        return skillStats;
     }
 
     static private TowerStats UpdateTowerUpgradePath(TowerStats c_prefab, StatsHolder statsHolder, string[] upgradePathArray) {
@@ -183,6 +186,47 @@ public class DatabaseLoader : Object
         return c_prefab;
     }
 
+    static private void CreateMonsterStats(StatsHolder statsHolder) {
+        TextAsset csvText = (TextAsset)AssetDatabase.LoadAssetAtPath(DATABASE_FOLDER + "/CSV/database - monster.csv", typeof(TextAsset));
+        CSVFile csvFile = new CSVFile(csvText.text);
+
+        AssetDatabase.CreateFolder(DATABASE_FOLDER + "/Asset", "Monster");
+
+        int csvCount = csvFile.length;
+        for (int i = csvCount - 1; i >= 0; i--)
+        {
+            string id = csvFile.Get<string>(i, "ID");
+
+            if (string.IsNullOrEmpty(id))
+                continue;
+
+            MonsterStats c_prefab = ScriptableObjectUtility.CreateAsset<MonsterStats>(DATABASE_FOLDER + "/Asset/Monster/", "[MonsterStat] " + id);
+            EditorUtility.SetDirty(c_prefab);
+
+            c_prefab.id = id;
+            c_prefab.label = csvFile.Get<string>(i, "Label");
+            c_prefab.strategy = (VariableFlag.Path) csvFile.Get<int>(i, "Strategy");
+            c_prefab.value = csvFile.Get<float>(i, "Value");
+
+            c_prefab.hp = csvFile.Get<int>(i, "HP");
+            c_prefab.atk = csvFile.Get<float>(i, "ATK");
+            c_prefab.spd = csvFile.Get<float>(i, "SPD");
+            c_prefab.range = csvFile.Get<int>(i, "RANGE");
+            c_prefab.avgPrize = csvFile.Get<int>(i, "Prize");
+            c_prefab.sprite_id = csvFile.Get<string>(i, "Sprite ID");
+
+            string rawSkills = csvFile.Get<string>(i, "Skill");
+            if (!string.IsNullOrEmpty(rawSkills))
+            {
+                string[] skillArray = rawSkills.Split(new string[] { "," }, System.StringSplitOptions.None);
+                c_prefab.skills = GetSkillFromIDs(statsHolder, skillArray);
+            }
+
+
+            statsHolder.stpObjectHolder.Add(c_prefab);
+        }
+    }
+
 
 
     [MenuItem("Assets/MazeDefense/Database/Reset", false, 0)]
@@ -199,6 +243,7 @@ public class DatabaseLoader : Object
         UnityDownloadGoogleSheet(new Dictionary<string, string> {
             { "database - tower", Regex.Replace( url, ":id", "0")},
             { "database - skill", Regex.Replace( url, ":id", "848255666")},
+            { "database - monster", Regex.Replace( url, ":id", "557977291")},
         });
     }
 

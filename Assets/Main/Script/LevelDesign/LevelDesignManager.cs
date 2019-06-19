@@ -4,6 +4,7 @@ using UnityEngine;
 using TD.Map;
 using TD.Unit;
 using Pooling;
+using TD.Database;
 
 namespace TD.AI {
     public class LevelDesignManager : MonoBehaviour
@@ -13,7 +14,7 @@ namespace TD.AI {
         private MapGrid _mapGrid;
 
         private BlockComponent _entranceComponent;
-        private List<STPMonster> _monsterUnits;
+        private List<MonsterStats> _monsterUnits;
         private int monsterLength;
 
         [SerializeField]
@@ -27,7 +28,7 @@ namespace TD.AI {
 
         private float recordTime;
 
-        public void SetUp(GameUnitManager gameUnitManager, MapBlockManager mapHolder, MapGrid mapGrid, List<STPMonster> monsterUnits)
+        public void SetUp(GameUnitManager gameUnitManager, MapBlockManager mapHolder, MapGrid mapGrid, List<MonsterStats> monsterUnits)
         {
             _gameUnitManager = gameUnitManager;
             _mapHolder = mapHolder;
@@ -68,13 +69,13 @@ namespace TD.AI {
 
             for (int s = 0; s < spawnNumPerTime; s++) {
                 //Pick monster type
-                STPMonster randomMonster = _monsterUnits[Random.Range(0, monsterLength)];
+                MonsterStats randomMonster = _monsterUnits[Random.Range(0, monsterLength)];
 
                 //Pick start position
                 int randomX = Random.Range(0, _entranceComponent.fullSize.x);
                 TileNode randomTileNode = _entranceComponent.tilemapReader.nodes[randomX, _entranceComponent.fullSize.y - 1];
 
-                GameObject monsterObject = PoolManager.instance.ReuseObject(randomMonster._id);
+                GameObject monsterObject = PoolManager.instance.ReuseObject(VariableFlag.Pooling.MonsterID);
                 if (monsterObject != null)
                 {
                     MonsterUnit unit = monsterObject.GetComponent<MonsterUnit>();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TD.Map;
+using TD.Database;
 using Pooling;
 
 namespace TD.Unit {
@@ -23,7 +24,7 @@ namespace TD.Unit {
 
         private BlockComponent currentBlockComp;
 
-        private STPMonster _stpMonster;
+        private MonsterStats _monsterStats;
 
         public bool isActive { get { return OnDestroyCallback != null; } }
 
@@ -32,21 +33,22 @@ namespace TD.Unit {
         }
         float _hp;
 
-        private enum StupidState
+        private enum ActiveState
         {
-            Idle, PathFirst, TowerFirst
+            Idle, Action
         }
+        private ActiveState currentState;
 
-        private StupidState currentStatus;
+        private VariableFlag.Path strategy;
 
-        public void SetUp(STPMonster stpMonster, MapGrid mapGrid, MapBlockManager mapBlockManager)
+        public void SetUp( MonsterStats monsterStats, MapGrid mapGrid, MapBlockManager mapBlockManager)
         {
-            _stpMonster = stpMonster;
+            _monsterStats = monsterStats;
             _mapGrid = mapGrid;
             _mapBlockManager = mapBlockManager;
-            currentStatus = StupidState.PathFirst;
+            currentState = ActiveState.Action;
 
-            _hp = _stpMonster.hp;
+            _hp = _monsterStats.hp;
         }
 
         public void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback)
@@ -60,7 +62,8 @@ namespace TD.Unit {
 
             Vector3 unitPosition = transform.position;
 
-            TileNode standTile = _mapGrid.GetTileNodeByWorldPos(transform.position);
+            //Update map information
+            TileNode standTile = _mapGrid.GetTileNodeByWorldPos(unitPosition);
 
             if (standTile.TilemapMember != null && standTile.GridIndex != _currentTile.GridIndex )
             {
@@ -70,7 +73,8 @@ namespace TD.Unit {
                 _mapGrid.EditUnitState(standTile.GridIndex, this, true);
             }
 
-            BlockComponent blockComponent = _mapBlockManager.GetMapComponentByPos(transform.position);
+            //Add self under mapObject 
+            BlockComponent blockComponent = _mapBlockManager.GetMapComponentByPos(unitPosition);
             if (blockComponent != null && currentBlockComp != blockComponent)
             {
                 if (currentBlockComp == null || (!currentBlockComp.isMoving && !blockComponent.isMoving))
@@ -81,15 +85,14 @@ namespace TD.Unit {
                 }
             }
             
-
-            ChooseTactics(currentBlockComp);
+            UpdateActiveState(currentBlockComp);
             AgentMove();
 
             _currentTile = standTile;
         }
 
         private void AgentMove() {
-            if (currentStatus == StupidState.PathFirst) {
+            if (currentState == ActiveState.Action) {
                 moveDelta.Set((_currentTile.GetFlowFieldPath(VariableFlag.Path.CastleFirst).x), 
                                 _currentTile.GetFlowFieldPath(VariableFlag.Path.CastleFirst).y, 0);
 
@@ -100,10 +103,10 @@ namespace TD.Unit {
             }
         }
 
-        private void ChooseTactics(BlockComponent blockComponent) {
+        private void UpdateActiveState(BlockComponent blockComponent) {
             if (blockComponent != null) {
                 //Debug.Log(blockComponent.name);
-                currentStatus = (blockComponent.isMoving) ? StupidState.Idle : StupidState.PathFirst;
+                currentState = (blockComponent.isMoving) ? ActiveState.Idle : ActiveState.Action;
             }
         }
 
