@@ -96,9 +96,11 @@ namespace TD.Unit {
 
             if (currentState == ActiveState.Action)
             {
+                //Fallback function
                 if (_strategy == null)
                     AgentMove();
-                else {
+                else
+                {
                     //_strategy shouldn't put any where but here, all units share the same strategy object
                     _strategy.SetUp(this, _monsterStats, _mapGrid);
                     _strategy.Execute(_currentTile);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TD.Map;
 using TD.Database;
+using TD.Unit;
 
 namespace TD.AI {
     public class StrategyCastleFirst : BaseStrategy
@@ -16,13 +17,16 @@ namespace TD.AI {
             strategy = ChooseMoveStrategy(currentNode);
             AgentMove(currentNode, strategy);
 
+            Debug.Log(strategy.ToString("g"));
+
+            //GO Destroy IT
             if (currentNode.towerUnit != null && currentNode.towerUnit.isActive) {
-                
+                AttackOnTower(currentNode.towerUnit);
             }
         }
 
-        private void AttackOnTower() {
-
+        protected override void AttackOnTower(TowerUnit towerUnit) {
+            Debug.Log("Attack " + towerUnit.name);
         }
 
         private VariableFlag.Strategy ChooseMoveStrategy(TileNode currentNode) {
@@ -45,8 +49,8 @@ namespace TD.AI {
             if (strategy == VariableFlag.Strategy.None)
                 return;
 
-            moveDelta.Set((currentNode.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).x),
-                            currentNode.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).y, 0);
+            moveDelta.Set((currentNode.GetFlowFieldPath(strategy).x),
+                            currentNode.GetFlowFieldPath(strategy).y, 0);
 
             moveDelta *= Time.deltaTime * monsterStat.spd * 0.3f;
 

@@ -8,6 +8,9 @@ using TD.AI;
 
 public class DummyMonsterGeneator : MonoBehaviour
 {
+    [SerializeField, Range(0, 1)]
+    float spawnSpeed = 0.2f;
+
     [SerializeField]
     MapGrid _mapGrid;
 
@@ -24,7 +27,9 @@ public class DummyMonsterGeneator : MonoBehaviour
 
     Camera _camera;
 
-    GameStrategyMapper _strategyMapper; 
+    GameStrategyMapper _strategyMapper;
+
+    private float recordSpawnTime;
 
     private void Start()
     {
@@ -38,14 +43,15 @@ public class DummyMonsterGeneator : MonoBehaviour
 #if UNITY_EDITOR
     private void Update()
     {
-        if (Input.GetMouseButtonDown(1)) {
+        if (Input.GetMouseButton(1) && LevelDesignManager.Time > recordSpawnTime) {
+            recordSpawnTime = LevelDesignManager.Time + spawnSpeed;
 
             var worldPos = (_camera.ScreenToWorldPoint(Input.mousePosition));
             worldPos.Set(worldPos.x, worldPos.y, 0);
 
             var tile = _mapGrid.GetTileNodeByWorldPos(worldPos);
 
-            if (tile.TileBase != null)
+            if (tile.TileBase != null && (tile.towerUnit == null || !tile.towerUnit.isActive) && tile.IsWalkable)
             {
                 GenerateMonster(tile);
             }
@@ -58,7 +64,7 @@ public class DummyMonsterGeneator : MonoBehaviour
         if (_monsterStats == null || _monsterStats.Count <= 0)
             return;
 
-        MonsterStats monsterStats = _monsterStats[Random.Range(0, _monsterStats.Count)];
+        MonsterStats monsterStats = _monsterStats[_monsterStats.Count - 1];
 
         GameObject monsterObject = Pooling.PoolManager.instance.ReuseObject(VariableFlag.Pooling.MonsterID);
         if (monsterObject != null) {

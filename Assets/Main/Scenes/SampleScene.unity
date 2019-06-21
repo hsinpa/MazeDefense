@@ -588,6 +588,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585b6a2cb869c11429859bd5687ac5d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnSpeed: 0.125
   _mapGrid: {fileID: 1313335100}
   _mapHolder: {fileID: 1313335097}
   _gameUnitManager: {fileID: 743619301}

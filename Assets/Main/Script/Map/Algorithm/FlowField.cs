@@ -67,6 +67,18 @@ public class FlowField
         return tileNodes;
     }
 
+    public async Task<TileNode[,]> ClearTileNodePath(TileNode[,] tileNodes, Vector2Int nodeSize) {
+        for (int x = 0; x < nodeSize.x; x++)
+        {
+            for (int y = 0; y < nodeSize.y; y++)
+            {
+                tileNodes[x, y].FlowFieldDirectionSet.Clear();
+            }
+        }
+
+        return tileNodes;
+     }
+
     public List<TileNode> GetNeighbours(TileNode[,] tileNodes, Vector2Int nodeSize, TileNode node)
     {
         List<TileNode> neighbours = new List<TileNode>();

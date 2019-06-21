@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TD.Unit;
+using System.Threading.Tasks;
 
 namespace TD.Map {
 
@@ -43,6 +44,7 @@ namespace TD.Map {
                 raw_tileData.Add(mapHolder.mapComponents[i].tilemapReader.nodes);
             }
 
+            //Clear tile node
             tilenodes = ReorganizedTileNode(raw_tileData, new Vector2Int(gridWidth, Mathf.RoundToInt(mapHolder.blockRadius.y * 2)));
 
             if (OnMapReform != null)
@@ -79,7 +81,7 @@ namespace TD.Map {
         public List<T> FindUnitsFromRange<T>(TileNode centerNode, float range) where T : class
         {
             int intRange = Mathf.RoundToInt(range);
-            List<T> unitList = new List<T>(); 
+            List<T> unitList = new List<T>();
 
             if (ValidateNodeIndex(centerNode.GridIndex.x, centerNode.GridIndex.y)) {
 
@@ -98,7 +100,7 @@ namespace TD.Map {
                         if (ValidateNodeIndex(x, y)) {
 
                             if (typeof(T) == typeof(MonsterUnit) && tilenodes[x, y].monsterUnit != null) {
-                                unitList.AddRange(tilenodes[x,y].monsterUnit as List<T>);
+                                unitList.AddRange(tilenodes[x, y].monsterUnit as List<T>);
                             } else if (typeof(T) == typeof(TowerUnit) && tilenodes[x, y].towerUnit != null)
                             {
                                 unitList.Add(tilenodes[x, y].towerUnit as T);
@@ -113,17 +115,24 @@ namespace TD.Map {
 
         public async void RefreshMonsterFlowFieldMap() {
 
-            var hardCodeTargetNodes = new TileNode[] { tilenodes[4, 0] };
+            Vector2Int fullSize = new Vector2Int(gridWidth, gridHeight);
 
-            TileNode[,] resultNode = await _flowField.Execute(tilenodes, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.CastleFirst);
+            //Remove all path sign
+            TileNode[,] resultNode = await _flowField.ClearTileNodePath(tilenodes, fullSize);
+
+            var hardCodeTargetNodes = new TileNode[] { resultNode[4, 0] };
+
+            resultNode = await _flowField.Execute(resultNode, hardCodeTargetNodes, fullSize, VariableFlag.Strategy.CastleFirst);
 
             TileNode[] towerTileNode = new TileNode[allTowerUnit.Count];
             for (int t = 0; t < towerTileNode.Length; t++)
                 towerTileNode[t] = allTowerUnit[t].currentTile;
 
-            resultNode = await _flowField.Execute(resultNode, hardCodeTargetNodes, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.CastleFirst);
+            resultNode = await _flowField.Execute(resultNode, towerTileNode, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.TowersFirst);
 
-            tilenodes = resultNode;
+            lock (tilenodes) {
+                tilenodes = resultNode;
+            }
         }
 
         private TileNode[,] ReorganizedTileNode(List<TileNode[,]> p_tileBlocks, Vector2Int blockSize)
@@ -147,7 +156,7 @@ namespace TD.Map {
 
             return tileNode;
         }
-        
+
         public TileNode GetTileNodeByWorldPos(Vector3 point)
         {
 

@@ -40,6 +40,11 @@ namespace TD.AI {
             }
         }
 
+        protected virtual void AttackOnTower(TowerUnit towerUnit )
+        {
+            
+        }
+
         public void SetUp(MonsterUnit unit, MonsterStats monsterStat, MapGrid mapGrid) {
             this.unit = unit;
             this.monsterStat = monsterStat;
