@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using TD.Map;
 
 namespace TD.AI
 {
     public class GameStrategyMapper
     {
         private Dictionary<VariableFlag.Strategy, BaseStrategy> strategyMappingTable;
+        private MapGrid _mapGrid;
 
         public GameStrategyMapper()
         {
@@ -26,8 +26,8 @@ namespace TD.AI
         {
             return new Dictionary<VariableFlag.Strategy, BaseStrategy> {
                 { VariableFlag.Strategy.CastleFirst, new StrategyCastleFirst() },
-                { VariableFlag.Strategy.TowersFirst, null },
-                { VariableFlag.Strategy.MoveStraight, null },
+                { VariableFlag.Strategy.TowersFirst, new StrategyTowerFirst() },
+                { VariableFlag.Strategy.MoveStraight, new StrategyMoveStraight() },
             };
         }
     }

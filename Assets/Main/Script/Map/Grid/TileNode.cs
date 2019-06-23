@@ -11,6 +11,7 @@ namespace TD.Map {
         public Vector2Int GridIndex { get; set; }
 
         public Vector3Int LocalPlace { get; set; }
+
         public Vector3Int TileMapPlace { get; set; }
 
         public Vector3 WorldSpace { get {
@@ -25,14 +26,22 @@ namespace TD.Map {
 
         public bool IsWalkable { get; set; }
 
-        public int Cost { get; set; }
+        public bool IsValidNode { get {
+                return TileBase != null;
+            }
+        }
 
-        //public Vector2 FlowFieldDirection { get; set; }
+        public int Cost { get; set; }
 
         public Dictionary<VariableFlag.Strategy, Vector2> FlowFieldDirectionSet { get; set; }
 
         public TowerUnit towerUnit { get; set; }
+
         public List<MonsterUnit> monsterUnit { get; set; }
+
+        public VariableFlag.CustomTileType customTileType { get; set; }
+
+        public BlockComponent BlockComponent { get; set; }
 
         public void AddFlowField(VariableFlag.Strategy pathTag, Vector2 direction) {
             if (FlowFieldDirectionSet == null)
@@ -45,10 +54,14 @@ namespace TD.Map {
         }
 
         public Vector2 GetFlowFieldPath(VariableFlag.Strategy pathTag) {
-            if (FlowFieldDirectionSet == null || !FlowFieldDirectionSet.ContainsKey(pathTag)) 
-                return Vector2.zero;
-            else
-                return FlowFieldDirectionSet[pathTag];
+
+            if (pathTag == VariableFlag.Strategy.MoveStraight)
+                return VariableFlag.Vector.Down;
+
+            if (FlowFieldDirectionSet == null || !FlowFieldDirectionSet.ContainsKey(pathTag))
+                return VariableFlag.Vector.Zero;
+            
+            return FlowFieldDirectionSet[pathTag];
         }
 
         public void AddMonsterUnit(TD.Unit.MonsterUnit unit)

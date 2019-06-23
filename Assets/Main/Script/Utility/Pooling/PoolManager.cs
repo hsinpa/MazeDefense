@@ -5,12 +5,14 @@ using UnityEngine;
 namespace Pooling {
     public class PoolManager : MonoBehaviour
     {
+
+        [SerializeField]
+        private Vector3 DisablePosition;
+
         private Dictionary<string, Queue<GameObject>> poolDictionary = new Dictionary<string, Queue<GameObject>>();
 
-        static PoolManager _instance;
-
-        private readonly Vector2 _destroyPos = new Vector2(0,0);
-
+        private static PoolManager _instance;
+        
         public static PoolManager instance
         {
             get
@@ -74,11 +76,11 @@ namespace Pooling {
 
         public void Destroy(GameObject p_gameobject)
         {
-            p_gameobject.transform.position = _destroyPos;
+            p_gameobject.transform.position = DisablePosition;
             p_gameobject.transform.SetParent(this.transform);
             SetActive(p_gameobject, false);
-
         }
+
     }
 }
 

@@ -131,9 +131,10 @@ public class DatabaseLoader : Object
             c_prefab.label = csvFile.Get<string>(i, "Label");
             c_prefab.tag = csvFile.Get<string>(i, "Tag");
 
+            c_prefab.hp = csvFile.Get<float>(i, "HP");
             c_prefab.level = csvFile.Get<int>(i, "Level");
             c_prefab.atk = csvFile.Get<float>(i, "ATK");
-            c_prefab.speed = csvFile.Get<float>(i, "SPD");
+            c_prefab.spd = csvFile.Get<float>(i, "SPD");
             c_prefab.range = csvFile.Get<float>(i, "RANGE");
             c_prefab.cost = csvFile.Get<int>(i, "COST");
 
@@ -214,6 +215,8 @@ public class DatabaseLoader : Object
             c_prefab.atk = csvFile.Get<float>(i, "ATK");
             c_prefab.spd = csvFile.Get<float>(i, "SPD");
             c_prefab.range = csvFile.Get<int>(i, "RANGE");
+            c_prefab.moveSpeed = csvFile.Get<float>(i, "Move Speed");
+
             c_prefab.avgPrize = csvFile.Get<int>(i, "Prize");
             c_prefab.sprite_id = csvFile.Get<string>(i, "Sprite ID");
 
@@ -224,7 +227,6 @@ public class DatabaseLoader : Object
                 c_prefab.skills = GetSkillFromIDs(statsHolder, skillArray);
             }
 
-            Debug.Log(string.Format(MonsterAnimatorPath, c_prefab.sprite_id));
             RuntimeAnimatorController animator = AssetDatabase.LoadAssetAtPath(string.Format(MonsterAnimatorPath, c_prefab.sprite_id), typeof(AnimatorOverrideController)) as RuntimeAnimatorController;
             if (animator != null)
                 c_prefab.animator = animator;

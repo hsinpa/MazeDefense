@@ -16,6 +16,8 @@ namespace TD.Unit
 
         public float hp => throw new System.NotImplementedException();
 
+        public TileNode currentTile { get { return default(TileNode); } }
+
         private Vector3 lastPosition;
         private Vector3 moveDelta;
         private Vector3 eulerRotation;

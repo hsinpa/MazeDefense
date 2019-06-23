@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using TD.Database;
+using TD.Unit; 
 
 namespace Utility {
 
@@ -22,6 +24,27 @@ namespace Utility {
                 );
 
             return vectorInPixels / pixelsPerUnit;
+        }
+
+        public static float GetReachTimeGivenInfo(Vector3 targetPos, Vector3 selfPos, float bulletSpeed, float constDeltaTime) {
+            float dist = Vector3.Distance(targetPos, selfPos);
+
+            return dist / (bulletSpeed * constDeltaTime * 60);
+        }
+
+        public static GameDamageManager.DMGRegistry GetDMGRegisterCard(UnitInterface target, UnitStats unitStats, float fireTime, float timeToDst)
+        {
+            GameDamageManager.DMGRegistry damageRequest = new GameDamageManager.DMGRegistry();
+
+            damageRequest.fireTime = fireTime;
+
+            damageRequest.timeToDest = timeToDst;
+
+            damageRequest.unitStats = unitStats;
+
+            damageRequest.target = target;
+
+            return damageRequest;
         }
 
 

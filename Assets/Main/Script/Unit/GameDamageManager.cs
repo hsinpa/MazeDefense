@@ -48,7 +48,7 @@ namespace TD.Unit {
                 for (int targetIndex = 0; targetIndex < targetListLength; targetIndex++) {
                     //var monster = dmgRegisterList[i].target;
                     if (targetList[targetIndex] != null && targetList[targetIndex].isActive)
-                        targetList[targetIndex].OnAttack(dmgRegisterList[i].towerStats.atk);
+                        targetList[targetIndex].OnAttack(dmgRegisterList[i].unitStats.atk);
                 }
 
                 if (dmgRegisterList[i].target != null) {
@@ -70,13 +70,13 @@ namespace TD.Unit {
             possibleTargetList.Clear();
             possibleTargetList.Add(dmgRegistry.target);
 
-            int skillLength = dmgRegistry.towerStats.skills.Length;
-            if (dmgRegistry.towerStats.skills != null && dmgRegistry.towerStats.skills.Length > 0) {
+            int skillLength = dmgRegistry.unitStats.skills.Length;
+            if (dmgRegistry.unitStats.skills != null && dmgRegistry.unitStats.skills.Length > 0) {
                 for (int s = 0; s < skillLength; s++) {
-                    BaseSkill skillWorker = _gameSkillMapper.GetSkill(dmgRegistry.towerStats.skills[s].id);
+                    BaseSkill skillWorker = _gameSkillMapper.GetSkill(dmgRegistry.unitStats.skills[s].id);
                     if (skillWorker != null) {
 
-                        possibleTargetList.AddRange(skillWorker.Execute(dmgRegistry.towerStats.skills[s], possibleTargetList, dmgRegistry, _mapBlockerManager, _mapGrid));
+                        possibleTargetList.AddRange(skillWorker.Execute(dmgRegistry.unitStats.skills[s], possibleTargetList, dmgRegistry, _mapBlockerManager, _mapGrid));
 
                     }
                 }
@@ -97,9 +97,8 @@ namespace TD.Unit {
         #endregion
 
         public struct DMGRegistry {
-            public STPTower towerInfo;
-            public TD.Database.TowerStats towerStats;
-            public MonsterUnit target;
+            public TD.Database.UnitStats unitStats;
+            public UnitInterface target;
 
             public float fireTime;
             public float timeToDest;

@@ -26,6 +26,7 @@ MonoBehaviour:
     m_Output: 0
     m_ColliderType: 1
     m_RandomTransform: 0
-  cost: 0
+  cost: 1
   walkable: 0
+  tileType: 1
   customData: []

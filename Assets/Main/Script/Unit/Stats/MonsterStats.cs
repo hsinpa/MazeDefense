@@ -1,19 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TD.Database
 {
-    public class MonsterStats : BaseStats
+    public class MonsterStats : UnitStats
     {
 
         public VariableFlag.Strategy strategy;
 
         public float value;
-        public int hp;
-        public float atk;
-        public float spd;
-        public float range;
+        public float moveSpeed;
 
         public float avgPrize;
         public float prize {
@@ -23,8 +18,6 @@ namespace TD.Database
                 return Mathf.Clamp(resetPrize, 5, resetPrize);
             }
         }
-
-        public SkillStats[] skills;
 
         public string sprite_id;
         public RuntimeAnimatorController animator;

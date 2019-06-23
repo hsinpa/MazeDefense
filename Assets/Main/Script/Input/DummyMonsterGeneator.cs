@@ -21,6 +21,9 @@ public class DummyMonsterGeneator : MonoBehaviour
     GameUnitManager _gameUnitManager;
 
     [SerializeField]
+    LevelDesignManager _levelDesignManager;
+
+    [SerializeField]
     StatsHolder _statsHolder;
 
     List<MonsterStats> _monsterStats;
@@ -34,6 +37,7 @@ public class DummyMonsterGeneator : MonoBehaviour
     private void Start()
     {
         _camera = Camera.main;
+        
         _strategyMapper = new GameStrategyMapper();
 
         if (_statsHolder != null)
@@ -56,6 +60,10 @@ public class DummyMonsterGeneator : MonoBehaviour
                 GenerateMonster(tile);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Space) && _levelDesignManager != null) {
+            _levelDesignManager.CallEveryoneReady();
+        }
     }
 #endif
 
@@ -64,7 +72,7 @@ public class DummyMonsterGeneator : MonoBehaviour
         if (_monsterStats == null || _monsterStats.Count <= 0)
             return;
 
-        MonsterStats monsterStats = _monsterStats[_monsterStats.Count - 1];
+        MonsterStats monsterStats = _monsterStats[0];
 
         GameObject monsterObject = Pooling.PoolManager.instance.ReuseObject(VariableFlag.Pooling.MonsterID);
         if (monsterObject != null) {
@@ -72,7 +80,7 @@ public class DummyMonsterGeneator : MonoBehaviour
             BaseStrategy strategy = _strategyMapper.GetStrategy(monsterStats.strategy);
 
             MonsterUnit dummyUnit = monsterObject.GetComponent<MonsterUnit>();
-            dummyUnit.SetUp(monsterStats, strategy, _mapGrid, _mapHolder);
+            dummyUnit.SetUp(monsterStats, strategy, _mapGrid, _mapHolder, _gameUnitManager.gameDamageManager);
 
             _gameUnitManager.AddUnit(dummyUnit);
         }

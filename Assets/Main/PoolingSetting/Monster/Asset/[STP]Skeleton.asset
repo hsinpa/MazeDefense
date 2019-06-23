@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: the_monster
   _tag: Monster
-  poolingNum: 30
+  poolingNum: 50
   prefab: {fileID: 448340967882919444, guid: e6b2c2fbeefab3f47945c8d2268c3e68, type: 3}
   hp: 5
   def: 5

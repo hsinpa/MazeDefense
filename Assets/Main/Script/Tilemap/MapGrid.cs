@@ -21,13 +21,15 @@ namespace TD.Map {
 
         public System.Action OnMapReform;
 
+        public TileNode[] DestinationNode { get { return _DestinationNode; } }
+        private TileNode[] _DestinationNode;
+        
         public void SetUp()
         {
             raw_tileData = new List<TileNode[,]>();
             mapHolder = this.GetComponent<MapBlockManager>();
             mapHolder.OnAddMapComponent += OnAddBlock;
             _flowField = new FlowField();
-
         }
 
         public void ReformMap()
@@ -41,7 +43,8 @@ namespace TD.Map {
 
             for (int i = mLength - 1; i >= 0; i--)
             {
-                raw_tileData.Add(mapHolder.mapComponents[i].tilemapReader.nodes);
+                TilemapReader tilemapReader = mapHolder.mapComponents[i].tilemapReader;
+                raw_tileData.Add(tilemapReader.nodes);
             }
 
             //Clear tile node
@@ -120,9 +123,7 @@ namespace TD.Map {
             //Remove all path sign
             TileNode[,] resultNode = await _flowField.ClearTileNodePath(tilenodes, fullSize);
 
-            var hardCodeTargetNodes = new TileNode[] { resultNode[4, 0] };
-
-            resultNode = await _flowField.Execute(resultNode, hardCodeTargetNodes, fullSize, VariableFlag.Strategy.CastleFirst);
+            resultNode = await _flowField.Execute(resultNode, DestinationNode, fullSize, VariableFlag.Strategy.CastleFirst);
 
             TileNode[] towerTileNode = new TileNode[allTowerUnit.Count];
             for (int t = 0; t < towerTileNode.Length; t++)
@@ -139,7 +140,7 @@ namespace TD.Map {
         {
             int blockLength = p_tileBlocks.Count;
             TileNode[,] tileNode = new TileNode[blockSize.x, blockSize.y * blockLength];
-            int tOffset = blockLength - 1;
+            List<TileNode> DestinationList = new List<TileNode>();
 
             for (int t = 0; t < blockLength; t++)
             {
@@ -150,9 +151,15 @@ namespace TD.Map {
                     {
                         p_tileBlocks[t][x, y].GridIndex = new Vector2Int(x, y + ((t) * blockSize.y));
                         tileNode[x, y + ((t) * blockSize.y)] = p_tileBlocks[t][x, y];
+
+                        //Update Destination node
+                        if (p_tileBlocks[t][x, y].customTileType == VariableFlag.CustomTileType.Destination)
+                            DestinationList.Add(p_tileBlocks[t][x, y]);
                     }
                 }
             }
+
+            _DestinationNode = DestinationList.ToArray();
 
             return tileNode;
         }
@@ -163,20 +170,6 @@ namespace TD.Map {
             //Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             int yOffset = Mathf.CeilToInt(mapHolder.minPos.y - mapHolder.cameraTop);
             var worldPoint = new Vector3Int(Mathf.FloorToInt(point.x + (mapHolder.blockRadius.x)), Mathf.FloorToInt(point.y + yOffset), 0);
-
-            //float fullHeight = mapHolder.sampleSize.y * 2;
-            //int componentIndex = Mathf.FloorToInt(worldPoint.y / (fullHeight));
-            //int tileNodeIndex = Mathf.RoundToInt(worldPoint.y % (fullHeight));
-
-            //if (componentIndex >= 0 && componentIndex < tilenode.Count &&
-            //    worldPoint.x >= 0 && worldPoint.x < mapHolder.sampleSize.x * 2 &&
-            //    tileNodeIndex >= 0 && tileNodeIndex < fullHeight
-            //    )
-            //{
-            //    var selectedNode = tilenode[componentIndex][worldPoint.x, tileNodeIndex];
-
-            //    return (selectedNode);
-            //}
 
             if (ValidateNodeIndex(worldPoint.x, worldPoint.y))
             {
@@ -197,6 +190,13 @@ namespace TD.Map {
 
         private bool ValidateNodeIndex(int x, int y) {
             return (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight);
+        }
+
+        public TileNode FindTileNodeByIndex(Vector2Int gridIndex) {
+            if (!ValidateNodeIndex(gridIndex.x, gridIndex.y))
+                return default(TileNode);
+
+            return tilenodes[gridIndex.x, gridIndex.y];
         }
 
         private void OnDestroy()

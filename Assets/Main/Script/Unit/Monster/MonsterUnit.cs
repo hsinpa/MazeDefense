@@ -9,17 +9,17 @@ using TD.AI;
 namespace TD.Unit {
     public class MonsterUnit : MonoBehaviour, UnitInterface
     {
-        public GameObject unitObject { get { return gameObject; } }
 
+        #region Private Parameter
         private MapGrid _mapGrid;
 
         private MapBlockManager _mapBlockManager;
 
+        private GameDamageManager _gameDamageManager;
+
         private Vector3 moveDelta;
 
         private System.Action<UnitInterface> OnDestroyCallback;
-
-        public TileNode currentTile { get { return _currentTile; } }
 
         private TileNode _currentTile;
 
@@ -27,33 +27,48 @@ namespace TD.Unit {
 
         private MonsterStats _monsterStats;
 
-        public bool isActive { get { return OnDestroyCallback != null; } }
+        [SerializeField]
+        private Animator _animator;
 
-        public float hp {
-            get { return _hp; } 
+        private BaseStrategy _strategy;
+        private VariableFlag.Strategy _currentStrategy = VariableFlag.Strategy.None;
+        private int _uniqueUnitID;
+        #endregion
+
+        #region Public Parameter
+        public GameObject unitObject { get { return gameObject; } }
+
+        public TileNode currentTile { get { return _currentTile; } }
+
+        public float hp
+        {
+            get { return _hp; }
         }
         float _hp;
 
         public enum ActiveState
         {
-            Idle, Action, Attack
+            Idle, Action
         }
         public ActiveState currentState;
+        public bool isActive { get { return OnDestroyCallback != null; } }
 
-        [SerializeField]
-        private Animator _animator;
+        
+        #endregion
 
-        private BaseStrategy _strategy;
-
-        public void SetUp( MonsterStats monsterStats, BaseStrategy strategy, MapGrid mapGrid, MapBlockManager mapBlockManager)
+        public void SetUp( MonsterStats monsterStats, BaseStrategy strategy, MapGrid mapGrid, MapBlockManager mapBlockManager, 
+                        GameDamageManager gameDamageManager)
         {
             _monsterStats = monsterStats;
             _strategy = strategy;
             _mapGrid = mapGrid;
             _mapBlockManager = mapBlockManager;
+            _gameDamageManager = gameDamageManager;
+
             currentState = ActiveState.Action;
             
             _hp = _monsterStats.hp;
+            _uniqueUnitID = gameObject.GetInstanceID();
 
             SetAnimator(monsterStats.animator);
         }
@@ -102,8 +117,11 @@ namespace TD.Unit {
                 else
                 {
                     //_strategy shouldn't put any where but here, all units share the same strategy object
-                    _strategy.SetUp(this, _monsterStats, _mapGrid);
-                    _strategy.Execute(_currentTile);
+                    _strategy.SetUp(this, _uniqueUnitID, _monsterStats, _mapGrid, _gameDamageManager);
+
+                    _currentStrategy = _strategy.Think(_currentTile, _currentStrategy);
+
+                    _strategy.Execute(_currentTile, _currentStrategy);
                 }
             }
 
@@ -114,7 +132,7 @@ namespace TD.Unit {
             moveDelta.Set((_currentTile.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).x), 
                             _currentTile.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).y, 0);
 
-            moveDelta *= Time.deltaTime * _monsterStats.spd * 0.3f;
+            moveDelta *= Time.deltaTime * _monsterStats.moveSpeed * 0.3f;
 
             transform.position += moveDelta;
         }

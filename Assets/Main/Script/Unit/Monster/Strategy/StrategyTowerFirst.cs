@@ -5,13 +5,13 @@ using TD.Map;
 using TD.Database;
 using TD.Unit;
 
-namespace TD.AI {
-    public class StrategyCastleFirst : BaseStrategy
+namespace TD.AI
+{
+    public class StrategyTowerFirst : BaseStrategy
     {
-
         private VariableFlag.Strategy[] _strategyList = new VariableFlag.Strategy[] {
-            VariableFlag.Strategy.CastleFirst,
-            VariableFlag.Strategy.TowersFirst
+            VariableFlag.Strategy.TowersFirst,
+            VariableFlag.Strategy.CastleFirst
         };
 
         private VariableFlag.Strategy _fallbackStrategy = VariableFlag.Strategy.None;

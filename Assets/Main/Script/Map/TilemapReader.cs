@@ -26,7 +26,6 @@ public class TilemapReader
     public void ReadGrid()
     {
         int length = mapComponent.tilemaps.Length;
-
         for (int i = 0; i < length; i++)
         {
             Tilemap tile = mapComponent.tilemaps[i];
@@ -62,12 +61,14 @@ public class TilemapReader
         node.IsWalkable = true;
         node.Cost = 1;
         node.FlowFieldDirectionSet = new Dictionary<VariableFlag.Strategy, Vector2>();
+        node.BlockComponent = mapComponent;
 
         if (tileBase.GetType() == typeof(CustomTile))
         {
             CustomTile customTile = (CustomTile)tileBase;
             node.IsWalkable = customTile.walkable;
             node.Cost = customTile.cost;
+            node.customTileType = customTile.tileType;
         }
 
         return node;

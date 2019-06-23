@@ -12,6 +12,7 @@ public class CustomTile : RuleTile
 
     public int cost;
     public bool walkable;
+    public VariableFlag.CustomTileType tileType;
 
     public CustomData[] customData;
 
@@ -19,9 +20,9 @@ public class CustomTile : RuleTile
     public struct CustomData
     {
         public float effect;
-        public float id;
+        public int id;
 
-        public CustomData(float effect, float id)
+        public CustomData(float effect, int id)
         {
             this.effect = effect;
             this.id = id;

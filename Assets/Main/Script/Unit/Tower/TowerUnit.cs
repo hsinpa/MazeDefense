@@ -5,6 +5,8 @@ using Pooling;
 using System.Linq;
 using TD.Map;
 using TD.Database;
+using Utility;
+using TD.AI;
 
 namespace TD.Unit {
     public class TowerUnit : MonoBehaviour, UnitInterface
@@ -38,11 +40,19 @@ namespace TD.Unit {
         bool fireReady = false;
         float recordFrequency;
 
+        public float hp
+        {
+            get { return _hp; }
+        }
+        float _hp;
+
+
         public void SetUp(TowerStats towerStats, STPTower stpTower, Sprite towerSprite, MapGrid mapGrid, 
             System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile) {
             _towerStats = towerStats;
             _stpTower = stpTower;
             _mapGrid = mapGrid;
+            _hp = towerStats.hp;
 
             SpriteRenderer renderer = gunBodyObject.GetComponent<SpriteRenderer>();
             renderer.sprite = towerSprite;
@@ -112,27 +122,13 @@ namespace TD.Unit {
                     bulletUnit.transform.position = transform.position;
                     bulletUnit.SetUp(_stpTower.stpBullet, target);
 
-                    float dist = Vector3.Distance(target.transform.position, transform.position);
-                    float reachTime = dist / (_stpTower.stpBullet.moveSpeed * Time.deltaTime * 60);
 
-                    OnFireProjectile(bulletUnit, GetDMGRegisterCard(target, time, reachTime));
-                    recordFrequency = time + _stpTower.frequency;
+                    float reachTime = GeneralUtility.GetReachTimeGivenInfo(target.transform.position, transform.position,
+                                                                            _stpTower.stpBullet.moveSpeed, LevelDesignManager.DeltaTime);
+                    OnFireProjectile(bulletUnit, GeneralUtility.GetDMGRegisterCard(target, _towerStats, time, reachTime));
+                    recordFrequency = time + _towerStats.spd;
                 }
             }
-        }
-
-        private GameDamageManager.DMGRegistry GetDMGRegisterCard(MonsterUnit target, float fireTime, float timeToDst) {
-            GameDamageManager.DMGRegistry damageRequest = new GameDamageManager.DMGRegistry();
-
-            damageRequest.fireTime = fireTime;
-            damageRequest.timeToDest = timeToDst;
-
-            damageRequest.towerInfo = _stpTower;
-            damageRequest.towerStats = _towerStats;
-
-            damageRequest.target = target;
-
-            return damageRequest;
         }
 
         private MonsterUnit UpdateTargetState() {
@@ -157,7 +153,13 @@ namespace TD.Unit {
 
         public void OnAttack(float dmg)
         {
-            throw new System.NotImplementedException();
+            _hp -= dmg;
+
+            Debug.Log("Under attack HP Leave" + _hp);
+
+            if (_hp <= 0)
+                Destroy();
+
         }
 
         private MonsterUnit FindTheClosestUnit(List<MonsterUnit> monsterUnits) {

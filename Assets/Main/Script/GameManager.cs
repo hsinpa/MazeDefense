@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
         _gameUnitManager.Reset();
         _blockManager.ReadTilemap();
 
+
         //_levelDesignManager.CallEveryoneReady();
     }
 
