@@ -5,10 +5,13 @@ using TD.Map;
 using TD.Unit;
 using Pooling;
 using TD.Database;
+using System.Threading;
 
 namespace TD.AI {
     public class LevelDesignManager : MonoBehaviour
     {
+        private LevelDirector _levelDirector;
+
         private GameUnitManager _gameUnitManager;
         private MapBlockManager _mapHolder;
         private MapGrid _mapGrid;
@@ -17,6 +20,8 @@ namespace TD.AI {
         private BlockComponent _entranceComponent;
         private List<MonsterStats> _monsterUnits;
         private int monsterLength;
+
+        private Queue<MonsterStats> _spawnQueue;
 
         public static float Time, DeltaTime;
 
@@ -33,12 +38,16 @@ namespace TD.AI {
 
         public void SetUp(GameUnitManager gameUnitManager, MapBlockManager mapHolder, MapGrid mapGrid, List<MonsterStats> monsterUnits)
         {
+            _levelDirector = new LevelDirector(gameUnitManager, monsterUnits, PoolManager.instance.GetObjectLength(VariableFlag.Pooling.MonsterID) );
+            _spawnQueue = new Queue<MonsterStats>();
             _gameUnitManager = gameUnitManager;
             _mapHolder = mapHolder;
             _mapGrid = mapGrid;
             _monsterUnits = monsterUnits;
             _strategyMapper = new GameStrategyMapper();
             monsterLength = _monsterUnits.Count;
+
+            _levelDirector.OnCallReinforcement += CallReinforcement;
         }
 
         public void CallEveryoneReady() {
@@ -62,21 +71,57 @@ namespace TD.AI {
             Time = UnityEngine.Time.time;
             DeltaTime = UnityEngine.Time.deltaTime;
 
-            if (recordTime > spawnStageLastSecond || _entranceComponent == null)
-                return;
+            if (_entranceComponent != null)
+                _levelDirector.OnUpdate();
 
-            if (recordTime < Time) {
-                Spawn();
+            //if (recordTime > spawnStageLastSecond || _entranceComponent == null)
+            //    return;
+
+            if (recordTime < Time)
+            {
+                SpawnQueueMonster();
                 recordTime = Time + spawnStageFrequncy;
             }
         }
 
-        private void Spawn() {
+        private void CallReinforcement(LevelDirector.UnitStructure unitStructure) {
+
+            Thread t = new Thread(new ThreadStart(() => {
+
+                lock (_spawnQueue) {
+                    foreach (KeyValuePair<MonsterStats, int> item in unitStructure.unitDict)
+                    {
+                        for (int i = 0; i < item.Value; i++)
+                        {
+                            _spawnQueue.Enqueue(item.Key);
+                        }
+                    }
+                }
+            }));
+
+            t.Start();
+
+        }
+
+        private void SpawnQueueMonster()
+        {
+            int queueLength = _spawnQueue.Count;
             int spawnNumPerTime = Random.Range(1, 4);
 
-            for (int s = 0; s < spawnNumPerTime; s++) {
-                //Pick monster type
-                MonsterStats randomMonster = _monsterUnits[Random.Range(0, monsterLength)];
+            for (int s = 0; s < spawnNumPerTime; s++)
+            {
+                if (s < queueLength) {
+                    Spawn(_spawnQueue.Dequeue());
+                }
+            }
+        }
+
+        private void Spawn(MonsterStats monster) {
+            //int spawnNumPerTime = Random.Range(1, 4);
+
+            //for (int s = 0; s < spawnNumPerTime; s++) {
+            //    //Pick monster type
+            //    MonsterStats randomMonster = _monsterUnits[Random.Range(0, monsterLength)];
 
                 //Pick start position
                 int randomX = Random.Range(0, _entranceComponent.fullSize.x);
@@ -85,14 +130,22 @@ namespace TD.AI {
                 GameObject monsterObject = PoolManager.instance.ReuseObject(VariableFlag.Pooling.MonsterID);
                 if (monsterObject != null)
                 {
-                    BaseStrategy strategy = _strategyMapper.GetStrategy(randomMonster.strategy);
+                    BaseStrategy strategy = _strategyMapper.GetStrategy(monster.strategy);
 
                     MonsterUnit unit = monsterObject.GetComponent<MonsterUnit>();
                     unit.transform.position = randomTileNode.WorldSpace;
-                    unit.SetUp(randomMonster, strategy, _mapGrid, _mapHolder, _gameUnitManager.gameDamageManager);
+                    unit.SetUp(monster, strategy, _mapGrid, _mapHolder, _gameUnitManager.gameDamageManager);
                     _gameUnitManager.AddUnit(unit);
                 }
-            }
+            //}
+        }
+
+        public void Reset()
+        {
+            _spawnQueue.Clear();
+            if (_levelDirector != null)
+                _levelDirector.OnCallReinforcement -= CallReinforcement;
+
         }
 
     }

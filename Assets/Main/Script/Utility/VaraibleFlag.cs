@@ -18,6 +18,11 @@ public class VariableFlag
         public const string Teleport = "skill_05";
     }
 
+    public class TowerSpriteID {
+        public const string TowerInfo = "tower_info";
+        public const string TowerSale = "tower_sale";
+    }
+
     public enum Strategy {
         None = -1,
         CastleFirst = 0,

@@ -95,7 +95,7 @@ namespace TD.AI {
         public void Execute(TileNode currentNode, VariableFlag.Strategy strategy)
         {
 
-            if (currentNode.IsValidNode && currentNode.towerUnit != null)
+            if (currentNode.towerUnit != null)
             {
                 //Enter attack mode
                 AttackOnTower(currentNode.towerUnit);
@@ -121,6 +121,7 @@ namespace TD.AI {
 
             int sLength = strategyOrder.Length;
             for (int i = 0; i < sLength; i++) {
+
                 if (currentNode.GetFlowFieldPath(strategyOrder[i]) != zeroDelta) {
                     return strategyOrder[i];
                 }

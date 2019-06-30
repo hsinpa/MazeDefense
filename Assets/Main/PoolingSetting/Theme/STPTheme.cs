@@ -10,6 +10,19 @@ namespace Pooling
     {
         public List<STPObject> stpObjectHolder = new List<STPObject>();
 
+        public int total {
+            get {
+                int count = 0;
+                int objectLength = stpObjectHolder.Count;
+
+                for (int i = 0; i < objectLength; i++)
+                {
+                    count += stpObjectHolder[i].poolingNum;
+                }
+                return count;
+            }
+        }
+
         public T FindObject<T>(string id) where T : STPObject {
             return stpObjectHolder.Find(x => x._id == id) as T;
         }

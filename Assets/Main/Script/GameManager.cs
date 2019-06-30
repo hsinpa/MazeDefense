@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
         _mapGrid.SetUp();
         _gameInputManager.SetUp(_mapGrid, _blockManager);
-        _gameUnitManager.SetUp(_blockManager, _mapGrid);
+        _gameUnitManager.SetUp(_blockManager, _mapGrid, poolingTheme.total);
         _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid, _blockManager, poolingTheme, statsHolder);
 
         var monsterPools = statsHolder.FindObjectByType<MonsterStats>();
@@ -57,8 +57,7 @@ public class GameManager : MonoBehaviour
         _gameUnitManager.Reset();
         _blockManager.ReadTilemap();
 
-
-        //_levelDesignManager.CallEveryoneReady();
+        _levelDesignManager.CallEveryoneReady();
     }
 
     private void PreparePoolingObject(STPTheme poolingTheme) {

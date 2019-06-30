@@ -25,6 +25,15 @@ namespace Pooling {
             }
         }
 
+        public int GetObjectLength(string poolKey) {
+
+            if (poolDictionary.TryGetValue(poolKey, out Queue<GameObject> result)) {
+                return result.Count;
+            }
+
+            return 0;
+        }
+
         public void CreatePool(GameObject prefab, string poolkey, int p_poolsize)
         {
 

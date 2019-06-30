@@ -47,7 +47,6 @@ public class ConstructionView : InGameUIBase
         int uiLength = _displayUiComs.Length;
         Button[] UIObjects = GetAvailableShotItemUI(uiLength);
 
-
         for (int i = 0; i < uiLength; i++) {
             int index = i;
             if (UIObjects[i] == null)
@@ -63,7 +62,7 @@ public class ConstructionView : InGameUIBase
 
             //Assign Click event
             UIObjects[i].onClick.RemoveAllListeners();
-            UIObjects[i].onClick.AddListener(() => OnTowerConstructClick(_displayUiComs[index]._id));
+            UIObjects[i].onClick.AddListener( () => _displayUiComs[index].ClickEvent() );
         }
 
         return UIObjects;
@@ -159,6 +158,8 @@ public class ConstructionView : InGameUIBase
         public Sprite sprite;
 
         public string label;
+
+        public System.Action ClickEvent;
     }
 
 }

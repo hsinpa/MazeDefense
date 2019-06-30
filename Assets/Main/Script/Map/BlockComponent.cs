@@ -17,13 +17,7 @@ namespace TD.Map
 
         public Transform unitHolder;
 
-        public Vector2Int fullSize
-        {
-            get
-            {
-                return new Vector2Int(Mathf.RoundToInt(radiusSize.x * 2), Mathf.RoundToInt(radiusSize.y * 2));
-            }
-        }
+        public Vector2Int fullSize;
 
         public enum Type
         {
@@ -63,7 +57,7 @@ namespace TD.Map
             
             offsetAnchor = sample_tilemap.tileAnchor;
             radiusSize = sample_tilemap.localBounds.extents;
-
+            fullSize = new Vector2Int(Mathf.RoundToInt(radiusSize.x * 2), Mathf.RoundToInt(radiusSize.y * 2));
             _targetPos = transform.position;
 
             tilemapReader = new TilemapReader(this);

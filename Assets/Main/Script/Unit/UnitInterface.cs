@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TD.Map;
+using TD.Database;
 
 namespace TD.Unit {
     public interface UnitInterface
     {
         GameObject unitObject { get; }
         TileNode currentTile { get; }
+        UnitStats unitStats { get; }
 
         bool isActive { get; }
 

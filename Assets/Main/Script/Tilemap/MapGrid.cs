@@ -23,7 +23,7 @@ namespace TD.Map {
 
         public TileNode[] DestinationNode { get { return _DestinationNode; } }
         private TileNode[] _DestinationNode;
-        
+
         public void SetUp()
         {
             raw_tileData = new List<TileNode[,]>();
@@ -56,17 +56,17 @@ namespace TD.Map {
             RefreshMonsterFlowFieldMap();
         }
 
-        public void EditUnitState(Vector2Int index, UnitInterface unit, bool isAdd) {
-            if (ValidateNodeIndex(index.x, index.y)) {
+        public void EditUnitState(int x, int y, UnitInterface unit, bool isAdd) {
+            if (ValidateNodeIndex(x, y)) {
 
                 if (unit.GetType() == typeof(TowerUnit)) {
                     if (isAdd) {
                         allTowerUnit.Add((TowerUnit)unit);
-                        tilenodes[index.x, index.y].towerUnit = (TowerUnit)unit;
+                        tilenodes[x, y].towerUnit = (TowerUnit)unit;
                     }
                     else {
-                        if (tilenodes[index.x, index.y].towerUnit == (TowerUnit)unit) {
-                            tilenodes[index.x, index.y].towerUnit = null;
+                        if (tilenodes[x, y].towerUnit == (TowerUnit)unit) {
+                            tilenodes[x, y].towerUnit = null;
                             allTowerUnit.Remove((TowerUnit)unit);
                         }
                     }
@@ -74,9 +74,9 @@ namespace TD.Map {
                 else {
 
                     if (isAdd)
-                        tilenodes[index.x, index.y].AddMonsterUnit((MonsterUnit)unit);
+                        tilenodes[x, y].AddMonsterUnit((MonsterUnit)unit);
                     else
-                        tilenodes[index.x, index.y].RemoveMonsterUnit((MonsterUnit)unit);
+                        tilenodes[x, y].RemoveMonsterUnit((MonsterUnit)unit);
                 }
             }
         }
@@ -126,7 +126,8 @@ namespace TD.Map {
             resultNode = await _flowField.Execute(resultNode, DestinationNode, fullSize, VariableFlag.Strategy.CastleFirst);
 
             TileNode[] towerTileNode = new TileNode[allTowerUnit.Count];
-            for (int t = 0; t < towerTileNode.Length; t++)
+            int towerLength = towerTileNode.Length;
+            for (int t = 0; t < towerLength; t++)
                 towerTileNode[t] = allTowerUnit[t].currentTile;
 
             resultNode = await _flowField.Execute(resultNode, towerTileNode, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.TowersFirst);
@@ -169,11 +170,12 @@ namespace TD.Map {
 
             //Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             int yOffset = Mathf.CeilToInt(mapHolder.minPos.y - mapHolder.cameraTop);
-            var worldPoint = new Vector3Int(Mathf.FloorToInt(point.x + (mapHolder.blockRadius.x)), Mathf.FloorToInt(point.y + yOffset), 0);
+            int x = (int)(point.x + (mapHolder.blockRadius.x));
+            int y = (int)(point.y + yOffset);
 
-            if (ValidateNodeIndex(worldPoint.x, worldPoint.y))
+            if (ValidateNodeIndex(x, y))
             {
-                var selectedNode = tilenodes[worldPoint.x, worldPoint.y];
+                var selectedNode = tilenodes[x, y];
 
                 //Debug.Log(selectedNode.GridIndex +", Move Direction " + selectedNode.FlowFieldDirection);
 

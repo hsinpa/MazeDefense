@@ -47,6 +47,37 @@ namespace Utility {
             return damageRequest;
         }
 
+        public static Dictionary<K, V> DictionaryInsert<K,V>(Dictionary<K, V> dictionary, K key, V value) {
+            if (dictionary == null)
+                dictionary = new Dictionary<K, V>();
+
+            if (!dictionary.ContainsKey(key))
+            {
+                dictionary.Add(key, value);
+            }
+            else {
+                dictionary[key] = value;
+            }
+
+            return dictionary;
+        }
+
+        public static Dictionary<K, float> DictionaryIncrement<K>(Dictionary<K, float> dictionary, K key, float value)
+        {
+            if (dictionary == null)
+                dictionary = new Dictionary<K, float>();
+
+            if (!dictionary.ContainsKey(key))
+            {
+                dictionary.Add(key, value);
+            }
+            else
+            {
+                dictionary[key] = dictionary[key] + value;
+            }
+
+            return dictionary;
+        }
 
     }
 }

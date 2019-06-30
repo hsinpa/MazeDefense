@@ -17,6 +17,7 @@ public class DatabaseLoader : Object
 {
 
     const string DATABASE_FOLDER = "Assets/Database";
+    const string TOWER_SPRITE_PATH = "Assets/Main/Sprite/TD/td_tower_icons.png";
 
     /// <summary>
     /// Main app instance.
@@ -112,6 +113,11 @@ public class DatabaseLoader : Object
     static private void CreateTowerStats(StatsHolder statsHolder)
     {
         TextAsset csvText = (TextAsset)AssetDatabase.LoadAssetAtPath(DATABASE_FOLDER + "/CSV/database - tower.csv", typeof(TextAsset));
+        UnityEngine.Object[] rawSpriteSheet = AssetDatabase.LoadAllAssetsAtPath(TOWER_SPRITE_PATH);
+
+        var sprteSheet = rawSpriteSheet.Where(q => q is Sprite).Cast<Sprite>().ToArray();
+
+
         CSVFile csvFile = new CSVFile(csvText.text);
 
         AssetDatabase.CreateFolder(DATABASE_FOLDER + "/Asset", "Tower");
@@ -137,6 +143,7 @@ public class DatabaseLoader : Object
             c_prefab.spd = csvFile.Get<float>(i, "SPD");
             c_prefab.range = csvFile.Get<float>(i, "RANGE");
             c_prefab.cost = csvFile.Get<int>(i, "COST");
+            c_prefab.value = c_prefab.cost;
 
             string upgradePath = csvFile.Get<string>(i, "Update Path");
             if (!string.IsNullOrEmpty(upgradePath)) {
@@ -151,6 +158,7 @@ public class DatabaseLoader : Object
                 c_prefab.skills = GetSkillFromIDs(statsHolder, skillArray);
             }
 
+            c_prefab.sprite = UtilityMethod.LoadSpriteFromMulti(sprteSheet, csvFile.Get<string>(i, "Sprite ID"));
 
             statsHolder.stpObjectHolder.Add(c_prefab);
         }
@@ -180,8 +188,10 @@ public class DatabaseLoader : Object
 
             TowerStats findObject = statsHolder.FindObject<TowerStats>(upgradePathArray[k]);
 
-            if (findObject != null)
+            if (findObject != null) {
                 c_prefab.upgrade_path[k] = findObject;
+                findObject.AddValue(c_prefab.cost);
+            }
         }
 
         return c_prefab;

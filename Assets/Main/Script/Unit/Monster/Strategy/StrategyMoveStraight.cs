@@ -13,8 +13,8 @@ namespace TD.AI
         private Vector2 directionVector;
 
         private VariableFlag.Strategy[] _strategyList = new VariableFlag.Strategy[] {
-            VariableFlag.Strategy.TowersFirst,
-            VariableFlag.Strategy.CastleFirst
+            VariableFlag.Strategy.CastleFirst,
+            VariableFlag.Strategy.TowersFirst
         };
 
         private VariableFlag.Strategy _fallbackStrategy = VariableFlag.Strategy.None;
@@ -27,7 +27,7 @@ namespace TD.AI
 
             //Find destination direction
             Vector3 direction = (mapGrid.DestinationNode[0].WorldSpace - unit.transform.position).normalized;
-            directionVector.Set(0, Mathf.RoundToInt(direction.y));
+            directionVector.Set(0, (direction.y > 0) ? 1 : -1);
 
             //Move toward castle, but in straight line
             _modifiedVector2.Set(currentNode.GridIndex.x, currentNode.GridIndex.y + (int)directionVector.y);

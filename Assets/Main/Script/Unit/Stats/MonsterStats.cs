@@ -7,7 +7,6 @@ namespace TD.Database
 
         public VariableFlag.Strategy strategy;
 
-        public float value;
         public float moveSpeed;
 
         public float avgPrize;

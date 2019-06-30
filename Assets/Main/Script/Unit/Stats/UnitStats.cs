@@ -7,6 +7,7 @@ namespace TD.Database
         public float atk;
         public float spd;
         public float range;
+        public float value;
 
         public SkillStats[] skills;
 

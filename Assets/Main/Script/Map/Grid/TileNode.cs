@@ -58,10 +58,12 @@ namespace TD.Map {
             if (pathTag == VariableFlag.Strategy.MoveStraight)
                 return VariableFlag.Vector.Down;
 
-            if (FlowFieldDirectionSet == null || !FlowFieldDirectionSet.ContainsKey(pathTag))
-                return VariableFlag.Vector.Zero;
-            
-            return FlowFieldDirectionSet[pathTag];
+            Vector2 pathDir = VariableFlag.Vector.Zero;
+            if (FlowFieldDirectionSet == null || !FlowFieldDirectionSet.TryGetValue(pathTag, out pathDir)) {
+                return pathDir;
+            }
+
+            return pathDir;
         }
 
         public void AddMonsterUnit(TD.Unit.MonsterUnit unit)

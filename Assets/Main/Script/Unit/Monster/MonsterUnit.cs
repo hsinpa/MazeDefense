@@ -40,6 +40,8 @@ namespace TD.Unit {
 
         public TileNode currentTile { get { return _currentTile; } }
 
+        public UnitStats unitStats { get { return _monsterStats; } }
+
         public float hp
         {
             get { return _hp; }
@@ -53,7 +55,6 @@ namespace TD.Unit {
         public ActiveState currentState;
         public bool isActive { get { return OnDestroyCallback != null; } }
 
-        
         #endregion
 
         public void SetUp( MonsterStats monsterStats, BaseStrategy strategy, MapGrid mapGrid, MapBlockManager mapBlockManager, 
@@ -90,9 +91,9 @@ namespace TD.Unit {
             if (standTile.TilemapMember != null && standTile.GridIndex != _currentTile.GridIndex )
             {
                 if (_currentTile.TilemapMember != null)
-                    _mapGrid.EditUnitState(_currentTile.GridIndex, this, false);
+                    _mapGrid.EditUnitState(_currentTile.GridIndex.x, _currentTile.GridIndex.y, this, false);
 
-                _mapGrid.EditUnitState(standTile.GridIndex, this, true);
+                _mapGrid.EditUnitState(standTile.GridIndex.x, standTile.GridIndex.y, this, true);
             }
 
             //Add self under mapObject 
@@ -167,7 +168,7 @@ namespace TD.Unit {
 
             if (_mapGrid != null)
             {
-                _mapGrid.EditUnitState(_currentTile.GridIndex, this, false);
+                _mapGrid.EditUnitState(_currentTile.GridIndex.x, _currentTile.GridIndex.y, this, false);
             }
 
             this.OnDestroyCallback = null;

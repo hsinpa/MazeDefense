@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TD.Map;
 using Pooling;
+using TD.Database;
 
 namespace TD.Unit
 {
@@ -17,6 +18,8 @@ namespace TD.Unit
         public float hp => throw new System.NotImplementedException();
 
         public TileNode currentTile { get { return default(TileNode); } }
+
+        public UnitStats unitStats { get { return null; } }
 
         private Vector3 lastPosition;
         private Vector3 moveDelta;

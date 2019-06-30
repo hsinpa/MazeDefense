@@ -28,7 +28,9 @@ namespace TD.Unit {
         private Transform gunBodyObject;
 
         [SerializeField]
-        private SpriteRenderer RangeIndicator;
+        private SpriteRenderer RangeIndicator; 
+
+        public UnitStats unitStats { get => _towerStats; }
 
         public GameObject unitObject { get => this.gameObject; }
 
@@ -46,18 +48,21 @@ namespace TD.Unit {
         }
         float _hp;
 
-
-        public void SetUp(TowerStats towerStats, STPTower stpTower, Sprite towerSprite, MapGrid mapGrid, 
+        public void SetUp(TowerStats towerStats, STPTower stpTower, MapGrid mapGrid, 
             System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile) {
-            _towerStats = towerStats;
+            this.SetTowerStats(towerStats);
             _stpTower = stpTower;
             _mapGrid = mapGrid;
+
+            this.OnFireProjectile = OnFireProjectile;
+        }
+
+        public void SetTowerStats(TowerStats towerStats) {
+            _towerStats = towerStats;
             _hp = towerStats.hp;
 
             SpriteRenderer renderer = gunBodyObject.GetComponent<SpriteRenderer>();
-            renderer.sprite = towerSprite;
-
-            this.OnFireProjectile = OnFireProjectile;
+            renderer.sprite = towerStats.sprite;
         }
 
         public void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback)
@@ -176,11 +181,11 @@ namespace TD.Unit {
             if (standTile.TilemapMember != null && standTile.GridIndex != _currentTile.GridIndex)
             {
                 if (_currentTile.TilemapMember != null)
-                    _mapGrid.EditUnitState(_currentTile.GridIndex, this, false);
+                    _mapGrid.EditUnitState(_currentTile.GridIndex.x, _currentTile.GridIndex.y, this, false);
 
                 _currentTile = standTile;
 
-                _mapGrid.EditUnitState(standTile.GridIndex, this, true);
+                _mapGrid.EditUnitState(standTile.GridIndex.x, standTile.GridIndex.y, this, true);
                 _mapGrid.RefreshMonsterFlowFieldMap();
             }
         }
@@ -191,7 +196,7 @@ namespace TD.Unit {
                 OnDestroyCallback(this);
 
             if (_mapGrid != null) {
-                _mapGrid.EditUnitState(_currentTile.GridIndex, this, false);
+                _mapGrid.EditUnitState(_currentTile.GridIndex.x, _currentTile.GridIndex.y, this, false);
                 _mapGrid.OnMapReform -= UpdateUnitState;
                 _mapGrid.RefreshMonsterFlowFieldMap();
             }
