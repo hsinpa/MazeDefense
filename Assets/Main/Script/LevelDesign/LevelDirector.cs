@@ -84,10 +84,6 @@ namespace TD.AI
             if (overallWarFieldScore < minimunScore)
                 overallWarFieldScore = minimunScore;
 
-            Debug.Log("overallWarFieldScore" + overallWarFieldScore);
-            Debug.Log("unitInfo.value" + unitInfo.value);
-            Debug.Log("QuadraticCurve" + (int)(Graph.QuadraticFunction(Graph.Normalized(unitInfo.value, overallWarFieldScore), -1f, 0, 1) * 10));
-
             _UnitStructure.unitDict.Add(FindMonsterByStrategy(VariableFlag.Strategy.CastleFirst),
              (int)(Graph.QuadraticFunction(Graph.Normalized(unitInfo.value, overallWarFieldScore), -1f, 0, 1) * 50)
             );
@@ -117,8 +113,13 @@ namespace TD.AI
             /// Monster ID, Spawn Length
             /// </summary>
             public Dictionary<MonsterStats, int> unitDict;
+
+            public int timeToNextWave;
         }
 
+        public struct UnitWave {
+            public UnitStructure[] phaseStructure;
+        }
 
     }
 }
