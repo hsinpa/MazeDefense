@@ -84,16 +84,16 @@ namespace TD.AI {
             }
         }
 
-        private void CallReinforcement(LevelDirector.UnitStructure unitStructure) {
+        private void CallReinforcement(LevelDirector.UnitStructure unitStructList) {
 
             Thread t = new Thread(new ThreadStart(() => {
 
                 lock (_spawnQueue) {
-                    foreach (KeyValuePair<MonsterStats, int> item in unitStructure.unitDict)
-                    {
-                        for (int i = 0; i < item.Value; i++)
+                    int arrayLength = unitStructList.unitArray.Length;
+                    for (int i = 0; i < arrayLength; i++) {
+                        for (int k = 0; k < unitStructList.unitArray[i].spawnNum; k++)
                         {
-                            _spawnQueue.Enqueue(item.Key);
+                            _spawnQueue.Enqueue(unitStructList.unitArray[i].monsterStats);
                         }
                     }
                 }

@@ -11,7 +11,7 @@ namespace TD.AI
 {
     public class LevelDirector
     {
-        public delegate void CallReinforcement(UnitStructure unitStructure);
+        public delegate void CallReinforcement(UnitStructure unitWave);
 
         #region Parameter
         private int MaxUnit;
@@ -20,13 +20,19 @@ namespace TD.AI
         private int PullingRange = 2;
         private float PullingTimeRecord = 1;
 
-        private int ReinforcementLength = 0;
+        private int WaveLength = 0;
+        private int WaveCombination = 0;
+        private int WaveCombinationLength = 0;
+        private UnitWave _UnitWave;
 
         private GameUnitManager.UnitInfo unitInfo;
 
         private List<MonsterStats> _monsterStats;
         private UtilityTheory _utilityTheory;
         private GameUnitManager _gameUnitManager;
+        private Dictionary<Phase, PhaseInterface> _phaseInterfaceDict;
+        private int _phaseDictLength = 0;
+        private Phase currentPhase ;
         #endregion
 
         #region Event
@@ -45,8 +51,12 @@ namespace TD.AI
             _monsterStats = monsterUnits;
             _utilityTheory = new UtilityTheory();
 
-        }
+            _phaseInterfaceDict = SetUpPhaseAI();
+            _phaseDictLength = _phaseInterfaceDict.Count;
 
+            currentPhase = Phase.BuildUp;
+            BuildWaveStructure(currentPhase);
+        }
 
         public void OnUpdate() {
 
@@ -55,7 +65,6 @@ namespace TD.AI
             if (PullingTimeRecord < LevelDesignManager.Time) {
 
                 CheckReinforcement();
-
 
                 PullingTimeRecord = (LevelDesignManager.Time) + (Random.Range(Pulling - PullingRange, Pulling + PullingRange));
             } 
@@ -67,52 +76,67 @@ namespace TD.AI
             bool hasPermission =  UtilityMethod.PercentageGame(reinforcePercent);
 
             if (hasPermission) {
-                if (OnCallReinforcement != null)
-                    OnCallReinforcement(FindReinforceStructure());
+
+                if (WaveCombination >= WaveCombinationLength)
+                {
+                    int phaseIndex = ((int)currentPhase + 1) % _phaseDictLength;
+                    currentPhase = (Phase)phaseIndex;
+                    Debug.Log(currentPhase.ToString("g"));
+                    //BuildWaveStructure();
+                }
+                
+                else if (_UnitWave.phaseStructure != null) {
+                    Debug.Log(WaveCombination +", " + WaveCombinationLength );
+
+                    if (OnCallReinforcement != null)
+                        OnCallReinforcement(_UnitWave.phaseStructure[WaveCombination]);
+
+                    WaveCombination++;
+                }
             }
         }
 
-        private UnitStructure FindReinforceStructure() {
-            UnitStructure _UnitStructure;
-            _UnitStructure.unitDict = new Dictionary<MonsterStats, int>();
-
+        private void BuildWaveStructure(Phase phaseType)
+        {
+            PhaseInterface findPhaseInterface = null;
             GameUnitManager.UnitInfo towerInfo = _gameUnitManager.GetUnitCount(VariableFlag.Pooling.TowerID);
-            GameUnitManager.UnitInfo unitInfo = _gameUnitManager.GetUnitCount(VariableFlag.Pooling.MonsterID );
-            int overallWarFieldScore = towerInfo.value + unitInfo.value;
-            int minimunScore = 50;
+            GameUnitManager.UnitInfo unitInfo = _gameUnitManager.GetUnitCount(VariableFlag.Pooling.MonsterID);
 
-            if (overallWarFieldScore < minimunScore)
-                overallWarFieldScore = minimunScore;
+            if (_phaseInterfaceDict.TryGetValue(phaseType, out findPhaseInterface)) {
+                findPhaseInterface.SetUp(_monsterStats);
 
-            _UnitStructure.unitDict.Add(FindMonsterByStrategy(VariableFlag.Strategy.CastleFirst),
-             (int)(Graph.QuadraticFunction(Graph.Normalized(unitInfo.value, overallWarFieldScore), -1f, 0, 1) * 50)
-            );
+                _UnitWave = findPhaseInterface.Calculate(WaveLength, towerInfo, unitInfo);
 
-            _UnitStructure.unitDict.Add(FindMonsterByStrategy(VariableFlag.Strategy.MoveStraight),
-                             (int)(Graph.QuadraticFunction(Graph.Normalized(unitInfo.value, overallWarFieldScore), -1f, 0, 1) * 5)
-                            );
+                WaveCombination = 0;
+                WaveCombinationLength = _UnitWave.phaseStructure.Length;
 
-            _UnitStructure.unitDict.Add(FindMonsterByStrategy(VariableFlag.Strategy.TowersFirst),
-                 (int)(Graph.QuadraticFunction(Graph.Normalized(unitInfo.value, overallWarFieldScore), -1f, 0, 1) * 10)
-                );
+                return;
+            };
 
-            return _UnitStructure;
+            WaveCombination = 0;
+            WaveCombinationLength = 0;
+
+            _UnitWave = default(UnitWave);
         }
 
-        private MonsterStats FindMonsterByStrategy(VariableFlag.Strategy strategy) {
-            List<MonsterStats> mList = _monsterStats.FindAll(x => x.strategy == strategy);
-            int mLength = mList.Count;
-            if (mList != null && mLength > 0) {
-                return mList[Random.Range(0, mLength)];
-            }
-            return null;
+        private Dictionary<Phase, PhaseInterface> SetUpPhaseAI() {
+            Dictionary<Phase, PhaseInterface> phaseInterface = new Dictionary<Phase, PhaseInterface>();
+            phaseInterface.Add(Phase.BuildUp, new BuildUpFphase());
+            phaseInterface.Add(Phase.Climax, new BuildUpFphase());
+            phaseInterface.Add(Phase.Relax, new BuildUpFphase());
+            return phaseInterface;
+        }
+
+        public struct Units {
+            public MonsterStats monsterStats;
+            public int spawnNum;
         }
 
         public struct UnitStructure {
             /// <summary>
             /// Monster ID, Spawn Length
             /// </summary>
-            public Dictionary<MonsterStats, int> unitDict;
+            public Units[] unitArray;
 
             public int timeToNextWave;
         }
