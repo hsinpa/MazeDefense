@@ -63,11 +63,8 @@ namespace TD.AI
             unitInfo = _gameUnitManager.GetUnitCount(VariableFlag.Pooling.MonsterID);
 
             if (PullingTimeRecord < LevelDesignManager.Time) {
-
                 CheckReinforcement();
-
-                PullingTimeRecord = (LevelDesignManager.Time) + (Random.Range(Pulling - PullingRange, Pulling + PullingRange));
-            } 
+            }
         }
 
 
@@ -82,7 +79,7 @@ namespace TD.AI
                     int phaseIndex = ((int)currentPhase + 1) % _phaseDictLength;
                     currentPhase = (Phase)phaseIndex;
                     Debug.Log(currentPhase.ToString("g"));
-                    //BuildWaveStructure();
+                    BuildWaveStructure();
                 }
                 
                 else if (_UnitWave.phaseStructure != null) {
@@ -90,6 +87,9 @@ namespace TD.AI
 
                     if (OnCallReinforcement != null)
                         OnCallReinforcement(_UnitWave.phaseStructure[WaveCombination]);
+
+                    PullingTimeRecord = (LevelDesignManager.Time) + (Random.Range(_UnitWave.phaseStructure[WaveCombination].timeToNextWave - PullingRange,
+                                                            _UnitWave.phaseStructure[WaveCombination].timeToNextWave + PullingRange));
 
                     WaveCombination++;
                 }

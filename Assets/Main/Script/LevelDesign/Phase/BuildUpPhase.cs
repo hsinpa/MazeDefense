@@ -33,34 +33,17 @@ namespace TD.AI
                 LevelDirector.UnitStructure unitStructure = new LevelDirector.UnitStructure();
                 unitStructure.unitArray = new LevelDirector.Units[2];
 
-                unitStructure.unitArray[0].monsterStats = FindMonsterByStrategy(VariableFlag.Strategy.CastleFirst);
-                unitStructure.unitArray[0].spawnNum = FindMonsterNum(25, 50, modifier);
+                unitStructure.unitArray[0].monsterStats = PhaseUtility.FindMonsterByStrategy(_monsterStats, VariableFlag.Strategy.CastleFirst);
+                unitStructure.unitArray[0].spawnNum = PhaseUtility.FindMonsterNum(15, 30, modifier);
 
-                unitStructure.unitArray[1].monsterStats = FindMonsterByStrategy(VariableFlag.Strategy.CastleFirst);
-                unitStructure.unitArray[1].spawnNum = FindMonsterNum(20, 40, modifier);
+                unitStructure.unitArray[1].monsterStats = PhaseUtility.FindMonsterByStrategy(_monsterStats, VariableFlag.Strategy.CastleFirst);
+                unitStructure.unitArray[1].spawnNum = PhaseUtility.FindMonsterNum(15, 25, modifier);
 
                 unitStructure.timeToNextWave = spawnDelayTime;
                 unitWave.phaseStructure[i] = unitStructure;
             }
 
             return unitWave;
-        }
-
-        private int FindMonsterNum(int minRange, int maxRange, float modifier)
-        {
-            int spawnMonster = Random.Range(minRange, maxRange);
-            return (int)(spawnMonster * modifier);
-        }
-
-        private MonsterStats FindMonsterByStrategy(VariableFlag.Strategy strategy)
-        {
-            List<MonsterStats> mList = _monsterStats.FindAll(x => x.strategy == strategy);
-            int mLength = mList.Count;
-            if (mList != null && mLength > 0)
-            {
-                return mList[Random.Range(0, mLength)];
-            }
-            return null;
         }
     }
 }

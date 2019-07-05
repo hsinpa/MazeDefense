@@ -134,7 +134,7 @@ namespace TD.Unit {
                             _currentTile.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).y, 0);
 
             moveDelta *= Time.deltaTime * _monsterStats.moveSpeed * 0.3f;
-
+            Debug.Log("No Move");
             transform.position += moveDelta;
         }
 

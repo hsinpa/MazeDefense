@@ -1,18 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TD.Database;
+using TD.Unit;
 using UnityEngine;
 
-public class ClimaxPhase : MonoBehaviour
+namespace TD.AI
 {
-    // Start is called before the first frame update
-    void Start()
+    public class ClimaxPhase : PhaseInterface
     {
-        
-    }
+        List<MonsterStats> _monsterStats;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public void SetUp(List<MonsterStats> monsterUnits)
+        {
+            _monsterStats = monsterUnits;
+        }
+
+        public LevelDirector.UnitWave Calculate(int wave, GameUnitManager.UnitInfo towerUnitInfo, GameUnitManager.UnitInfo monsterUnitInfo)
+        {
+
+        }
+
+
     }
 }
