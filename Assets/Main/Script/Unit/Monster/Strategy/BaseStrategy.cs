@@ -79,7 +79,7 @@ namespace TD.AI {
                 float meleeAttackTime = 5f;
                 float reachTime = GeneralUtility.GetReachTimeGivenInfo(towerUnit.transform.position, unit.transform.position, meleeAttackTime, LevelDesignManager.DeltaTime);
 
-                GameDamageManager.DMGRegistry registry = GeneralUtility.GetDMGRegisterCard(towerUnit, monsterStat, LevelDesignManager.Time, reachTime);
+                GameDamageManager.DMGRegistry registry = GeneralUtility.GetDMGRegisterCard(towerUnit, this.unit, monsterStat, LevelDesignManager.Time, reachTime);
 
                 _gameDamageManager.AddRequest(registry);
                 AttackTimeDict[_uniqueID] = LevelDesignManager.Time + monsterStat.spd;

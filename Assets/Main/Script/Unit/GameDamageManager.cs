@@ -48,7 +48,7 @@ namespace TD.Unit {
                 for (int targetIndex = 0; targetIndex < targetListLength; targetIndex++) {
                     //var monster = dmgRegisterList[i].target;
                     if (targetList[targetIndex] != null && targetList[targetIndex].isActive)
-                        targetList[targetIndex].OnAttack(dmgRegisterList[i].unitStats.atk);
+                        targetList[targetIndex].OnAttack(dmgRegisterList[i]);
                 }
 
                 if (dmgRegisterList[i].target != null) {
@@ -99,6 +99,7 @@ namespace TD.Unit {
         public struct DMGRegistry {
             public TD.Database.UnitStats unitStats;
             public UnitInterface target;
+            public UnitInterface fromUnit;
 
             public float fireTime;
             public float timeToDest;

@@ -19,7 +19,7 @@ namespace TD.AI
 
         public LevelDirector.UnitWave Calculate(int wave, GameUnitManager.UnitInfo towerUnitInfo, GameUnitManager.UnitInfo monsterUnitInfo)
         {
-            int combinationNum = Random.Range(4, 8);
+            int combinationNum = Random.Range(3, 6);
 
             LevelDirector.UnitWave unitWave = new LevelDirector.UnitWave();
             unitWave.phaseStructure = new LevelDirector.UnitStructure[combinationNum];

@@ -79,7 +79,7 @@ namespace TD.AI
                     int phaseIndex = ((int)currentPhase + 1) % _phaseDictLength;
                     currentPhase = (Phase)phaseIndex;
                     Debug.Log(currentPhase.ToString("g"));
-                    BuildWaveStructure();
+                    //BuildWaveStructure();
                 }
                 
                 else if (_UnitWave.phaseStructure != null) {

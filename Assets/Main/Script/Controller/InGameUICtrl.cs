@@ -6,228 +6,252 @@ using Utility;
 using Pooling;
 using TD.Unit;
 using TD.Database;
+using TD.AI;
 using System.Threading.Tasks;
 
-public class InGameUICtrl : MonoBehaviour
+namespace TD.UI
 {
-    GameInputManager _gameInputManager;
-    GameUnitManager _gameUnitManager;
-    MapGrid _mapGrid;
-    MapBlockManager _mapBlockManager;
+    public class InGameUICtrl : MonoBehaviour
+    {
+        GameInputManager _gameInputManager;
+        GameUnitManager _gameUnitManager;
+        MapGrid _mapGrid;
+        MapBlockManager _mapBlockManager;
+        LevelDesignManager _levelDesignManager;
 
-    TileNode currentSelectedNode;
-    STPTheme _stpTheme;
-    StatsHolder _statHolder;
+        TileNode currentSelectedNode;
+        STPTheme _stpTheme;
+        StatsHolder _statHolder;
 
-    [SerializeField]
-    ConstructionView ConstructionUI;
+        [SerializeField]
+        ConstructionView ConstructionUI;
 
-    [SerializeField]
-    Sprite[] spriteSheet;
+        [SerializeField]
+        Sprite[] spriteSheet;
 
-    [SerializeField, Range(0, 4)]
-    float IgnoreInputRange = 2;
+        [SerializeField, Range(0, 4)]
+        float IgnoreInputRange = 2;
 
-    private List<TowerStats> FirstLevelTowers;
+        private List<TowerStats> FirstLevelTowers;
 
-    public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, MapGrid mapGrid, MapBlockManager mapBlockManager, 
-                    STPTheme stpTheme, StatsHolder statHolder) {
-        _gameInputManager = gameInputManager;
-        _gameInputManager.OnSelectTileNode += SelectTileListener;
-
-        _gameUnitManager = gameUnitManager;
-        _mapGrid = mapGrid;
-        _mapBlockManager = mapBlockManager;
-        _stpTheme = stpTheme;
-        _statHolder = statHolder;
-
-        if (ConstructionUI != null)
+        public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, LevelDesignManager levelDesign, MapGrid mapGrid, MapBlockManager mapBlockManager,
+                        STPTheme stpTheme, StatsHolder statHolder)
         {
-            ConstructionUI.TowerClickEvent += SelectTowerToBuild;
+            _gameInputManager = gameInputManager;
+            _gameInputManager.OnSelectTileNode += SelectTileListener;
+
+            _gameUnitManager = gameUnitManager;
+            _levelDesignManager = levelDesign;
+            _mapGrid = mapGrid;
+            _mapBlockManager = mapBlockManager;
+            _stpTheme = stpTheme;
+            _statHolder = statHolder;
+
+            if (ConstructionUI != null)
+            {
+                ConstructionUI.TowerClickEvent += SelectTowerToBuild;
+            }
         }
-    }
 
-    private async void SelectTowerToBuild(string tower_id) {
+        private async void SelectTowerToBuild(string tower_id)
+        {
 
-        if (currentSelectedNode.TileMapPlace != null) {
-            var tower = PoolManager.instance.ReuseObject(VariableFlag.Pooling.TowerID);
-
-            if (tower != null) {
-                tower.transform.position = currentSelectedNode.WorldSpace;
-
-                BlockComponent mapBlock = _mapBlockManager.GetMapComponentByPos(currentSelectedNode.WorldSpace);
-                STPTower stpTower = _stpTheme.FindObject<STPTower>(VariableFlag.Pooling.TowerID);
-                TowerUnit towerUnit = tower.GetComponent<TowerUnit>();
+            if (currentSelectedNode.TileMapPlace != null)
+            {
                 TowerStats towerStats = _statHolder.FindObject<TowerStats>(tower_id);
 
-                if (stpTower != null && towerUnit != null && mapBlock != null && towerStats != null) {
-                    tower.transform.SetParent(mapBlock.unitHolder);
-                    towerUnit.SetUp(towerStats, stpTower,
-                        _mapGrid, (UnitInterface projectile, GameDamageManager.DMGRegistry dmgRistry) => {
-                        _gameUnitManager.AddUnit(projectile);
-                        _gameUnitManager.gameDamageManager.AddRequest(dmgRistry);
-                    });
+                //No money
+                if (_levelDesignManager.selfPlayer.capital < towerStats.cost)
+                    return;
 
-                    _gameUnitManager.AddUnit(towerUnit);
+
+                var tower = PoolManager.instance.ReuseObject(VariableFlag.Pooling.TowerID);
+
+                if (tower != null)
+                {
+                    tower.transform.position = currentSelectedNode.WorldSpace;
+
+                    BlockComponent mapBlock = _mapBlockManager.GetMapComponentByPos(currentSelectedNode.WorldSpace);
+                    STPTower stpTower = _stpTheme.FindObject<STPTower>(VariableFlag.Pooling.TowerID);
+                    TowerUnit towerUnit = tower.GetComponent<TowerUnit>();
+
+                    if (stpTower != null && towerUnit != null && mapBlock != null && towerStats != null)
+                    {
+                        tower.transform.SetParent(mapBlock.unitHolder);
+                        towerUnit.SetUp(towerStats, stpTower,
+                            _mapGrid, _levelDesignManager.selfPlayer,
+                       (UnitInterface projectile, GameDamageManager.DMGRegistry dmgRistry) =>
+                       {
+                           _gameUnitManager.AddUnit(projectile);
+                           _gameUnitManager.gameDamageManager.AddRequest(dmgRistry);
+                       });
+
+                        _gameUnitManager.AddUnit(towerUnit);
+                    }
                 }
             }
         }
-    }
 
-    private void SelectTowerToUpgrade(TowerUnit towerUnit, TowerStats upgradeStats)
-    {
-        towerUnit.SetTowerStats(upgradeStats);
-    }
-
-    private void SelectTowerToInfo(TileNode tileNode, TowerStats upgradeStats)
-    {
-        Debug.Log("Mouse click SelectTowerToInfo");
-    }
-
-    private void SelectTowerToSale(TileNode tileNode, TowerStats upgradeStats)
-    {
-        Debug.Log("Mouse click SelectTowerToSale");
-    }
-
-    private void SelectTileListener(TileNode tileNode) {
-        if (!tileNode.IsWalkable)
-            return;
-
-        UnityEngine.UI.Button[] displayBTObjects = null;
-
-        if (currentSelectedNode.TilemapMember != null) {
-            //float dist = Vector3.Distance(currentSelectedNode.WorldSpace, tileNode.WorldSpace);
-            //if (dist > IgnoreInputRange)
-            //{
-            //    Reset();
-            //}
-            Reset();
-
-            return;
+        private void SelectTowerToUpgrade(TowerUnit towerUnit, TowerStats upgradeStats)
+        {
+            towerUnit.SetTowerStats(upgradeStats);
         }
 
-        if (tileNode.towerUnit != null)
-            displayBTObjects = ConstructionUI.SetTowerToDisplay(GetTowerUpgradePath(tileNode.towerUnit));
-
-        currentSelectedNode = tileNode;
-
-        if (displayBTObjects == null)
-            displayBTObjects = ConstructionUI.SetTowerToDisplay(GetInitialTowerPlacement());
-
-        ConstructionUI.SetLayoutUI(displayBTObjects, currentSelectedNode.GridIndex, _mapBlockManager.blockSize);
-        ConstructionUI.transform.position = currentSelectedNode.WorldSpace;
-        ConstructionUI.Show(true);
-    }
-
-    #region Build Tower UI
-    private ConstructionView.DisplayUIComp[] GetInitialTowerPlacement()
-    {
-        List<TowerStats> firstLevelTowers = _statHolder.FindObjectByType<TowerStats>();
-        firstLevelTowers = firstLevelTowers.FindAll(x => x.level == 1);
-
-        int towerLength = firstLevelTowers.Count;
-
-        ConstructionView.DisplayUIComp[] uiCompArray = new ConstructionView.DisplayUIComp[towerLength];
-
-        for (int i = 0; i < towerLength; i++)
+        private void SelectTowerToInfo(TileNode tileNode, TowerStats upgradeStats)
         {
-            int index = i;
-            ConstructionView.DisplayUIComp uiComp = FormTowerUIComp("$" + firstLevelTowers[i].cost, firstLevelTowers[i].id, firstLevelTowers[i].sprite,
-            () => {
-                SelectTowerToBuild(firstLevelTowers[index].id);
-            });
-            
-            uiCompArray[i] = uiComp;
+            Debug.Log("Mouse click SelectTowerToInfo");
         }
 
-        return uiCompArray;
-    }
-    #endregion
-
-    #region Upgrade Tower UI
-    private ConstructionView.DisplayUIComp[] GetTowerUpgradePath(TowerUnit towerUnit)
-    {
-        if (towerUnit.unitStats == null)
-            return null;
-
-        TowerStats towerStats = (TowerStats)towerUnit.unitStats;
-        List<ConstructionView.DisplayUIComp> uiComps = new List<ConstructionView.DisplayUIComp>();
-
-        if (towerStats.upgrade_path != null && towerStats.upgrade_path.Length > 0)
+        private void SelectTowerToSale(TileNode tileNode, TowerStats upgradeStats)
         {
-            int upgradePathLength = towerStats.upgrade_path.Length;
-
-            for (int i = 0; i < upgradePathLength; i++)
-                uiComps.Add(GetTowerUIComp(towerUnit, towerStats.upgrade_path[i]));
+            Debug.Log("Mouse click SelectTowerToSale");
         }
 
-        uiComps.Add(GetTowerInfoComp(towerStats));
-        uiComps.Add(GetTowerSaleComp(towerStats));
-
-        return uiComps.ToArray();
-    }
-
-    private ConstructionView.DisplayUIComp GetTowerUIComp(TowerUnit towerUnit, TowerStats towerStats)
-    {
-        return FormTowerUIComp("$" + towerStats.cost, towerStats.id, towerStats.sprite,
-            () =>
-            {
-                SelectTowerToUpgrade(towerUnit, towerStats);
-            });
-    }
-
-    private ConstructionView.DisplayUIComp GetTowerInfoComp(TowerStats towerStats)
-    {
-        return FormTowerUIComp("Info", towerStats.id, UtilityMethod.LoadSpriteFromMulti(spriteSheet, VariableFlag.TowerSpriteID.TowerInfo),
-            () =>
-            {
-                SelectTowerToInfo(currentSelectedNode, towerStats);
-            });
-    }
-
-    private ConstructionView.DisplayUIComp GetTowerSaleComp(TowerStats towerStats)
-    {
-        return FormTowerUIComp("Sale", towerStats.id, UtilityMethod.LoadSpriteFromMulti(spriteSheet, VariableFlag.TowerSpriteID.TowerSale),
-            () =>
-            {
-                SelectTowerToSale(currentSelectedNode, towerStats);
-            });
-    }
-
-    private ConstructionView.DisplayUIComp FormTowerUIComp(string label, string id, Sprite sprite, System.Action clickCallback)
-    {
-        ConstructionView.DisplayUIComp uiComp = new ConstructionView.DisplayUIComp();
-
-        uiComp.label = label;
-
-        uiComp._id = id;
-
-        uiComp.sprite = sprite;
-
-        uiComp.ClickEvent = () => {
-            clickCallback();
-        };
-
-        return uiComp;
-    }
-    #endregion
-
-    public async void DelayReset() {
-        await(GeneralUtility.DoDelayWork(0.01f, () =>
+        private void SelectTileListener(TileNode tileNode)
         {
-            Reset();
-        }));
-    }
+            if (!tileNode.IsWalkable)
+                return;
 
-    private void Reset()
-    {
-        currentSelectedNode.TilemapMember = null;
-        ConstructionUI.Show(false);
-    }
+            UnityEngine.UI.Button[] displayBTObjects = null;
 
-    private void OnDestroy()
-    {
-        if (_gameInputManager != null)
-            _gameInputManager.OnSelectTileNode -= SelectTileListener;
+            if (currentSelectedNode.TilemapMember != null)
+            {
+                float dist = Vector3.Distance(currentSelectedNode.WorldSpace, tileNode.WorldSpace);
+                if (dist > IgnoreInputRange)
+                {
+                    Reset();
+                }
+                //Reset();
+
+                return;
+            }
+
+            if (tileNode.towerUnit != null)
+                displayBTObjects = ConstructionUI.SetTowerToDisplay(GetTowerUpgradePath(tileNode.towerUnit));
+
+            currentSelectedNode = tileNode;
+
+            if (displayBTObjects == null)
+                displayBTObjects = ConstructionUI.SetTowerToDisplay(GetInitialTowerPlacement());
+
+            ConstructionUI.SetLayoutUI(displayBTObjects, currentSelectedNode.GridIndex, _mapBlockManager.blockSize);
+            ConstructionUI.transform.position = currentSelectedNode.WorldSpace;
+            ConstructionUI.Show(true);
+        }
+
+        #region Build Tower UI
+        private ConstructionView.DisplayUIComp[] GetInitialTowerPlacement()
+        {
+            List<TowerStats> firstLevelTowers = _statHolder.FindObjectByType<TowerStats>();
+            firstLevelTowers = firstLevelTowers.FindAll(x => x.level == 1);
+
+            int towerLength = firstLevelTowers.Count;
+
+            ConstructionView.DisplayUIComp[] uiCompArray = new ConstructionView.DisplayUIComp[towerLength];
+
+            for (int i = 0; i < towerLength; i++)
+            {
+                int index = i;
+                ConstructionView.DisplayUIComp uiComp = FormTowerUIComp("$" + firstLevelTowers[i].cost, firstLevelTowers[i].id, firstLevelTowers[i].sprite,
+                () =>
+                {
+                    SelectTowerToBuild(firstLevelTowers[index].id);
+                });
+
+                uiCompArray[i] = uiComp;
+            }
+
+            return uiCompArray;
+        }
+        #endregion
+
+        #region Upgrade Tower UI
+        private ConstructionView.DisplayUIComp[] GetTowerUpgradePath(TowerUnit towerUnit)
+        {
+            if (towerUnit.unitStats == null)
+                return null;
+
+            TowerStats towerStats = (TowerStats)towerUnit.unitStats;
+            List<ConstructionView.DisplayUIComp> uiComps = new List<ConstructionView.DisplayUIComp>();
+
+            if (towerStats.upgrade_path != null && towerStats.upgrade_path.Length > 0)
+            {
+                int upgradePathLength = towerStats.upgrade_path.Length;
+
+                for (int i = 0; i < upgradePathLength; i++)
+                    uiComps.Add(GetTowerUIComp(towerUnit, towerStats.upgrade_path[i]));
+            }
+
+            uiComps.Add(GetTowerInfoComp(towerStats));
+            uiComps.Add(GetTowerSaleComp(towerStats));
+
+            return uiComps.ToArray();
+        }
+
+        private ConstructionView.DisplayUIComp GetTowerUIComp(TowerUnit towerUnit, TowerStats towerStats)
+        {
+            return FormTowerUIComp("$" + towerStats.cost, towerStats.id, towerStats.sprite,
+                () =>
+                {
+                    SelectTowerToUpgrade(towerUnit, towerStats);
+                });
+        }
+
+        private ConstructionView.DisplayUIComp GetTowerInfoComp(TowerStats towerStats)
+        {
+            return FormTowerUIComp("Info", towerStats.id, UtilityMethod.LoadSpriteFromMulti(spriteSheet, VariableFlag.TowerSpriteID.TowerInfo),
+                () =>
+                {
+                    SelectTowerToInfo(currentSelectedNode, towerStats);
+                });
+        }
+
+        private ConstructionView.DisplayUIComp GetTowerSaleComp(TowerStats towerStats)
+        {
+            return FormTowerUIComp("Sale", towerStats.id, UtilityMethod.LoadSpriteFromMulti(spriteSheet, VariableFlag.TowerSpriteID.TowerSale),
+                () =>
+                {
+                    SelectTowerToSale(currentSelectedNode, towerStats);
+                });
+        }
+
+        private ConstructionView.DisplayUIComp FormTowerUIComp(string label, string id, Sprite sprite, System.Action clickCallback)
+        {
+            ConstructionView.DisplayUIComp uiComp = new ConstructionView.DisplayUIComp();
+
+            uiComp.label = label;
+
+            uiComp._id = id;
+
+            uiComp.sprite = sprite;
+
+            uiComp.ClickEvent = () =>
+            {
+                clickCallback();
+            };
+
+            return uiComp;
+        }
+        #endregion
+
+        public async void DelayReset()
+        {
+            await (GeneralUtility.DoDelayWork(0.01f, () =>
+             {
+                 Reset();
+             }));
+        }
+
+        private void Reset()
+        {
+            currentSelectedNode.TilemapMember = null;
+            ConstructionUI.Show(false);
+        }
+
+        private void OnDestroy()
+        {
+            if (_gameInputManager != null)
+                _gameInputManager.OnSelectTileNode -= SelectTileListener;
+        }
     }
 }

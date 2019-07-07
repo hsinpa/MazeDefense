@@ -6,9 +6,11 @@ using TD.Map;
 using TD.Unit;
 using TD.AI;
 using TD.Database;
+using TD.UI;
 
 public class GameManager : MonoBehaviour
 {
+    #region Core Class
     private MapBlockManager _blockManager;
     private MapGrid _mapGrid;
     private InGameUICtrl _gameInteractorCtrl;
@@ -16,6 +18,11 @@ public class GameManager : MonoBehaviour
     private PoolManager _poolManager;
     private GameUnitManager _gameUnitManager;
     private LevelDesignManager _levelDesignManager;
+    #endregion
+
+    #region UI Class
+    private HeaderView _headView;
+    #endregion
 
     [SerializeField]
     STPTheme poolingTheme;
@@ -25,6 +32,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        var monsterPools = statsHolder.FindObjectByType<MonsterStats>();
+
         _blockManager = GetComponentInChildren<MapBlockManager>();
 
         _mapGrid = GetComponentInChildren<MapGrid>();
@@ -34,15 +43,14 @@ public class GameManager : MonoBehaviour
         _poolManager = GetComponentInChildren<PoolManager>();
         _gameUnitManager = GetComponentInChildren<GameUnitManager>();
         _levelDesignManager = GetComponentInChildren<LevelDesignManager>();
+        _headView = GetComponentInChildren<HeaderView>();
 
         _mapGrid.SetUp();
         _gameInputManager.SetUp(_mapGrid, _blockManager);
         _gameUnitManager.SetUp(_blockManager, _mapGrid, poolingTheme.total);
-        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid, _blockManager, poolingTheme, statsHolder);
+        _levelDesignManager.Init(_gameUnitManager, _blockManager, _mapGrid, monsterPools);
 
-        var monsterPools = statsHolder.FindObjectByType<MonsterStats>();
-
-        _levelDesignManager.SetUp(_gameUnitManager, _blockManager, _mapGrid, monsterPools);
+        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _levelDesignManager, _mapGrid, _blockManager, poolingTheme, statsHolder);
     }
 
     public void Start() {
@@ -57,7 +65,11 @@ public class GameManager : MonoBehaviour
         _gameUnitManager.Reset();
         _blockManager.ReadTilemap();
 
-        _levelDesignManager.CallEveryoneReady();
+        PlayerModel mainPlayer = PlayerModel.CreatePlayer();
+
+        _levelDesignManager.SetLevel(new List<PlayerModel> { mainPlayer }, mainPlayer);
+        _headView.SetUp(mainPlayer);
+
     }
 
     private void PreparePoolingObject(STPTheme poolingTheme) {

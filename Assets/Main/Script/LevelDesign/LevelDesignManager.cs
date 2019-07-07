@@ -19,6 +19,13 @@ namespace TD.AI {
 
         private BlockComponent _entranceComponent;
         private List<MonsterStats> _monsterUnits;
+        private List<PlayerModel> _players;
+
+        public PlayerModel selfPlayer {
+            get { return _player; }
+        }
+        private PlayerModel _player;
+
         private int monsterLength;
 
         private Queue<MonsterStats> _spawnQueue;
@@ -36,21 +43,29 @@ namespace TD.AI {
 
         private float recordTime;
 
-        public void SetUp(GameUnitManager gameUnitManager, MapBlockManager mapHolder, MapGrid mapGrid, List<MonsterStats> monsterUnits)
+        public void Init(GameUnitManager gameUnitManager, MapBlockManager mapHolder, MapGrid mapGrid, List<MonsterStats> allMonsterUnits)
         {
-            _levelDirector = new LevelDirector(gameUnitManager, monsterUnits, PoolManager.instance.GetObjectLength(VariableFlag.Pooling.MonsterID) );
+            _levelDirector = new LevelDirector(gameUnitManager, allMonsterUnits, PoolManager.instance.GetObjectLength(VariableFlag.Pooling.MonsterID) );
             _spawnQueue = new Queue<MonsterStats>();
             _gameUnitManager = gameUnitManager;
             _mapHolder = mapHolder;
             _mapGrid = mapGrid;
-            _monsterUnits = monsterUnits;
+            _monsterUnits = allMonsterUnits;
+
             _strategyMapper = new GameStrategyMapper();
             monsterLength = _monsterUnits.Count;
 
             _levelDirector.OnCallReinforcement += CallReinforcement;
         }
 
-        public void CallEveryoneReady() {
+        public void SetLevel(List<PlayerModel> players, PlayerModel selfPlayer) {
+            this._players = players;
+            this._player = selfPlayer;
+
+            CallEveryoneReady();
+        }
+
+        private void CallEveryoneReady() {
             if (_mapHolder == null) return;
 
             var tComponent = FindEntryComponent(_mapHolder);
@@ -100,7 +115,6 @@ namespace TD.AI {
             }));
 
             t.Start();
-
         }
 
         private void SpawnQueueMonster()

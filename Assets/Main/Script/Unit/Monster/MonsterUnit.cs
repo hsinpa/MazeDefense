@@ -134,7 +134,6 @@ namespace TD.Unit {
                             _currentTile.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).y, 0);
 
             moveDelta *= Time.deltaTime * _monsterStats.moveSpeed * 0.3f;
-            Debug.Log("No Move");
             transform.position += moveDelta;
         }
 
@@ -153,12 +152,30 @@ namespace TD.Unit {
             }
         }
 
-        public void OnAttack(float damage)
+        public void OnAttack(GameDamageManager.DMGRegistry dmgCard)
         {
-            _hp -= damage;
+            try
+            {
+                _hp -= dmgCard.unitStats.atk;
 
-            if (_hp <= 0)
-                Destroy();
+                if (_hp <= 0)
+                {
+
+                    if (dmgCard.fromUnit != null)
+                    {
+
+                        TowerUnit towerUnit = (TowerUnit)dmgCard.fromUnit;
+                        if (towerUnit != null && towerUnit.buildPlayer != null) {
+                            towerUnit.buildPlayer.EarnPrize(_monsterStats.prize);
+                        }
+                    }
+
+                    Destroy();
+                }
+            }
+            catch {
+                Debug.Log("OnAttack error occur");
+            }
         }
 
         public void Destroy()

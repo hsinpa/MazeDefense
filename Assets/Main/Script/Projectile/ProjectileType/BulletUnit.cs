@@ -78,7 +78,7 @@ namespace TD.Unit
             this.OnDestroyCallback = null;
         }
 
-        public void OnAttack(float dmg)
+        public void OnAttack(GameDamageManager.DMGRegistry dmgCard)
         {
             throw new System.NotImplementedException();
         }

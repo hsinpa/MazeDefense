@@ -16,7 +16,7 @@ namespace TD.Unit {
         void ReadyToAction(System.Action<UnitInterface> OnDestroyCallback);
         void OnUpdate();
 
-        void OnAttack(float dmg);
+        void OnAttack(GameDamageManager.DMGRegistry dmg);
         void Destroy();
     }
 }

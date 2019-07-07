@@ -60,10 +60,6 @@ public class DummyMonsterGeneator : MonoBehaviour
                 GenerateMonster(tile);
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.Space) && _levelDesignManager != null) {
-            _levelDesignManager.CallEveryoneReady();
-        }
     }
 #endif
 

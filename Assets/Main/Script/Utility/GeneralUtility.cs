@@ -32,7 +32,7 @@ namespace Utility {
             return dist / (bulletSpeed * constDeltaTime * 60);
         }
 
-        public static GameDamageManager.DMGRegistry GetDMGRegisterCard(UnitInterface target, UnitStats unitStats, float fireTime, float timeToDst)
+        public static GameDamageManager.DMGRegistry GetDMGRegisterCard(UnitInterface target, UnitInterface fromUnit, UnitStats unitStats, float fireTime, float timeToDst)
         {
             GameDamageManager.DMGRegistry damageRequest = new GameDamageManager.DMGRegistry();
 
@@ -43,6 +43,8 @@ namespace Utility {
             damageRequest.unitStats = unitStats;
 
             damageRequest.target = target;
+
+            damageRequest.fromUnit = fromUnit;
 
             return damageRequest;
         }

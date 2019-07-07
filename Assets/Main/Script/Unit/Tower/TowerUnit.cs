@@ -11,13 +11,13 @@ using TD.AI;
 namespace TD.Unit {
     public class TowerUnit : MonoBehaviour, UnitInterface
     {
-        STPTower _stpTower;
-        TowerStats _towerStats;
-        
-        MapGrid _mapGrid;
-        System.Action<UnitInterface> OnDestroyCallback;
+        private STPTower _stpTower;
+        private TowerStats _towerStats;
 
-        System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile;
+        private MapGrid _mapGrid;
+        private System.Action<UnitInterface> OnDestroyCallback;
+
+        private System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile;
 
         public bool isActive { get { return OnDestroyCallback != null; } }
 
@@ -37,6 +37,9 @@ namespace TD.Unit {
         public TileNode currentTile { get { return _currentTile; } }
         private TileNode _currentTile;
 
+        public PlayerModel buildPlayer { get { return _playerModel; } }
+        private PlayerModel _playerModel;
+
         MonsterUnit currentTarget;
         const float minRotationDiff = 35;
         bool fireReady = false;
@@ -48,11 +51,12 @@ namespace TD.Unit {
         }
         float _hp;
 
-        public void SetUp(TowerStats towerStats, STPTower stpTower, MapGrid mapGrid, 
-            System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile) {
+        public void SetUp(TowerStats towerStats, STPTower stpTower, MapGrid mapGrid,
+            PlayerModel playerModel, System.Action<UnitInterface, GameDamageManager.DMGRegistry> OnFireProjectile) {
             this.SetTowerStats(towerStats);
             _stpTower = stpTower;
             _mapGrid = mapGrid;
+            _playerModel = playerModel;
 
             this.OnFireProjectile = OnFireProjectile;
         }
@@ -130,7 +134,7 @@ namespace TD.Unit {
 
                     float reachTime = GeneralUtility.GetReachTimeGivenInfo(target.transform.position, transform.position,
                                                                             _stpTower.stpBullet.moveSpeed, LevelDesignManager.DeltaTime);
-                    OnFireProjectile(bulletUnit, GeneralUtility.GetDMGRegisterCard(target, _towerStats, time, reachTime));
+                    OnFireProjectile(bulletUnit, GeneralUtility.GetDMGRegisterCard(target, this, _towerStats, time, reachTime));
                     recordFrequency = time + _towerStats.spd;
                 }
             }
@@ -156,11 +160,12 @@ namespace TD.Unit {
             }
         }
 
-        public void OnAttack(float dmg)
+        public void OnAttack(GameDamageManager.DMGRegistry dmgCard)
         {
-            _hp -= dmg;
+            if (dmgCard.unitStats == null)
+                return;
 
-            Debug.Log("Under attack HP Leave" + _hp);
+            _hp -= dmgCard.unitStats.atk;
 
             if (_hp <= 0)
                 Destroy();
@@ -204,7 +209,7 @@ namespace TD.Unit {
             this.OnFireProjectile = null;
             this.OnDestroyCallback = null;
             this._stpTower = null;
-
+            this._playerModel = null;
             this.recordFrequency = 0;
 
             currentTarget = null;
