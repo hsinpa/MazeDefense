@@ -32,6 +32,8 @@ namespace TD.UI
         [SerializeField, Range(0, 4)]
         float IgnoreInputRange = 2;
 
+        bool isTaskDone = false;
+
         private List<TowerStats> FirstLevelTowers;
 
         public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, LevelDesignManager levelDesign, MapGrid mapGrid, MapBlockManager mapBlockManager,
@@ -87,6 +89,7 @@ namespace TD.UI
                        });
 
                         _gameUnitManager.AddUnit(towerUnit);
+                        isTaskDone = true;
                     }
                 }
             }
@@ -121,7 +124,9 @@ namespace TD.UI
                 {
                     Reset();
                 }
-                //Reset();
+
+                if (isTaskDone)
+                    Reset();
 
                 return;
             }
@@ -246,6 +251,8 @@ namespace TD.UI
         {
             currentSelectedNode.TilemapMember = null;
             ConstructionUI.Show(false);
+            isTaskDone = false;
+            
         }
 
         private void OnDestroy()

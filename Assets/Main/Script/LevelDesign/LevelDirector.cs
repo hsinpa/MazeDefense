@@ -79,11 +79,12 @@ namespace TD.AI
                     int phaseIndex = ((int)currentPhase + 1) % _phaseDictLength;
                     currentPhase = (Phase)phaseIndex;
                     Debug.Log(currentPhase.ToString("g"));
-                    //BuildWaveStructure();
+
+                    BuildWaveStructure(currentPhase);
                 }
                 
                 else if (_UnitWave.phaseStructure != null) {
-                    Debug.Log(WaveCombination +", " + WaveCombinationLength );
+                    Debug.Log(currentPhase.ToString("g") +", " + WaveCombination +", " + WaveCombinationLength );
 
                     if (OnCallReinforcement != null)
                         OnCallReinforcement(_UnitWave.phaseStructure[WaveCombination]);
@@ -122,8 +123,8 @@ namespace TD.AI
         private Dictionary<Phase, PhaseInterface> SetUpPhaseAI() {
             Dictionary<Phase, PhaseInterface> phaseInterface = new Dictionary<Phase, PhaseInterface>();
             phaseInterface.Add(Phase.BuildUp, new BuildUpFphase());
-            phaseInterface.Add(Phase.Climax, new BuildUpFphase());
-            phaseInterface.Add(Phase.Relax, new BuildUpFphase());
+            phaseInterface.Add(Phase.Climax, new ClimaxPhase());
+            phaseInterface.Add(Phase.Relax, new RelaxPhase());
             return phaseInterface;
         }
 
