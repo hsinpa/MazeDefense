@@ -78,13 +78,13 @@ namespace TD.AI
                 {
                     int phaseIndex = ((int)currentPhase + 1) % _phaseDictLength;
                     currentPhase = (Phase)phaseIndex;
-                    Debug.Log(currentPhase.ToString("g"));
+                    //Debug.Log(currentPhase.ToString("g"));
 
                     BuildWaveStructure(currentPhase);
                 }
                 
                 else if (_UnitWave.phaseStructure != null) {
-                    Debug.Log(currentPhase.ToString("g") +", " + WaveCombination +", " + WaveCombinationLength );
+                    //Debug.Log(currentPhase.ToString("g") +", " + WaveCombination +", " + WaveCombinationLength );
 
                     if (OnCallReinforcement != null)
                         OnCallReinforcement(_UnitWave.phaseStructure[WaveCombination]);

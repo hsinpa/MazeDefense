@@ -58,7 +58,7 @@ namespace TD.UI
         private async void SelectTowerToBuild(string tower_id)
         {
 
-            if (currentSelectedNode.TileMapPlace != null)
+            if (IsTileNodeValid(currentSelectedNode))
             {
                 TowerStats towerStats = _statHolder.FindObject<TowerStats>(tower_id);
 
@@ -112,8 +112,10 @@ namespace TD.UI
 
         private void SelectTileListener(TileNode tileNode)
         {
-            if (!tileNode.IsWalkable)
+            if (!IsTileNodeValid(tileNode)) {
+                Reset();
                 return;
+            }
 
             UnityEngine.UI.Button[] displayBTObjects = null;
 
@@ -245,6 +247,10 @@ namespace TD.UI
              {
                  Reset();
              }));
+        }
+
+        private bool IsTileNodeValid(TileNode tileNode) {
+            return !(currentSelectedNode.TileMapPlace == null || !tileNode.IsWalkable || (tileNode.monsterUnit != null && tileNode.monsterUnit.Count > 0));
         }
 
         private void Reset()

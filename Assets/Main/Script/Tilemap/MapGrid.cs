@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TD.Unit;
 using System.Threading.Tasks;
+using Utility;
 
 namespace TD.Map {
 
@@ -24,12 +25,15 @@ namespace TD.Map {
         public TileNode[] DestinationNode { get { return _DestinationNode; } }
         private TileNode[] _DestinationNode;
 
+        private QueueTaskManager _queueTaskManager;
+
         public void SetUp()
         {
             raw_tileData = new List<TileNode[,]>();
             mapHolder = this.GetComponent<MapBlockManager>();
             mapHolder.OnAddMapComponent += OnAddBlock;
             _flowField = new FlowField();
+            _queueTaskManager = new QueueTaskManager();
         }
 
         public void ReformMap()
@@ -116,7 +120,11 @@ namespace TD.Map {
             return unitList;
         }
 
-        public async void RefreshMonsterFlowFieldMap() {
+        public void RefreshMonsterFlowFieldMap() {
+            _queueTaskManager.PushTask(AsyncRefreshMonsterFlowFieldMap);
+        }
+
+        private async void AsyncRefreshMonsterFlowFieldMap() {
 
             Vector2Int fullSize = new Vector2Int(gridWidth, gridHeight);
 
@@ -135,6 +143,8 @@ namespace TD.Map {
             lock (tilenodes) {
                 tilenodes = resultNode;
             }
+
+            _queueTaskManager.ExecuteNextTask();
         }
 
         private TileNode[,] ReorganizedTileNode(List<TileNode[,]> p_tileBlocks, Vector2Int blockSize)

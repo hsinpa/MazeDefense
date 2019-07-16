@@ -9,24 +9,19 @@ public class FlowField
 {
 
     private Vector3 zeroVector3 = new Vector3(0, 0, 0);
+    private Queue<TileNode> frontier = new Queue<TileNode>();
+    private HashSet<Vector2Int> came_from = new HashSet<Vector2Int>();
+    private Vector2Int[] directionSet;
+    private int directionSetLength;
 
-    //public void ExecuteAsyn(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Path pathTag, System.Action<TileNode[,]> callback) {
-    //    Thread t = new Thread(new ThreadStart(() => {
-
-    //        tileNodes = EraseTileNextPath(tileNodes, nodeSize);
-    //        tileNodes = Execute(tileNodes, targetNodes, nodeSize, pathTag);
-
-    //        if (callback != null)
-    //            callback(tileNodes);
-    //    }));
-    //    t.Start();
-    //}
+    public FlowField() {
+        directionSet = new Vector2Int[] { new Vector2Int(0, 1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
+        directionSetLength = directionSet.Length;
+    }
 
     public async Task<TileNode[,]> Execute(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Strategy pathTag) {
-
-        var frontier = new Queue<TileNode>();
-
-        var came_from = new List<Vector2Int>();
+        frontier.Clear();
+        came_from.Clear();
 
         int targetNodeLength = targetNodes.Length;
         for (int t = 0; t < targetNodeLength; t++) {
@@ -43,12 +38,11 @@ public class FlowField
             TileNode current = frontier.Dequeue();
             length--;
 
-
-            List<TileNode> neighbours = GetNeighbours(tileNodes, nodeSize, current);
-            for (int n = 0; n < neighbours.Count; n++) {
+            TileNode[] neighbours = GetNeighbours(tileNodes, nodeSize, current);
+            for (int n = 0; n < directionSetLength; n++) {
                 var neighbour = neighbours[n];
 
-                if (!neighbour.IsWalkable || neighbour.towerUnit != null)
+                if (neighbour.TileBase == null || !neighbour.IsWalkable || neighbour.towerUnit != null)
                     continue;
 
                 if (!came_from.Contains(neighbour.GridIndex))
@@ -79,9 +73,9 @@ public class FlowField
         return tileNodes;
      }
 
-    public List<TileNode> GetNeighbours(TileNode[,] tileNodes, Vector2Int nodeSize, TileNode node)
+    public TileNode[] GetNeighbours(TileNode[,] tileNodes, Vector2Int nodeSize, TileNode node)
     {
-        List<TileNode> neighbours = new List<TileNode>();
+        TileNode[] neighbours = new TileNode[directionSetLength];
 
         //for (int x = -1; x <= 1; x++)
         //{
@@ -103,18 +97,16 @@ public class FlowField
 
         Vector2 NeighbourPos = Vector2.zero;
 
-        Vector2Int[] directionSet = new Vector2Int[] { new Vector2Int(0, 1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
-        foreach (Vector2Int dirSet in directionSet)
-        {
+        for (int i = 0; i < directionSetLength; i++) {
+            Vector2Int dirSet = directionSet[i];
 
             int checkX = node.GridIndex.x + dirSet.x;
             int checkY = node.GridIndex.y + dirSet.y;
 
             if (checkX >= 0 && checkX < nodeSize.x && checkY >= 0 && checkY < nodeSize.y)
             {
-                neighbours.Add(tileNodes[checkX, checkY]);
+                neighbours[i] = (tileNodes[checkX, checkY]);
             }
-
         }
 
         return neighbours;
