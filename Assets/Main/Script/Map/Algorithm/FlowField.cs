@@ -9,8 +9,6 @@ public class FlowField
 {
 
     private Vector3 zeroVector3 = new Vector3(0, 0, 0);
-    private Queue<TileNode> frontier = new Queue<TileNode>();
-    private HashSet<Vector2Int> came_from = new HashSet<Vector2Int>();
     private Vector2Int[] directionSet;
     private int directionSetLength;
 
@@ -19,9 +17,9 @@ public class FlowField
         directionSetLength = directionSet.Length;
     }
 
-    public async Task<TileNode[,]> Execute(TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Strategy pathTag) {
-        frontier.Clear();
-        came_from.Clear();
+    public void Execute(ref TileNode[,] tileNodes, TileNode[] targetNodes, Vector2Int nodeSize, VariableFlag.Strategy pathTag) {
+        var frontier = new Queue<TileNode>();
+        var came_from = new HashSet<Vector2Int>();
 
         int targetNodeLength = targetNodes.Length;
         for (int t = 0; t < targetNodeLength; t++) {
@@ -57,8 +55,6 @@ public class FlowField
                 }
             }
         }
-
-        return tileNodes;
     }
 
     public async Task<TileNode[,]> ClearTileNodePath(TileNode[,] tileNodes, Vector2Int nodeSize) {

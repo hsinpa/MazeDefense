@@ -2721,7 +2721,7 @@ MonoBehaviour:
   spriteSheet:
   - {fileID: 21300000, guid: ea2088f35a42c5e41bfbf8059e3f6cb3, type: 3}
   - {fileID: 21300008, guid: ea2088f35a42c5e41bfbf8059e3f6cb3, type: 3}
-  IgnoreInputRange: 2
+  IgnoreInputRange: 1.7
 --- !u!483693784 &1519231822 stripped
 TilemapRenderer:
   m_CorrespondingSourceObject: {fileID: 8413173766971902988, guid: 373e2933f0dd2ad4c92fa233f924f177,

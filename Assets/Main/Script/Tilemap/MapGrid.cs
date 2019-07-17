@@ -4,6 +4,7 @@ using UnityEngine;
 using TD.Unit;
 using System.Threading.Tasks;
 using Utility;
+using System.Threading;
 
 namespace TD.Map {
 
@@ -25,15 +26,12 @@ namespace TD.Map {
         public TileNode[] DestinationNode { get { return _DestinationNode; } }
         private TileNode[] _DestinationNode;
 
-        private QueueTaskManager _queueTaskManager;
-
         public void SetUp()
         {
             raw_tileData = new List<TileNode[,]>();
             mapHolder = this.GetComponent<MapBlockManager>();
             mapHolder.OnAddMapComponent += OnAddBlock;
             _flowField = new FlowField();
-            _queueTaskManager = new QueueTaskManager();
         }
 
         public void ReformMap()
@@ -120,31 +118,26 @@ namespace TD.Map {
             return unitList;
         }
 
-        public void RefreshMonsterFlowFieldMap() {
-            _queueTaskManager.PushTask(AsyncRefreshMonsterFlowFieldMap);
-        }
-
-        private async void AsyncRefreshMonsterFlowFieldMap() {
+        public async void RefreshMonsterFlowFieldMap() {
 
             Vector2Int fullSize = new Vector2Int(gridWidth, gridHeight);
 
             //Remove all path sign
             TileNode[,] resultNode = await _flowField.ClearTileNodePath(tilenodes, fullSize);
 
-            resultNode = await _flowField.Execute(resultNode, DestinationNode, fullSize, VariableFlag.Strategy.CastleFirst);
-
             TileNode[] towerTileNode = new TileNode[allTowerUnit.Count];
             int towerLength = towerTileNode.Length;
-            for (int t = 0; t < towerLength; t++)
-                towerTileNode[t] = allTowerUnit[t].currentTile;
+            for (int i = 0; i < towerLength; i++)
+                towerTileNode[i] = allTowerUnit[i].currentTile;
 
-            resultNode = await _flowField.Execute(resultNode, towerTileNode, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.TowersFirst);
+            Thread t = new Thread(new ThreadStart(() => {
 
-            lock (tilenodes) {
-                tilenodes = resultNode;
-            }
+                _flowField.Execute(ref resultNode, DestinationNode, fullSize, VariableFlag.Strategy.CastleFirst);
 
-            _queueTaskManager.ExecuteNextTask();
+                _flowField.Execute(ref resultNode, towerTileNode, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.TowersFirst);
+            }));
+
+            t.Start();
         }
 
         private TileNode[,] ReorganizedTileNode(List<TileNode[,]> p_tileBlocks, Vector2Int blockSize)
