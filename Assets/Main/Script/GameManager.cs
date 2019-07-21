@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
 
     #region UI Class
     private HeaderView _headView;
+    private MapBlockBottomView _mapBlockBottomView;
     #endregion
 
     [SerializeField]
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
         _gameUnitManager = GetComponentInChildren<GameUnitManager>();
         _levelDesignManager = GetComponentInChildren<LevelDesignManager>();
         _headView = GetComponentInChildren<HeaderView>();
+        _mapBlockBottomView = GetComponentInChildren<MapBlockBottomView>();
 
         _mapGrid.SetUp();
         _gameInputManager.SetUp(_mapGrid, _blockManager);
@@ -69,7 +71,7 @@ public class GameManager : MonoBehaviour
 
         _levelDesignManager.SetLevel(new List<PlayerModel> { mainPlayer }, mainPlayer);
         _headView.SetUp(mainPlayer);
-
+        _mapBlockBottomView.SetUp(_blockManager);
     }
 
     private void PreparePoolingObject(STPTheme poolingTheme) {

@@ -23,6 +23,11 @@ public class VariableFlag
         public const string TowerSale = "tower_sale";
     }
 
+
+    public class UIAnimator {
+        public const string Expand = "Expand";
+    }
+
     public enum Strategy {
         None = -1,
         CastleFirst = 0,

@@ -123,7 +123,7 @@ namespace TD.Map {
             Vector2Int fullSize = new Vector2Int(gridWidth, gridHeight);
 
             //Remove all path sign
-            TileNode[,] resultNode = await _flowField.ClearTileNodePath(tilenodes, fullSize);
+            tilenodes = await _flowField.ClearTileNodePath(tilenodes, fullSize);
 
             TileNode[] towerTileNode = new TileNode[allTowerUnit.Count];
             int towerLength = towerTileNode.Length;
@@ -131,10 +131,9 @@ namespace TD.Map {
                 towerTileNode[i] = allTowerUnit[i].currentTile;
 
             Thread t = new Thread(new ThreadStart(() => {
+                _flowField.Execute(ref tilenodes, DestinationNode, fullSize, VariableFlag.Strategy.CastleFirst);
 
-                _flowField.Execute(ref resultNode, DestinationNode, fullSize, VariableFlag.Strategy.CastleFirst);
-
-                _flowField.Execute(ref resultNode, towerTileNode, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.TowersFirst);
+                _flowField.Execute(ref tilenodes, towerTileNode, new Vector2Int(gridWidth, gridHeight), VariableFlag.Strategy.TowersFirst);
             }));
 
             t.Start();

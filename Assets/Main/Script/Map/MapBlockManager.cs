@@ -159,6 +159,28 @@ namespace TD.Map {
             }
         }
 
+        public void InsertNewMapComponent(BlockComponent mapComponent)
+        {
+            try
+            {
+                mapComponent.transform.SetParent(transform);
+                mapComponent.SetUp();
+
+                _mapLength++;
+
+                _mapComponents.Insert(1, mapComponent);
+
+                CalculateMapTargetPos();
+                SetMapBlockPositionImmediately();
+
+                if (OnAddMapComponent != null)
+                    OnAddMapComponent(mapComponent);
+            }
+            catch (System.Exception e) {
+                Debug.LogError("Insert Error " + e.ToString());
+            }
+        }
+
         private int GetComponentIndexByPos(float yPos) {
             if (_mapComponents.Count <= 0)
                 return 0;
@@ -183,6 +205,15 @@ namespace TD.Map {
                 float diff = transform.position.y - _mapComponents[i].radiusSize.y - ((_mapComponents[i].radiusSize.y * 2) * (i));
 
                 _mapComponents[i].SetTargetPosition(new Vector2(0, diff));
+            }
+        }
+
+        private void SetMapBlockPositionImmediately() {
+            for (int i = 0; i < _mapComponents.Count; i++)
+            {
+                float diff = transform.position.y - _mapComponents[i].radiusSize.y - ((_mapComponents[i].radiusSize.y * 2) * (i));
+
+                _mapComponents[i].transform.position = new Vector3(0, diff, 0);
             }
         }
 

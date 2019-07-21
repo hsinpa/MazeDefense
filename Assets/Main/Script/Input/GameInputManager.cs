@@ -19,7 +19,7 @@ public class GameInputManager : MonoBehaviour
     [SerializeField, Range(0, 3)]
     float maxDragSensitivity;
 
-    [SerializeField, Range(0, 1)]
+    [SerializeField, Range(0, 3)]
     float maxDragVelocity;
 
     [SerializeField, Range(0, 1)]
@@ -51,9 +51,29 @@ public class GameInputManager : MonoBehaviour
 
     public InputState inputState;
 
+    private float ignoreTimePeriod;
+
+    private static GameInputManager _instance;
+
+    public static GameInputManager instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<GameInputManager>();
+            }
+            return _instance;
+        }
+    }
     #region Event
     public System.Action<TileNode> OnSelectTileNode;
     #endregion
+
+    public void AppendIgnoreTime() {
+        ignoreTimePeriod = Time.time + 0.2f;
+    }
+
     public void SetUp(MapGrid mapGrid, MapBlockManager mapHolder)
     {
         _camera = Camera.main;
@@ -82,7 +102,7 @@ public class GameInputManager : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            if (inputState == InputState.Click)
+            if (inputState == InputState.Click && Time.time > ignoreTimePeriod)
                 ClickOnMapMaterial(mouseWorldPos);
 
             Release();
@@ -121,8 +141,15 @@ public class GameInputManager : MonoBehaviour
         float delta = (mousePosition - initialMousePos).y;
         delta = Mathf.Clamp(delta, -maxDragSensitivity, maxDragSensitivity);
 
+        if (Mathf.Abs(delta) > dragRange) {
+            initialMousePos = mousePosition;
+        }
+
         if (inputState == InputState.Click && mapHolder.IsWithinMapSizeRange(mousePosition) &&
             Mathf.Abs(delta) > dragRange) {
+
+            initialMousePos = mousePosition;
+
             inputState = InputState.DragMap;
         }
 
@@ -135,9 +162,10 @@ public class GameInputManager : MonoBehaviour
                 return;
             }
 
-            dragVelocity = delta * Time.deltaTime * dragSpeed;
+            dragVelocity += delta * Time.deltaTime * dragSpeed;
             transform.position += new Vector3(0, dragVelocity, 0);
         }
+
     }
 
     void CheckMapComponentDrag(Vector3 mousePosition) {
@@ -161,7 +189,6 @@ public class GameInputManager : MonoBehaviour
             transform.position = new Vector3(transform.position.x, 0, transform.position.z);
             return false;
         }
-
 
         if (inputState != InputState.DragComp)
         {

@@ -57,7 +57,7 @@ namespace TD.Unit {
 
         #endregion
 
-        public void SetUp( MonsterStats monsterStats, BaseStrategy strategy, MapGrid mapGrid, MapBlockManager mapBlockManager, 
+        public void SetUp(MonsterStats monsterStats, BaseStrategy strategy, MapGrid mapGrid, MapBlockManager mapBlockManager,
                         GameDamageManager gameDamageManager)
         {
             _monsterStats = monsterStats;
@@ -67,7 +67,7 @@ namespace TD.Unit {
             _gameDamageManager = gameDamageManager;
 
             currentState = ActiveState.Action;
-            
+
             _hp = _monsterStats.hp;
             _uniqueUnitID = gameObject.GetInstanceID();
 
@@ -86,9 +86,9 @@ namespace TD.Unit {
             Vector3 unitPosition = transform.position;
 
             //Update map information
-            TileNode standTile = _mapGrid.GetTileNodeByWorldPos(unitPosition);
+            TileNode standTile = FindValidStandPosition(unitPosition);
 
-            if (standTile.TilemapMember != null && standTile.GridIndex != _currentTile.GridIndex )
+            if (standTile.TilemapMember != null && standTile.GridIndex != _currentTile.GridIndex)
             {
                 if (_currentTile.TilemapMember != null)
                     _mapGrid.EditUnitState(_currentTile.GridIndex.x, _currentTile.GridIndex.y, this, false);
@@ -107,7 +107,7 @@ namespace TD.Unit {
                     this.transform.SetParent(currentBlockComp.unitHolder);
                 }
             }
-            
+
             UpdateActiveState(currentBlockComp);
 
             if (currentState == ActiveState.Action)
@@ -130,7 +130,7 @@ namespace TD.Unit {
         }
 
         private void AgentMove() {
-            moveDelta.Set((_currentTile.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).x), 
+            moveDelta.Set((_currentTile.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).x),
                             _currentTile.GetFlowFieldPath(VariableFlag.Strategy.CastleFirst).y, 0);
 
             moveDelta *= Time.deltaTime * _monsterStats.moveSpeed * 0.3f;
@@ -147,9 +147,29 @@ namespace TD.Unit {
         private void SetAnimator(RuntimeAnimatorController targetAnimator) {
             if (targetAnimator != null && _animator != null) {
 
-                _animator.runtimeAnimatorController = targetAnimator ;
+                _animator.runtimeAnimatorController = targetAnimator;
 
             }
+        }
+
+        private TileNode FindValidStandPosition(Vector3 unitPosition) {
+            TileNode standTile = _mapGrid.GetTileNodeByWorldPos(unitPosition);
+
+            if (standTile.TilemapMember != null && !standTile.IsWalkable)
+            {
+                Vector3[] searchDirection = new Vector3[] { Vector3.up, Vector3.down, Vector3.right, Vector3.left };
+                int searchLength = searchDirection.Length;
+
+                for (int i = 0; i < searchLength; i++)
+                {
+                    TileNode searchTile = _mapGrid.GetTileNodeByWorldPos(unitPosition + searchDirection[i]);
+                    if (searchTile.IsWalkable)
+                    {
+                        return searchTile;
+                    }
+                }
+            }
+            return standTile;
         }
 
         public void OnAttack(GameDamageManager.DMGRegistry dmgCard)
