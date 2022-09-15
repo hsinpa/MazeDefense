@@ -44,6 +44,33 @@ public partial class @NewControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MainMouseDown"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7c6daaf-4f46-450b-a8d6-34bb0428f781"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MainMouseClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""74b29d33-77cf-46a9-a3ca-06388803f826"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MainMouseUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""af2d99cb-c44a-45ef-b206-bf8c369540fd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -178,6 +205,39 @@ public partial class @NewControls : IInputActionCollection2, IDisposable
                     ""action"": ""XAxis"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2031e77-4189-460f-a194-a49d15c9680d"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MainMouseDown"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb4d5434-b63c-4d29-89d3-52a56c01435b"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MainMouseClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d748b5a6-6494-4412-9909-6115fc1c2645"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Press(behavior=1)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MainMouseUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -188,6 +248,9 @@ public partial class @NewControls : IInputActionCollection2, IDisposable
         m_InputAction = asset.FindActionMap("InputAction", throwIfNotFound: true);
         m_InputAction_YAxis = m_InputAction.FindAction("YAxis", throwIfNotFound: true);
         m_InputAction_XAxis = m_InputAction.FindAction("XAxis", throwIfNotFound: true);
+        m_InputAction_MainMouseDown = m_InputAction.FindAction("MainMouseDown", throwIfNotFound: true);
+        m_InputAction_MainMouseClick = m_InputAction.FindAction("MainMouseClick", throwIfNotFound: true);
+        m_InputAction_MainMouseUp = m_InputAction.FindAction("MainMouseUp", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -249,12 +312,18 @@ public partial class @NewControls : IInputActionCollection2, IDisposable
     private IInputActionActions m_InputActionActionsCallbackInterface;
     private readonly InputAction m_InputAction_YAxis;
     private readonly InputAction m_InputAction_XAxis;
+    private readonly InputAction m_InputAction_MainMouseDown;
+    private readonly InputAction m_InputAction_MainMouseClick;
+    private readonly InputAction m_InputAction_MainMouseUp;
     public struct InputActionActions
     {
         private @NewControls m_Wrapper;
         public InputActionActions(@NewControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @YAxis => m_Wrapper.m_InputAction_YAxis;
         public InputAction @XAxis => m_Wrapper.m_InputAction_XAxis;
+        public InputAction @MainMouseDown => m_Wrapper.m_InputAction_MainMouseDown;
+        public InputAction @MainMouseClick => m_Wrapper.m_InputAction_MainMouseClick;
+        public InputAction @MainMouseUp => m_Wrapper.m_InputAction_MainMouseUp;
         public InputActionMap Get() { return m_Wrapper.m_InputAction; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -270,6 +339,15 @@ public partial class @NewControls : IInputActionCollection2, IDisposable
                 @XAxis.started -= m_Wrapper.m_InputActionActionsCallbackInterface.OnXAxis;
                 @XAxis.performed -= m_Wrapper.m_InputActionActionsCallbackInterface.OnXAxis;
                 @XAxis.canceled -= m_Wrapper.m_InputActionActionsCallbackInterface.OnXAxis;
+                @MainMouseDown.started -= m_Wrapper.m_InputActionActionsCallbackInterface.OnMainMouseDown;
+                @MainMouseDown.performed -= m_Wrapper.m_InputActionActionsCallbackInterface.OnMainMouseDown;
+                @MainMouseDown.canceled -= m_Wrapper.m_InputActionActionsCallbackInterface.OnMainMouseDown;
+                @MainMouseClick.started -= m_Wrapper.m_InputActionActionsCallbackInterface.OnMainMouseClick;
+                @MainMouseClick.performed -= m_Wrapper.m_InputActionActionsCallbackInterface.OnMainMouseClick;
+                @MainMouseClick.canceled -= m_Wrapper.m_InputActionActionsCallbackInterface.OnMainMouseClick;
+                @MainMouseUp.started -= m_Wrapper.m_InputActionActionsCallbackInterface.OnMainMouseUp;
+                @MainMouseUp.performed -= m_Wrapper.m_InputActionActionsCallbackInterface.OnMainMouseUp;
+                @MainMouseUp.canceled -= m_Wrapper.m_InputActionActionsCallbackInterface.OnMainMouseUp;
             }
             m_Wrapper.m_InputActionActionsCallbackInterface = instance;
             if (instance != null)
@@ -280,6 +358,15 @@ public partial class @NewControls : IInputActionCollection2, IDisposable
                 @XAxis.started += instance.OnXAxis;
                 @XAxis.performed += instance.OnXAxis;
                 @XAxis.canceled += instance.OnXAxis;
+                @MainMouseDown.started += instance.OnMainMouseDown;
+                @MainMouseDown.performed += instance.OnMainMouseDown;
+                @MainMouseDown.canceled += instance.OnMainMouseDown;
+                @MainMouseClick.started += instance.OnMainMouseClick;
+                @MainMouseClick.performed += instance.OnMainMouseClick;
+                @MainMouseClick.canceled += instance.OnMainMouseClick;
+                @MainMouseUp.started += instance.OnMainMouseUp;
+                @MainMouseUp.performed += instance.OnMainMouseUp;
+                @MainMouseUp.canceled += instance.OnMainMouseUp;
             }
         }
     }
@@ -288,5 +375,8 @@ public partial class @NewControls : IInputActionCollection2, IDisposable
     {
         void OnYAxis(InputAction.CallbackContext context);
         void OnXAxis(InputAction.CallbackContext context);
+        void OnMainMouseDown(InputAction.CallbackContext context);
+        void OnMainMouseClick(InputAction.CallbackContext context);
+        void OnMainMouseUp(InputAction.CallbackContext context);
     }
 }

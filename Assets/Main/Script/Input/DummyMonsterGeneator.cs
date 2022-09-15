@@ -5,6 +5,7 @@ using TD.Map;
 using TD.Unit;
 using TD.Database;
 using TD.AI;
+using UnityEngine.InputSystem;
 
 public class DummyMonsterGeneator : MonoBehaviour
 {
@@ -47,19 +48,19 @@ public class DummyMonsterGeneator : MonoBehaviour
 #if UNITY_EDITOR
     private void Update()
     {
-        if (Input.GetMouseButton(1) && LevelDesignManager.Time > recordSpawnTime) {
-            recordSpawnTime = LevelDesignManager.Time + spawnSpeed;
+        //if (Mouse.current.rightButton.isPressed && LevelDesignManager.Time > recordSpawnTime) {
+        //    recordSpawnTime = LevelDesignManager.Time + spawnSpeed;
 
-            var worldPos = (_camera.ScreenToWorldPoint(Input.mousePosition));
-            worldPos.Set(worldPos.x, worldPos.y, 0);
+        //    var worldPos = (_camera.ScreenToWorldPoint(Input.mousePosition));
+        //    worldPos.Set(worldPos.x, worldPos.y, 0);
 
-            var tile = _mapGrid.GetTileNodeByWorldPos(worldPos);
+        //    var tile = _mapGrid.GetTileNodeByWorldPos(worldPos);
 
-            if (tile.TileBase != null && (tile.towerUnit == null || !tile.towerUnit.isActive) && tile.IsWalkable)
-            {
-                GenerateMonster(tile);
-            }
-        }
+        //    if (tile.TileBase != null && (tile.towerUnit == null || !tile.towerUnit.isActive) && tile.IsWalkable)
+        //    {
+        //        GenerateMonster(tile);
+        //    }
+        //}
     }
 #endif
 

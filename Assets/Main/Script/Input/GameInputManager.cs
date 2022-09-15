@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TD.Map;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameInputManager : MonoBehaviour
 {
@@ -50,6 +51,7 @@ public class GameInputManager : MonoBehaviour
     }
 
     public InputState inputState;
+    public bool mainMouseActionFlag = false;
 
     private float ignoreTimePeriod;
 
@@ -66,6 +68,11 @@ public class GameInputManager : MonoBehaviour
             return _instance;
         }
     }
+
+    private NewControls m_new_controller;
+    private Vector2 m_mouse_pos;
+    public Vector2 MousePos => this.m_mouse_pos;
+
     #region Event
     public System.Action<TileNode> OnSelectTileNode;
     #endregion
@@ -79,6 +86,14 @@ public class GameInputManager : MonoBehaviour
         _camera = Camera.main;
         this.mapGrid = mapGrid;
         this.mapHolder = mapHolder;
+
+
+        //m_new_controller = new NewControls();
+        //m_new_controller.Enable();
+
+        //m_new_controller.InputAction.MainMouseDown.performed += OnInputMouseDown;
+        //m_new_controller.InputAction.MainMouseClick.performed += OnInputMousePress;
+        //m_new_controller.InputAction.MainMouseUp.performed += OnInputMouseUp;
     }
 
     // Update is called once per frame
@@ -86,26 +101,33 @@ public class GameInputManager : MonoBehaviour
     {
         if (_camera == null)
             return;
+        m_mouse_pos = Mouse.current.position.ReadValue();
 
-        mouseWorldPos = (_camera.ScreenToWorldPoint(Input.mousePosition));
+        mouseWorldPos = (_camera.ScreenToWorldPoint(m_mouse_pos));
         mouseWorldPos.Set(mouseWorldPos.x, mouseWorldPos.y, 0);
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            Debug.Log("wasPressedThisFrame");
             CheckMapComponentDrag(mouseWorldPos);
+            mainMouseActionFlag = true;
         }
 
-        if (Input.GetMouseButton(0)) {
+        if (mainMouseActionFlag)
+        {
             CheckMapHolderDrag(mouseWorldPos);
         }
 
         Drag(dragObject, mouseWorldPos);
 
-        if (Input.GetMouseButtonUp(0))
+        if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
+            Debug.Log("wasReleasedThisFrame");
             if (inputState == InputState.Click && Time.time > ignoreTimePeriod)
                 ClickOnMapMaterial(mouseWorldPos);
 
             Release();
+            mainMouseActionFlag = false;
         }
 
         bool outOfBoundary = IsOutOfBoundary();
@@ -121,9 +143,12 @@ public class GameInputManager : MonoBehaviour
     }
 
     void Scroll() {
-        if (Input.mouseScrollDelta.y != 0)
+
+        Vector2 scrll_delta = Mouse.current.scroll.ReadValue();
+
+        if (scrll_delta.y != 0)
         {
-            transform.position += new Vector3(0, Input.mouseScrollDelta.y, 0) * Time.deltaTime * dragSpeed;
+            transform.position += new Vector3(0, scrll_delta.y, 0) * Time.deltaTime * dragSpeed;
             inputState = InputState.Scroll;
         }
         else if (inputState == InputState.Scroll) {
@@ -262,5 +287,15 @@ public class GameInputManager : MonoBehaviour
             OnSelectTileNode(tile);
         }
     }
+
+    private void OnDestroy()
+    {
+        this.m_new_controller?.Dispose();
+    }
+
+    #region Input Event
+
+    #endregion
+
 }
 
