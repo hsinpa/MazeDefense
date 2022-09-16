@@ -145,6 +145,9 @@ namespace TD.Map {
             int originalIndex = _mapComponents.IndexOf(mapComponent);
             int insertIndex = GetComponentIndexByPos(mapComponent.transform.position.y - mapComponent.offsetAnchor.y);
 
+            if (_mapComponents[insertIndex].map_type != BlockComponent.Type.Free)
+                return;
+
             if (originalIndex != insertIndex) {
 
                 _mapComponents.RemoveAt(originalIndex);
@@ -190,11 +193,12 @@ namespace TD.Map {
 
             float lowestPoint = transform.position.y - (_mapComponents[0].fullSize.y * _mapComponents.Count);
 
-            if (yPos < lowestPoint)
-                return _mapComponents.Count - 1;
+            if (yPos < lowestPoint) {
+                int lastIndex = _mapComponents.Count - 1;
+                return lastIndex;
+            }
 
             int index = Mathf.FloorToInt((transform.position.y - yPos) / (_mapComponents[0].fullSize.y));
-
             return index;
         }
 

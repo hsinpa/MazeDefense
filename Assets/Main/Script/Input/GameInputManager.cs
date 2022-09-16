@@ -108,7 +108,6 @@ public class GameInputManager : MonoBehaviour
 
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            Debug.Log("wasPressedThisFrame");
             CheckMapComponentDrag(mouseWorldPos);
             mainMouseActionFlag = true;
         }
@@ -122,7 +121,6 @@ public class GameInputManager : MonoBehaviour
 
         if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
-            Debug.Log("wasReleasedThisFrame");
             if (inputState == InputState.Click && Time.time > ignoreTimePeriod)
                 ClickOnMapMaterial(mouseWorldPos);
 
@@ -150,6 +148,8 @@ public class GameInputManager : MonoBehaviour
         {
             transform.position += new Vector3(0, scrll_delta.y, 0) * Time.deltaTime * dragSpeed;
             inputState = InputState.Scroll;
+
+            IsOutOfBoundary();
         }
         else if (inputState == InputState.Scroll) {
             Release();
@@ -190,7 +190,6 @@ public class GameInputManager : MonoBehaviour
             dragVelocity += delta * Time.deltaTime * dragSpeed;
             transform.position += new Vector3(0, dragVelocity, 0);
         }
-
     }
 
     void CheckMapComponentDrag(Vector3 mousePosition) {
