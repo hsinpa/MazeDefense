@@ -7,6 +7,7 @@ using TD.Unit;
 using TD.AI;
 using TD.Database;
 using TD.UI;
+using Hsinpa.StateEntity;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        StateEntityManager.Dispose();
+
         var monsterPools = statsHolder.FindObjectByType<MonsterStats>();
 
         _blockManager = GetComponentInChildren<MapBlockManager>();
@@ -48,11 +51,12 @@ public class GameManager : MonoBehaviour
         _mapBlockBottomView = GetComponentInChildren<MapBlockBottomView>();
 
         _mapGrid.SetUp();
-        _gameInputManager.SetUp(_mapGrid, _blockManager);
         _gameUnitManager.SetUp(_blockManager, _mapGrid, poolingTheme.total);
+        _gameInputManager.SetUp(_mapGrid, _blockManager, _gameUnitManager);
         _levelDesignManager.Init(_gameUnitManager, _blockManager, _mapGrid, monsterPools);
 
         _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _levelDesignManager, _mapGrid, _blockManager, poolingTheme, statsHolder);
+
     }
 
     public void Start() {

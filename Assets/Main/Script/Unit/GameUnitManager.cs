@@ -4,6 +4,7 @@ using UnityEngine;
 using TD.Map;
 using System.Linq;
 using Utility;
+using Hsinpa.StateEntity;
 
 namespace TD.Unit {
     public class GameUnitManager : MonoBehaviour
@@ -62,8 +63,12 @@ namespace TD.Unit {
         {
             HandleDestroyUnit();
 
-            for (int i = 0; i < unitLength; i++) {
-                unitList[i].OnUpdate();
+            bool is_mapblock_dragging = StateEntityManager.Query(StateEntityManager.BoolOperation.AND, EntityData.Tag.MapBlockDrag);
+            if (!is_mapblock_dragging) {
+                for (int i = 0; i < unitLength; i++)
+                {
+                    unitList[i].OnUpdate();
+                }
             }
 
             gameDamageManager.OnUpdate();

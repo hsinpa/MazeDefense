@@ -8,6 +8,7 @@ using TD.Unit;
 using TD.Database;
 using TD.AI;
 using System.Threading.Tasks;
+using Hsinpa.StateEntity;
 
 namespace TD.UI
 {
@@ -53,6 +54,9 @@ namespace TD.UI
             {
                 ConstructionUI.TowerClickEvent += SelectTowerToBuild;
             }
+
+            StateEntityManager.OnEntityPushed += OnEntityPush;
+            StateEntityManager.OnEntityRemoved += OnEntityRemove;
         }
 
         private async void SelectTowerToBuild(string tower_id)
@@ -238,6 +242,17 @@ namespace TD.UI
             };
 
             return uiComp;
+        }
+        #endregion
+
+        #region Event
+        private void OnEntityPush(EntityData.Tag tag) {
+            if (tag == EntityData.Tag.MapBlockDrag) Reset();
+        }
+
+        private void OnEntityRemove(EntityData.Tag tag)
+        {
+            if (tag == EntityData.Tag.MapBlockDrag) Reset();
         }
         #endregion
 

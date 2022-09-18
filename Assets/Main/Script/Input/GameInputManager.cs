@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using Hsinpa.StateEntity;
+using System.Collections;
 using System.Collections.Generic;
 using TD.Map;
+using TD.Unit;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -36,7 +38,8 @@ public class GameInputManager : MonoBehaviour
     Vector2 lastMousePos;
 
     private MapGrid mapGrid;
-    MapBlockManager mapHolder;
+    private MapBlockManager mapHolder;
+    private GameUnitManager m_game_unit_manager;
 
     [SerializeField]
     public Vector3 mouseWorldPos;
@@ -81,19 +84,12 @@ public class GameInputManager : MonoBehaviour
         ignoreTimePeriod = Time.time + 0.2f;
     }
 
-    public void SetUp(MapGrid mapGrid, MapBlockManager mapHolder)
+    public void SetUp(MapGrid mapGrid, MapBlockManager mapHolder, GameUnitManager gameUnitManager)
     {
         _camera = Camera.main;
         this.mapGrid = mapGrid;
         this.mapHolder = mapHolder;
-
-
-        //m_new_controller = new NewControls();
-        //m_new_controller.Enable();
-
-        //m_new_controller.InputAction.MainMouseDown.performed += OnInputMouseDown;
-        //m_new_controller.InputAction.MainMouseClick.performed += OnInputMousePress;
-        //m_new_controller.InputAction.MainMouseUp.performed += OnInputMouseUp;
+        this.m_game_unit_manager = gameUnitManager;
     }
 
     // Update is called once per frame
@@ -108,7 +104,7 @@ public class GameInputManager : MonoBehaviour
 
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            CheckMapComponentDrag(mouseWorldPos);
+            bool object_detected = CheckMapComponentDrag(mouseWorldPos);
             mainMouseActionFlag = true;
         }
 
@@ -192,7 +188,7 @@ public class GameInputManager : MonoBehaviour
         }
     }
 
-    void CheckMapComponentDrag(Vector3 mousePosition) {
+    bool CheckMapComponentDrag(Vector3 mousePosition) {
         float radius = 0.01f;
 
         int hits = Physics2D.OverlapCircleNonAlloc(mousePosition, radius, rayhitCache, raycastLayer);
@@ -202,8 +198,14 @@ public class GameInputManager : MonoBehaviour
                 dragObject = tMapComp;
                 //mapHolder.RemoveMapComp(dragObject);
                 //mapHolder.CalculateMapTargetPos();
+
+                Time.timeScale = 0;
+                StateEntityManager.PushEntity(EntityData.Tag.MapBlockDrag);
+
+                return true;
             }
         }
+        return false;
     }
 
     bool IsOutOfBoundary() {
@@ -246,6 +248,7 @@ public class GameInputManager : MonoBehaviour
         dragObject.isMoving = true;
 
         mapHolder.AutoEditMapComp(dragObject);
+
         //Debug.Log(dragObject.name);
     }
 
@@ -276,7 +279,10 @@ public class GameInputManager : MonoBehaviour
 
         inputState = InputState.Idle;
         dragObject = null;
-        initialMousePos = Vector2.zero; 
+        initialMousePos = Vector2.zero;
+        Time.timeScale = 1;
+
+        StateEntityManager.RemoveEntity(EntityData.Tag.MapBlockDrag);
     }
 
     void ClickOnMapMaterial(Vector3 worldPos) {
