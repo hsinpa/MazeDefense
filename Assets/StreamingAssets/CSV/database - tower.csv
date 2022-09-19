@@ -1,0 +1,9 @@
+ID,Label,Level,Tag,HP,ATK,SPD,RANGE,COST,Update Path,Skill,Sprite ID
+tower_01,Archer_01,1,Archery,15,10,0.5,5,100,tower_02,,tower_1
+tower_02,Archer_02,2,Archery,15,12,0.5,5.5,50,tower_03,,tower_1
+tower_03,Archer_03,3,Archery,15,14,0.5,6,60,"tower_04,tower_05",,tower_1
+tower_04,Archer_Poison_04,4,Archery,15,16,0.5,7.5,70,,skill_02,tower_2
+tower_05,Archer_Laser_05,4,Archery,15,14,0.5,7,80,,skill_01,tower_2
+tower_06,Bombard_01,1,Bombard,15,8,1,8,250,tower_07,skill_03,tower_3
+tower_07,Bombard_02,2,Bombard,15,10,1,9,150,tower_08,,tower_3
+tower_08,Bombard_03,3,Bombard,15,12,1,10,200,,,tower_3

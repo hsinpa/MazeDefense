@@ -1,0 +1,6 @@
+ID,Label,Parameter 1,Parameter 2,Parameter 3,Parameter 4
+skill_01,Penetration,2.00,1.00,,
+skill_02,DiminishOverTime,2.00,1.00,,
+skill_03,Diffusion,1.00,,,
+skill_04,Slow,0.30,2.00,,
+skill_05,Teleport,2.00,,,

@@ -1,0 +1,5 @@
+ID,Label,Strategy,Value,HP,ATK,SPD,RANGE,Move Speed,Prize,Skill,Skill Length,Sprite ID
+monster_01,Skeleton,0,4,15,2,0.6,1,5,1,,0,skeleton
+monster_02,Goblin,0,11,10,5,0.4,1,10,2,,0,goblin
+monster_03,Troll,1,38,30,15,1,1,5,7,,0,troll
+monster_04,Battering ram,2,63,50,25,1.5,1,3,12,,0,battering_ram
