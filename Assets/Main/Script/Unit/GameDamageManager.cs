@@ -4,6 +4,7 @@ using UnityEngine;
 using Pooling;
 using TD.Skill;
 using TD.Map;
+using Hsinpa.Utility;
 
 namespace TD.Unit {
     public class GameDamageManager
@@ -31,7 +32,7 @@ namespace TD.Unit {
 
         public void OnUpdate()
         {
-            float time = Time.time;
+            float time = TimeSystem.time;
             int removeNum = 0;
             for (int i = 0; i < dmgRegisterLength; i++)
             {

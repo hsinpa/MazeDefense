@@ -7,6 +7,7 @@ using TD.Map;
 using TD.Database;
 using Utility;
 using TD.AI;
+using Hsinpa.Utility;
 
 namespace TD.Unit {
     public class TowerUnit : MonoBehaviour, UnitInterface
@@ -121,7 +122,7 @@ namespace TD.Unit {
         }
 
         private void Fire(MonsterUnit target) {
-            float time = Time.time;
+            float time = TimeSystem.time;
 
             if (recordFrequency < time) {
                 GameObject bulletObj = Pooling.PoolManager.instance.ReuseObject(_stpTower.stpBullet._id);

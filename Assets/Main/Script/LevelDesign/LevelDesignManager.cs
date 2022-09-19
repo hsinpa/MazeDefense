@@ -6,6 +6,7 @@ using TD.Unit;
 using Pooling;
 using TD.Database;
 using System.Threading;
+using Hsinpa.Utility;
 
 namespace TD.AI {
     public class LevelDesignManager : MonoBehaviour
@@ -83,7 +84,7 @@ namespace TD.AI {
 
         private void Update() {
 
-            Time = UnityEngine.Time.time;
+            Time = TimeSystem.time;
             DeltaTime = UnityEngine.Time.deltaTime;
 
             if (_entranceComponent != null)

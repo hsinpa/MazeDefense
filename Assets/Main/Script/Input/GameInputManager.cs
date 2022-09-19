@@ -1,4 +1,5 @@
 ﻿using Hsinpa.StateEntity;
+using Hsinpa.Utility;
 using System.Collections;
 using System.Collections.Generic;
 using TD.Map;
@@ -81,7 +82,7 @@ public class GameInputManager : MonoBehaviour
     #endregion
 
     public void AppendIgnoreTime() {
-        ignoreTimePeriod = Time.time + 0.2f;
+        ignoreTimePeriod = TimeSystem.time + 0.2f;
     }
 
     public void SetUp(MapGrid mapGrid, MapBlockManager mapHolder, GameUnitManager gameUnitManager)
@@ -117,7 +118,7 @@ public class GameInputManager : MonoBehaviour
 
         if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
-            if (inputState == InputState.Click && Time.time > ignoreTimePeriod)
+            if (inputState == InputState.Click && TimeSystem.time > ignoreTimePeriod)
                 ClickOnMapMaterial(mouseWorldPos);
 
             Release();
@@ -199,7 +200,7 @@ public class GameInputManager : MonoBehaviour
                 //mapHolder.RemoveMapComp(dragObject);
                 //mapHolder.CalculateMapTargetPos();
 
-                Time.timeScale = 0;
+                TimeSystem.Pause();
                 StateEntityManager.PushEntity(EntityData.Tag.MapBlockDrag);
 
                 return true;
@@ -280,7 +281,7 @@ public class GameInputManager : MonoBehaviour
         inputState = InputState.Idle;
         dragObject = null;
         initialMousePos = Vector2.zero;
-        Time.timeScale = 1;
+        TimeSystem.Flow();
 
         StateEntityManager.RemoveEntity(EntityData.Tag.MapBlockDrag);
     }
