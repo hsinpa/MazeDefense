@@ -11,7 +11,7 @@ namespace TD.Static
         public struct RawStoryBoardStruct
         {
             public string ID;
-            public string Group;
+            public string Level;
             public string Type;
             public string Title;
             public string Data;
@@ -24,9 +24,12 @@ namespace TD.Static
         {
             public MonsterStats[] monsters;
             public int[] spawn_count;
+            public int[] spawn_record;//Default 0
 
             public int length => monsters.Length;
             public int duration;
+
+            public bool IsValid => monsters != null;
         }
     }
 }

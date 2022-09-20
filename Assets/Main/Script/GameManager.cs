@@ -83,6 +83,8 @@ public class GameManager : MonoBehaviour
         _levelDesignManager.SetLevel(new List<PlayerModel> { mainPlayer }, mainPlayer);
         _headView.SetUp(mainPlayer);
         _mapBlockBottomView.SetUp(_blockManager);
+
+        _storyBoardManager.StartStoryBoard("stroy_group_01");
     }
 
     private void PreparePoolingObject(STPTheme poolingTheme) {

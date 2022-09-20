@@ -123,6 +123,8 @@ namespace TD.AI {
             int queueLength = _spawnQueue.Count;
             int spawnNumPerTime = Random.Range(1, 4);
 
+
+
             for (int s = 0; s < spawnNumPerTime; s++)
             {
                 if (s < queueLength) {
