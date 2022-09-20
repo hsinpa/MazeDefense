@@ -2510,6 +2510,7 @@ GameObject:
   - component: {fileID: 743619300}
   - component: {fileID: 743619301}
   - component: {fileID: 743619302}
+  - component: {fileID: 743619303}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -2559,6 +2560,18 @@ MonoBehaviour:
   spawnSpeedAtWaitingStage: 1
   spawnStageLastSecond: 20
   spawnStageFrequncy: 0.3
+--- !u!114 &743619303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743619299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49b4760faa9e4904a82836f5ac118e2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &752806115
 GameObject:
   m_ObjectHideFlags: 0
@@ -3910,6 +3923,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
@@ -4494,7 +4508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolingTheme: {fileID: 11400000, guid: d560e864e2e6b0044b00a747b01ff8ca, type: 2}
-  statsHolder: {fileID: 11400000, guid: caceefdc9fb6da242b4eb780b9ba0a74, type: 2}
+  statsHolder: {fileID: 11400000, guid: 8131972d7f735c34b8f2942cf627c82c, type: 2}
 --- !u!4 &1401475228
 Transform:
   m_ObjectHideFlags: 0

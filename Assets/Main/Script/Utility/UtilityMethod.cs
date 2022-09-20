@@ -117,5 +117,42 @@ namespace Utility {
 		    return (T) System.Enum.Parse(typeof(T), value, true);
 		}
 
+		public static Dictionary<T, K> SetDictionary<T, K>(Dictionary<T, K> dict, T key, K addValue)
+		{
+
+			if (dict.ContainsKey(key))
+			{
+				dict[key] = addValue;
+			}
+			else
+			{
+				dict.Add(key, addValue);
+			}
+
+			return dict;
+		}
+
+		public static Dictionary<string, List<T>> SetListDictionary<T>(Dictionary<string, List<T>> dict, string id, T dataStruct)
+		{
+			if (dict.ContainsKey(id))
+			{
+				dict[id].Add(dataStruct);
+			}
+			else
+			{
+				dict.Add(id, new List<T>() { dataStruct });
+			}
+			return dict;
+		}
+
+		public static void SetSimpleBtnEvent(Button btn, System.Action eventCallback)
+		{
+			if (btn == null || eventCallback == null) return;
+			btn.onClick.RemoveAllListeners();
+			btn.onClick.AddListener(() =>
+			{
+				eventCallback();
+			});
+		}
 	}
 }

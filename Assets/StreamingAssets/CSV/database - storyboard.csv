@@ -1,0 +1,7 @@
+ID,Type,Title,Data,Time
+storyboard_01,StartLevel,Preface,,
+storyboard_02,Wave,,monster_01:10&monster_02:10,0
+storyboard_03,Wave,,monster_01:30&monster_02:30&monster_03:5,8
+storyboard_04,Wave,,monster_01:10&monster_02:5&monster_03:10,16
+storyboard_05,Cinema,,cinema_id_01,
+storyboard_06,EndLevel,,,

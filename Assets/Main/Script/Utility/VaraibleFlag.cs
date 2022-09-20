@@ -50,4 +50,10 @@ public class VariableFlag
         public static readonly Vector2 Right = new Vector2(1, 0);
     }
 
+    public class StoryBoard {
+        public const string StartType = "Start";
+        public const string WaveType = "Wave";
+        public const string CinemaType = "Cinema";
+        public const string EndType = "End";
+    }
 }

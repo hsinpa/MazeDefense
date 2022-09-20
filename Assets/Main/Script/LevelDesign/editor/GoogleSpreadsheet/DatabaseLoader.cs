@@ -260,6 +260,7 @@ public class DatabaseLoader : Object
             { "database - tower", Regex.Replace( url, ":id", "0")},
             { "database - skill", Regex.Replace( url, ":id", "848255666")},
             { "database - monster", Regex.Replace( url, ":id", "557977291")},
+            { "database - storyboard", Regex.Replace( url, ":id", "596235006")},
         });
     }
 
