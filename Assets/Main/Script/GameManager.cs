@@ -19,8 +19,6 @@ public class GameManager : MonoBehaviour
     private GameInputManager _gameInputManager;
     private PoolManager _poolManager;
     private GameUnitManager _gameUnitManager;
-
-    private LevelDesignManager _levelDesignManager;
     private StoryBoardManager _storyBoardManager;
 
     #endregion
@@ -50,7 +48,7 @@ public class GameManager : MonoBehaviour
         _gameInteractorCtrl = GetComponentInChildren<InGameUICtrl>();
         _poolManager = GetComponentInChildren<PoolManager>();
         _gameUnitManager = GetComponentInChildren<GameUnitManager>();
-        _levelDesignManager = GetComponentInChildren<LevelDesignManager>();
+        //_levelDesignManager = GetComponentInChildren<LevelDesignManager>();
         _storyBoardManager = GetComponentInChildren<StoryBoardManager>();
 
         _headView = GetComponentInChildren<HeaderView>();
@@ -59,10 +57,10 @@ public class GameManager : MonoBehaviour
         _mapGrid.SetUp();
         _gameUnitManager.SetUp(_blockManager, _mapGrid, poolingTheme.total);
         _gameInputManager.SetUp(_mapGrid, _blockManager, _gameUnitManager);
-        _levelDesignManager.Init(_gameUnitManager, _blockManager, _mapGrid, monsterPools);
+        //_levelDesignManager.Init(_gameUnitManager, _blockManager, _mapGrid, monsterPools);
         _storyBoardManager.Init(_gameUnitManager, _blockManager, _mapGrid, monsterPools);
 
-        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _levelDesignManager, _mapGrid, _blockManager, poolingTheme, statsHolder);
+        _gameInteractorCtrl.SetUp(_gameInputManager, _gameUnitManager, _mapGrid, _blockManager, poolingTheme, statsHolder);
 
     }
 
@@ -80,7 +78,7 @@ public class GameManager : MonoBehaviour
 
         PlayerModel mainPlayer = PlayerModel.CreatePlayer();
 
-        _levelDesignManager.SetLevel(new List<PlayerModel> { mainPlayer }, mainPlayer);
+        //_levelDesignManager.SetLevel(new List<PlayerModel> { mainPlayer }, mainPlayer);
         _headView.SetUp(mainPlayer);
         _mapBlockBottomView.SetUp(_blockManager);
 

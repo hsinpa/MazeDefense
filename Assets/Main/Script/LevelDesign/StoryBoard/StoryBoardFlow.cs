@@ -63,16 +63,16 @@ namespace TD.Storyboard
         }
 
         public GeneralObjectStruct.WaveStruct ParseWave(GeneralObjectStruct.RawStoryBoardStruct storyBoardStruct) {
-
+            string[] splitExtra = storyBoardStruct.Extra.Split('&');
             string[] splitUnits = storyBoardStruct.Data.Split('&');
             int unit_length = splitUnits.Length;
 
             GeneralObjectStruct.WaveStruct wave = new GeneralObjectStruct.WaveStruct();
-            wave.duration = storyBoardStruct.Time;
             wave.monsters = new MonsterStats[unit_length];
             wave.spawn_count = new int[unit_length];
             wave.spawn_record = new int[unit_length];
 
+            //Parse Data
             for (int i = 0; i < unit_length; i++) {
                 string[] unitPair = splitUnits[i].Split(':');
 
@@ -86,6 +86,9 @@ namespace TD.Storyboard
                 wave.spawn_count[i] = int.Parse(unitPair[1]);
                 wave.spawn_record[i] = 0;
             }
+
+            //Parse Extra
+            if (int.TryParse(splitExtra[0], out int p_duration)) wave.duration = p_duration;
 
             return wave;
         }

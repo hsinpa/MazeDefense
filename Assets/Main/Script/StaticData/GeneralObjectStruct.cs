@@ -15,7 +15,7 @@ namespace TD.Static
             public string Type;
             public string Title;
             public string Data;
-            public int Time;
+            public string Extra;
 
             public bool IsValid => !string.IsNullOrEmpty(ID);
         }

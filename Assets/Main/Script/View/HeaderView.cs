@@ -10,7 +10,7 @@ namespace TD.UI
         private PlayerModel mainPlayer;
 
         [SerializeField]
-        private Text capital_text;
+        private TMPro.TextMeshProUGUI capital_text;
 
         public void SetUp(PlayerModel mainPlayer)
         {

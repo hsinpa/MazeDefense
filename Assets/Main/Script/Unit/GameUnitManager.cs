@@ -13,6 +13,7 @@ namespace TD.Unit {
         private List<UnitInterface> pendingDestroyList = new List<UnitInterface>();
 
         private int unitLength = 0;
+        public int UnitLength => unitLength;
 
         public GameDamageManager gameDamageManager;
         private GameSkillMapper gameSkillMapper;

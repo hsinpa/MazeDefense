@@ -1,7 +1,7 @@
-ID,Level,Type,Title,Data,Time
+ID,Level,Type,Title,Data,Extra
 storyboard_01,stroy_group_01,Start,Preface,,
-storyboard_02,stroy_group_01,Wave,,monster_01:10&monster_02:10,0
-storyboard_03,stroy_group_01,Wave,,monster_01:30&monster_02:30&monster_03:5,8
-storyboard_04,stroy_group_01,Wave,,monster_01:10&monster_02:5&monster_03:10,16
+storyboard_02,stroy_group_01,Wave,,monster_01:10&monster_02:10,8
+storyboard_03,stroy_group_01,Wave,,monster_01:30&monster_02:30&monster_03:5,10
+storyboard_04,stroy_group_01,Wave,,monster_01:10&monster_02:5&monster_03:10,-1
 storyboard_05,stroy_group_01,Cinema,,cinema_id_01,
 storyboard_06,stroy_group_01,End,,,

@@ -58,6 +58,8 @@ namespace TD.Storyboard {
 
         #region Storyboard Logic Flow
         public async void StartStoryBoard(string level_id) {
+            _entranceComponent = _mapHolder.mapComponents.Find(x => x.map_type == BlockComponent.Type.Entrance);
+
             await Utility.UtilityMethod.WaitUntil(() => _storyBoardFlow.IsCompleteLoad, 100);
 
             var storyStruct =_storyBoardFlow.StartStoryBoard(level_id);
@@ -70,10 +72,9 @@ namespace TD.Storyboard {
             }
         }
 
-        private void RunStartStruct(GeneralObjectStruct.RawStoryBoardStruct storyBoardStruct) {             
-            var next = _storyBoardFlow.Process();
-
-            RunStoryBoardStruct(next);
+        private void RunStartStruct(GeneralObjectStruct.RawStoryBoardStruct storyBoardStruct) {
+            Debug.Log("Start " + storyBoardStruct.ID);
+            RunNextStory();
         }
 
         private void RunWaveStruct(GeneralObjectStruct.RawStoryBoardStruct storyBoardStruct)
@@ -81,16 +82,23 @@ namespace TD.Storyboard {
             this._currentWaveStruct = _storyBoardFlow.ParseWave(storyBoardStruct);
             this.waveUnitPTable = new float[this._currentWaveStruct.length];
             this.waveStartTime = (int)TimeSystem.time;
+            this.waveStepTime = 0;
         }
 
         private void RunCinemaStruct(GeneralObjectStruct.RawStoryBoardStruct storyBoardStruct)
         {
-
+            Debug.Log("Cinema " + storyBoardStruct.ID);
+            RunNextStory();
         }
 
         private void RunEndStruct(GeneralObjectStruct.RawStoryBoardStruct storyBoardStruct)
         {
             Debug.Log("End Level " + storyBoardStruct.ID);
+        }
+
+        private void RunNextStory() {
+            var next = _storyBoardFlow.Process();
+            RunStoryBoardStruct(next);
         }
         #endregion
 
@@ -130,10 +138,10 @@ namespace TD.Storyboard {
 
             wave.spawn_record[selectIndex] += spawnNumPerTime;
 
-            //for (int s = 0; s < spawnNumPerTime; s++)
-            //{
-            //    Spawn(wave.monsters[selectIndex]);
-            //}
+            for (int s = 0; s < spawnNumPerTime; s++)
+            {
+                Spawn(wave.monsters[selectIndex]);
+            }
         }
 
         private void Spawn(MonsterStats monster)
@@ -158,13 +166,31 @@ namespace TD.Storyboard {
 
         private void Update()
         {
-            if (waveStepTime < TimeSystem.time && _storyBoardFlow.CurrentStroyStruct.Type == VariableFlag.StoryBoard.WaveType)
-            {
-                int selectIndex = SelectMonsterIndex(this._currentWaveStruct, ref waveUnitPTable);
-                SpawnQueueMonster(this._currentWaveStruct, selectIndex);
-                Debug.Log("Spawn Update, Index " + selectIndex);
+            if (this._currentWaveStruct.IsValid) {
 
-                waveStepTime = TimeSystem.time + spawnStageFrequncy;
+                if (this.waveStartTime + this._currentWaveStruct.duration < TimeSystem.time && this._currentWaveStruct.duration >= 0) {
+                    //Debug.Log("Duration " + (this.waveStartTime + this._currentWaveStruct.duration) +", Time " + TimeSystem.time);
+                    RunNextStory();
+                    return;
+                }
+
+                if (this._currentWaveStruct.duration == -1 && this._gameUnitManager.UnitLength <= 0) {
+                    RunNextStory();
+                    return;
+                }
+
+                if (waveStepTime < TimeSystem.time)
+                {
+                    int selectIndex = SelectMonsterIndex(this._currentWaveStruct, ref waveUnitPTable);
+                    //Debug.Log("Spawn Update, Index " + selectIndex);
+
+                    if (selectIndex >= 0)
+                    {
+                        SpawnQueueMonster(this._currentWaveStruct, selectIndex);
+                    }
+
+                    waveStepTime = TimeSystem.time + spawnStageFrequncy;
+                }
             }
         }
     }

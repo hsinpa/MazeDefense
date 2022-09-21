@@ -18,7 +18,6 @@ namespace TD.UI
         GameUnitManager _gameUnitManager;
         MapGrid _mapGrid;
         MapBlockManager _mapBlockManager;
-        LevelDesignManager _levelDesignManager;
 
         TileNode currentSelectedNode;
         STPTheme _stpTheme;
@@ -37,14 +36,13 @@ namespace TD.UI
 
         private List<TowerStats> FirstLevelTowers;
 
-        public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, LevelDesignManager levelDesign, MapGrid mapGrid, MapBlockManager mapBlockManager,
+        public void SetUp(GameInputManager gameInputManager, GameUnitManager gameUnitManager, MapGrid mapGrid, MapBlockManager mapBlockManager,
                         STPTheme stpTheme, StatsHolder statHolder)
         {
             _gameInputManager = gameInputManager;
             _gameInputManager.OnSelectTileNode += SelectTileListener;
 
             _gameUnitManager = gameUnitManager;
-            _levelDesignManager = levelDesign;
             _mapGrid = mapGrid;
             _mapBlockManager = mapBlockManager;
             _stpTheme = stpTheme;
@@ -67,9 +65,8 @@ namespace TD.UI
                 TowerStats towerStats = _statHolder.FindObject<TowerStats>(tower_id);
 
                 //No money
-                if (_levelDesignManager.selfPlayer.capital < towerStats.cost)
-                    return;
-
+                //if (_levelDesignManager.selfPlayer.capital < towerStats.cost)
+                //    return;
 
                 var tower = PoolManager.instance.ReuseObject(VariableFlag.Pooling.TowerID);
 
@@ -83,16 +80,16 @@ namespace TD.UI
 
                     if (stpTower != null && towerUnit != null && mapBlock != null && towerStats != null)
                     {
-                        tower.transform.SetParent(mapBlock.unitHolder);
-                        towerUnit.SetUp(towerStats, stpTower,
-                            _mapGrid, _levelDesignManager.selfPlayer,
-                       (UnitInterface projectile, GameDamageManager.DMGRegistry dmgRistry) =>
-                       {
-                           _gameUnitManager.AddUnit(projectile);
-                           _gameUnitManager.gameDamageManager.AddRequest(dmgRistry);
-                       });
+                       // tower.transform.SetParent(mapBlock.unitHolder);
+                       // towerUnit.SetUp(towerStats, stpTower,
+                       //     _mapGrid, _levelDesignManager.selfPlayer,
+                       //(UnitInterface projectile, GameDamageManager.DMGRegistry dmgRistry) =>
+                       //{
+                       //    _gameUnitManager.AddUnit(projectile);
+                       //    _gameUnitManager.gameDamageManager.AddRequest(dmgRistry);
+                       //});
 
-                        _gameUnitManager.AddUnit(towerUnit);
+                       // _gameUnitManager.AddUnit(towerUnit);
                         isTaskDone = true;
                     }
                 }
